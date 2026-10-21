@@ -15,7 +15,7 @@
       var raiz = el('div', { 'class': 'cc-acceso', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'ccTit' });
       raiz.innerHTML =
         '<div class="cc-caja">' +
-          '<div class="cc-cabeza"><img src="' + esc(op.icono) + '" alt=""><h1 id="ccTit">' + esc(op.app) + '</h1><p>' + esc(op.lema || 'una CiccApp') + '</p></div>' +
+          '<div class="cc-cabeza"><span class="cc-ico"><img src="' + esc(op.icono) + '" alt=""></span><h1 id="ccTit">' + esc(op.app) + '</h1><p>' + esc(op.lema || 'una CiccApp') + '</p></div>' +
           '<div class="cc-modos" role="group" aria-label="Acceso"><button type="button" id="ccM1" aria-pressed="true">Entrar</button><button type="button" id="ccM2" aria-pressed="false">Crear cuenta</button></div>' +
           '<form class="cc-form" id="ccForm" novalidate>' +
             '<div class="cc-campo"><label for="ccEmail">Correo</label><input id="ccEmail" type="email" autocomplete="email" inputmode="email" required></div>' +
