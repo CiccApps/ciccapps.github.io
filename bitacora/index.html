@@ -93,6 +93,8 @@ header p{margin:0;color:var(--muted);max-width:58ch}
 .now-card{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--gold);background:var(--gold-soft);border-radius:6px;cursor:pointer;text-align:left;width:100%}
 .now-card.soft{border-color:var(--line);background:var(--card)}
 .spine-mini{width:14px;height:46px;border-radius:2px;flex:none}
+.spine-mini.lectura{width:18px;height:56px;position:relative;box-shadow:inset -3px 0 0 rgba(0,0,0,.18)}
+.spine-mini.lectura::after{content:"";position:absolute;left:5px;top:-2px;width:6px;height:calc(var(--pr) + 6px);max-height:calc(100% + 10px);background:#7A2633;border:1px solid rgba(241,230,207,.75);border-top:0;clip-path:polygon(0 0,100% 0,100% 100%,50% calc(100% - 5px),0 100%);transition:height .4s}
 .now-card .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .now-card h3{font-size:20px;line-height:1.2}
 .now-card small{color:var(--muted)}
@@ -190,13 +192,22 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hab .btn.hecho{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .mes-btn{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:11px 16px;font:600 14px var(--f-body,inherit);color:var(--ink);cursor:pointer}
 .mes-btn.nuevo{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.mes-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 6px}
+.mes-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 6px}
+@media (max-width:420px){.mes-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mes-grid div{background:var(--paper);border-radius:6px;padding:12px 10px;display:flex;flex-direction:column}
 .mes-grid b{font-family:var(--f-display);font-weight:400;font-size:30px;line-height:1}.mes-grid span{font-size:11.5px;color:var(--muted)}
 .mes-cal{display:grid;grid-template-columns:repeat(7,26px);justify-content:center;gap:5px;margin:16px 0 18px}
 .mes-cal i{width:26px;height:26px;border-radius:5px;background:var(--line);font:500 10px var(--f-mono);font-style:normal;display:grid;place-items:center;color:var(--muted)}.mes-cal i.si{color:var(--paper)}.mes-cal i.si{background:var(--ink)}.mes-cal i.vacio{background:none}
 .mes-libro{display:flex;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
 .mes-libro img{width:40px;height:60px;object-fit:cover;border-radius:3px}.mes-libro b{display:block}.mes-libro span{font-size:13px;color:var(--muted)}
+.fr-list{display:flex;flex-direction:column;gap:10px;margin-bottom:4px}
+.fr{margin:0;padding:10px 12px 8px 14px;background:var(--paper);border-radius:6px;position:relative}
+.fr::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--gold)}
+.fr blockquote{margin:0;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:16px;line-height:1.45;color:var(--ink)}
+.fr figcaption{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-top:4px;min-height:24px}
+.fr-del{background:none;border:0;color:var(--muted);font:inherit;font-size:12px;cursor:pointer;padding:4px 0 4px 8px;margin-left:auto}
+.fr-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}
+.frases textarea{min-height:64px}
 .hab input{font:inherit;font-size:16px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);margin-top:6px}
 .resumen{justify-content:center;font-size:13px;color:var(--muted)}
 .salir-link{border:0;background:none;color:var(--muted);font:600 13px var(--f-body);cursor:pointer;padding:6px}
@@ -285,6 +296,15 @@ body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif
 .cab h1 .desc{font-family:"Libre Caslon Text",Georgia,serif;font-size:.4em;color:var(--muted);letter-spacing:.01em;white-space:nowrap}
 .cab .lema{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(19px,4.8vw,24px);line-height:1.25;color:var(--gold);margin:0}
 .cab .lede{text-wrap:pretty;margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
+/* Cabecera como tapa de libro encuadernada en cuero: el mismo degradado que el icono, filete dorado doble */
+.cab{position:relative;max-width:none;background:radial-gradient(130% 150% at 22% 10%,#7A4E2C,#4E2F19 58%,#26160B);color:#F1E6CF;border-radius:6px 12px 12px 6px;padding:26px 26px 24px 34px;box-shadow:0 1px 2px rgba(38,22,11,.25),0 10px 28px rgba(38,22,11,.22);overflow:hidden}
+.cab::before{content:"";position:absolute;inset:9px 9px 9px 17px;border:1px solid rgba(217,184,120,.55);border-radius:3px 8px 8px 3px;box-shadow:inset 0 0 0 3px transparent,inset 0 0 0 4px rgba(217,184,120,.35);pointer-events:none}
+.cab::after{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,0) 60%,rgba(255,255,255,.06));pointer-events:none}
+.cab .eyebrow{color:#D9B878}
+.cab h1{color:#F1E6CF}
+.cab .lema{color:#D9B878}
+.cab .lede{color:rgba(241,230,207,.78)}
+
 
 @media (min-width:900px){.shelf{zoom:1.45}}
 h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400}
@@ -468,6 +488,9 @@ const amz=b=>`https://www.amazon.es/s?k=${encodeURIComponent(b.t+" "+b.a+(EDS[b.
 
 /* Ritmo: páginas por día a partir de libros con fechas; 20 si aún no hay datos */
 function pace(){
+  const hoy=new Date();let suma=0,primero=null;
+  for(let i=0;i<14;i++){const d=new Date(hoy);d.setDate(d.getDate()-i);const k=diaISO(d);if(PAGS[k]){suma+=PAGS[k];primero=i}}
+  if(suma>0)return {ppd:Math.max(2,suma/Math.max(7,primero+1)),real:true,log:true};
   const done=ALL.filter(b=>st(b.id)==="leido"&&S(b.id).inicio&&S(b.id).fin);
   if(!done.length)return {ppd:20,real:false};
   const p=done.reduce((s,b)=>s+b.p,0),d=done.reduce((s,b)=>s+days(S(b.id).inicio,S(b.id).fin),0);
@@ -507,10 +530,11 @@ function renderTop(){
     html=reading.map(b=>{const s=S(b.id);const pg=+s.pagina||0;const pct=Math.min(100,Math.round(pg/b.p*100));
       const rest=Math.max(0,b.p-pg);const eta=Math.ceil(rest/P.ppd);
       const d=s.inicio?`día ${days(s.inicio,today())}`:"sin fecha de inicio";
-      return `<button class="now-card" data-open="${b.id}"><span class="spine-mini" style="background:var(${b.stage.c})"></span><span class="txt"><h3>${esc(b.t)}</h3>
+      const fin=new Date();fin.setDate(fin.getDate()+eta);const fecha=fin.getDate()+" de "+MESES[fin.getMonth()]+(fin.getFullYear()!==new Date().getFullYear()?" de "+fin.getFullYear():"");
+      return `<button class="now-card" data-open="${b.id}"><span class="spine-mini lectura" style="background:var(${b.stage.c});--pr:${Math.max(6,pct)}%" aria-hidden="true"></span><span class="txt"><h3>${esc(b.t)}</h3>
       <small>${esc(b.a)} · ${d}${pg?` · pág. ${pg} de ≈${b.p}`:""}</small>
       <span class="bar"><i style="width:${pct}%"></i></span>
-      <small>${pg?`A tu ritmo lo terminas en unos ${eta} días`:"Apunta la página por la que vas para ver cuándo lo terminas"}</small></span><span class="go">Página</span></button>`}).join("");
+      <small>${pg?(eta<=0?"Te queda nada y menos":`A este ritmo lo terminas el ${fecha}`):"Apunta la página por la que vas para ver cuándo lo terminas"}</small></span><span class="go">Página</span></button>`}).join("");
   }else{
     const nextPlan=MAIN.find(b=>st(b.id)==="pendiente");
     const nextOwned=MAIN.find(b=>st(b.id)==="pendiente"&&owned(b.id));
@@ -661,6 +685,8 @@ async function persist(id,patch){
   if(r.error)toast("No se pudo guardar. Revisa la conexión.");
 }
 function setBook(id,patch){
+  const antes=state[id]||{};
+  if("pagina" in patch&&antes.estado==="leyendo"){const d=(+patch.pagina||0)-(+antes.pagina||0);if(d>0&&d<1500)sumarPaginas(d)}
   state[id]=Object.assign({estado:"pendiente"},state[id]||{},patch);
   render();persist(id,patch);
 }
@@ -687,7 +713,10 @@ function openSheet(id,msg){
     <div class="dates"><div class="field"><label for="dIni">Empezado</label><input type="date" id="dIni" value="${draft.inicio||""}"></div>
     <div class="field"><label for="dFin">Terminado</label><input type="date" id="dFin" value="${draft.fin||""}"></div></div>
     <div class="field"><span class="lbl">Valoración</span><div class="rate" id="rate">${[1,2,3,4,5].map(i=>`<button data-rate="${i}" class="${i<=draft.nota?"on":""}" aria-label="${i} de 5">★</button>`).join("")}</div></div>
-    <div class="field"><label for="dCom">Notas, frases o lo que te dejó</label><textarea id="dCom">${esc(draft.comentario||"")}</textarea></div>
+    <div class="field"><label for="dCom">Notas o lo que te dejó</label><textarea id="dCom">${esc(draft.comentario||"")}</textarea></div>
+    <div class="field frases"><span class="lbl">Frases subrayadas</span><div id="frList" class="fr-list"><p class="hint" style="margin:0">Cargando…</p></div>
+      <textarea id="frTxt" rows="2" maxlength="2000" placeholder="Copia aquí una frase que quieras guardar" aria-label="Frase nueva"></textarea>
+      <div class="fr-row"><input type="number" id="frPg" inputmode="numeric" min="1" placeholder="Página (opcional)" aria-label="Página de la frase"><button class="btn" id="frAdd" type="button">Guardar frase</button></div></div>
     ${e&&!draft.tengo?`<div class="ed" style="font-size:14px;background:var(--paper);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span class="eyebrow">Edición recomendada</span><b>${esc(e.ed)}</b>${e.why?`<span>${esc(e.why)}</span>`:""}${e.alt?`<small style="color:var(--muted)">Más barata: ${esc(e.alt)}</small>`:""}</div>`:""}
     <div class="links"><a href="${gr(b)}" target="_blank" rel="noopener">Goodreads ↗</a><a href="${amz(b)}" target="_blank" rel="noopener">Amazon ↗</a></div>
     <div class="sheet-actions"><button class="btn" id="shEdit">Editar libro</button><button class="btn" id="shCancel">Cerrar</button><button class="btn primary" id="shSave">Guardar</button></div>
@@ -709,7 +738,20 @@ function openSheet(id,msg){
     setBook(sheetId,{estado:draft.estado,tengo:draft.tengo||draft.estado!=="pendiente"&&draft.tengo,inicio:document.getElementById("dIni").value,fin:document.getElementById("dFin").value,
       nota:draft.nota,comentario:document.getElementById("dCom").value.trim(),pagina:draft.estado==="leido"?b.p:(isNaN(pg)?"":pg)});
     closeSheet();toast("Guardado");};
+  cargarFrases(id);
+  document.getElementById("frAdd").onclick=async()=>{const t=document.getElementById("frTxt").value.trim();if(!t){toast("Escribe la frase");return}
+    const pg=parseInt(document.getElementById("frPg").value,10);
+    const r=await sb.from("frases").insert({libro_id:id,texto:t,pagina:isNaN(pg)?null:pg}).select().single();
+    if(r.error){toast("No se pudo guardar la frase");return}
+    document.getElementById("frTxt").value="";document.getElementById("frPg").value="";toast("Frase guardada");cargarFrases(id)};
   if(draft.estado==="leyendo")document.getElementById("dPg").focus({preventScroll:true});
+}
+async function cargarFrases(id){
+  const r=await sb.from("frases").select("*").eq("libro_id",id).order("creado");const L=document.getElementById("frList");if(!L||sheetId!==id)return;
+  const F=(r.data||[]).filter(f=>f.libro_id===id);
+  L.innerHTML=F.length?F.map(f=>`<figure class="fr"><blockquote>${esc(f.texto)}</blockquote><figcaption>${f.pagina?"Pág. "+f.pagina:""}<button type="button" class="fr-del" data-frdel="${f.id}">Borrar</button></figcaption></figure>`).join(""):`<p class="hint" style="margin:0">Aún no has guardado ninguna frase de este libro.</p>`;
+  L.querySelectorAll("[data-frdel]").forEach(x=>x.onclick=async()=>{if(x.dataset.ok!=="1"){x.dataset.ok="1";x.textContent="¿Seguro?";setTimeout(()=>{if(x.isConnected){x.dataset.ok="";x.textContent="Borrar"}},3000);return}
+    await sb.from("frases").delete().eq("id",x.dataset.frdel);cargarFrases(id)});
 }
 function closeSheet(){document.getElementById("sheetRoot").innerHTML="";sheetId=null;render()}
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&sheetId)closeSheet()});
@@ -780,19 +822,21 @@ async function escanear(cuando){
 }
 
 /* Hábito: racha de días leyendo y objetivo anual */
-let DIAS=new Set(),AJ={};
+let DIAS=new Set(),AJ={},PAGS={};
 const hoyISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const diaISO=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 function racha(){let n=0;const d=new Date();if(!DIAS.has(diaISO(d)))d.setDate(d.getDate()-1);while(DIAS.has(diaISO(d))){n++;d.setDate(d.getDate()-1)}return n}
 async function marcarHoy(){const h=hoyISO();if(DIAS.has(h))return;DIAS.add(h);renderHabito();const r=await sb.from("lectura_dias").insert({dia:h});if(r.error&&!/duplicate/i.test(r.error.message))toast("No se pudo guardar el día")}
-async function desmarcarHoy(){const h=hoyISO();DIAS.delete(h);renderHabito();await sb.from("lectura_dias").delete().eq("dia",h)}
+async function sumarPaginas(n){if(!(n>0))return;const h=hoyISO();PAGS[h]=(PAGS[h]||0)+n;DIAS.add(h);renderHabito();
+  const r=await sb.from("lectura_dias").upsert({dia:h,paginas:PAGS[h]},{onConflict:"user_id,dia"});if(r.error)toast("No se pudieron guardar las páginas")}
+async function desmarcarHoy(){const h=hoyISO();DIAS.delete(h);delete PAGS[h];renderHabito();await sb.from("lectura_dias").delete().eq("dia",h)}
 async function guardarAjustes(patch){AJ=Object.assign({},AJ,patch);const r=await sb.from("ajustes").upsert({app:"bitacora",datos:AJ,actualizado:new Date().toISOString()});if(r.error)toast("No se pudo guardar")}
 function renderHabito(){
   marcarMesNuevo();
   const n=racha();const hoy=DIAS.has(hoyISO());
   document.getElementById("hRacha").textContent=n;
   document.getElementById("hRachaTxt").textContent=n===1?"día leyendo":"días seguidos leyendo";
-  const b=document.getElementById("hHoy");b.textContent=hoy?"Leído hoy ✓":"He leído hoy";b.classList.toggle("hecho",hoy);
+  const b=document.getElementById("hHoy");const ph=PAGS[hoyISO()]||0;b.textContent=hoy?(ph?"Hoy · "+ph+" págs":"Leído hoy ✓"):"He leído hoy";b.classList.toggle("hecho",hoy);
   const y=new Date().getFullYear();const meta=+AJ.objetivo||12;
   const hechos=ALL.filter(x=>st(x.id)==="leido"&&String(S(x.id).fin||"").startsWith(String(y))).length;
   document.getElementById("hObjAnio").textContent="Objetivo "+y;
@@ -810,7 +854,8 @@ function tuMes(){
   const {y,m,cerrado}=mesResumen();const pre=y+"-"+String(m+1).padStart(2,"0");const nd=new Date(y,m+1,0).getDate();
   const hasta=cerrado?nd:new Date().getDate();
   const dias=[];for(let i=1;i<=nd;i++)dias.push(DIAS.has(pre+"-"+String(i).padStart(2,"0")));
-  const leidos=dias.slice(0,hasta).filter(Boolean).length;let mejor=0,c=0;dias.forEach(s=>{c=s?c+1:0;mejor=Math.max(mejor,c)});
+  const leidos=dias.slice(0,hasta).filter(Boolean).length;
+  const pagMes=Object.keys(PAGS).filter(k=>k.startsWith(pre)).reduce((a,k)=>a+PAGS[k],0);let mejor=0,c=0;dias.forEach(s=>{c=s?c+1:0;mejor=Math.max(mejor,c)});
   const fin=ALL.filter(b=>st(b.id)==="leido"&&String(S(b.id).fin||"").startsWith(pre));
   const empez=ALL.filter(b=>String(S(b.id).inicio||"").startsWith(pre)).length;
   const pags=fin.reduce((a,b)=>a+(+b.p||0),0);
@@ -819,10 +864,10 @@ function tuMes(){
   const cmp=diasA||leidos?(dif>0?`${dif} días más leyendo que en ${MESES[ant.getMonth()]}`:dif<0?`${-dif} días menos que en ${MESES[ant.getMonth()]}`:`Los mismos días que en ${MESES[ant.getMonth()]}`):"";
   const off=(new Date(y,m,1).getDay()+6)%7;
   const root=document.getElementById("sheetRoot");
-  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mesT" style="--sc:var(--s1)">
+  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mesT" style="--sc:var(--gold)">
     <span class="eyebrow">${cerrado?"Tu resumen del mes":"Tu mes hasta hoy"}</span><h3 id="mesT" style="text-transform:capitalize">${MESES[m]}</h3>
-    <div class="mes-grid"><div><b class="mono">${leidos}</b><span>días leyendo</span></div><div><b class="mono">${mejor}</b><span>mejor racha</span></div><div><b class="mono">${fin.length}</b><span>${fin.length===1?"libro terminado":"libros terminados"}</span></div></div>
-    ${cmp?`<p class="hint" style="margin:0">${cmp}${empez?` · ${empez} ${empez===1?"libro empezado":"libros empezados"}`:""}${pags?` · ≈${pags} páginas en libros acabados`:""}.</p>`:""}
+    <div class="mes-grid"><div><b class="mono">${leidos}</b><span>días leyendo</span></div><div><b class="mono">${pagMes}</b><span>páginas</span></div><div><b class="mono">${mejor}</b><span>mejor racha</span></div><div><b class="mono">${fin.length}</b><span>${fin.length===1?"libro terminado":"libros terminados"}</span></div></div>
+    ${cmp?`<p class="hint" style="margin:0">${cmp}${empez?` · ${empez} ${empez===1?"libro empezado":"libros empezados"}`:""}.</p>`:""}
     <div class="mes-cal" aria-label="Días que leíste">${"<i class=\"vacio\"></i>".repeat(off)}${dias.map((s,i)=>`<i class="${s?"si":""}">${i+1}</i>`).join("")}</div>
     ${fin.length?`<span class="eyebrow">Terminados</span>${fin.map(b=>`<div class="mes-libro">${b.cov?`<img src="${esc(b.cov)}" alt="">`:""}<div><b>${esc(b.t)}</b><span>${esc(b.a)}${S(b.id).nota?" · "+"★".repeat(S(b.id).nota):""}</span></div></div>`).join("")}`:`<p class="hint">${leidos?"Este mes no has terminado ningún libro, pero has seguido leyendo. Eso cuenta.":"Aún no hay días marcados. Pulsa «He leído hoy» cuando leas."}</p>`}
     <div class="sheet-actions"><button class="btn primary" id="mesCerrar">Cerrar</button></div></div></div>`;
@@ -830,7 +875,25 @@ function tuMes(){
   try{localStorage.setItem("bitacora-mes-visto",y+"-"+(m+1))}catch(_){}document.getElementById("mesBtn").classList.remove("nuevo");
 }
 document.getElementById("mesBtn").onclick=tuMes;
-document.getElementById("hHoy").onclick=()=>DIAS.has(hoyISO())?desmarcarHoy():marcarHoy();
+document.getElementById("hHoy").onclick=apuntarHoy;
+function apuntarHoy(){
+  const lect=ALL.filter(b=>st(b.id)==="leyendo");const h=hoyISO();const hoy=DIAS.has(h);
+  const root=document.getElementById("sheetRoot");sheetId="__hoy";
+  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="hoyT" style="--sc:var(--gold)">
+    <span class="eyebrow">${hoy?"Leído hoy"+(PAGS[h]?" · "+PAGS[h]+" páginas":""):"Lectura de hoy"}</span><h3 id="hoyT">¿Por dónde vas?</h3>
+    ${lect.map(b=>`<div class="field"><label for="hp-${b.id}">${esc(b.t)}</label><input type="number" inputmode="numeric" min="0" max="${b.p*2}" id="hp-${b.id}" data-hp="${b.id}" value="${S(b.id).pagina||""}" placeholder="Página, de ≈${b.p}"></div>`).join("")}
+    <div class="field"><label for="hpExtra">${lect.length?"Otras páginas leídas hoy":"Páginas leídas hoy"}</label><input type="number" inputmode="numeric" min="0" max="1500" id="hpExtra" placeholder="${lect.length?"Opcional: revistas, otro libro…":"Por ejemplo, 25"}"></div>
+    <p class="hint" style="margin:0">Las páginas cuentan para tu ritmo y para el resumen del mes.</p>
+    <div class="sheet-actions" style="justify-content:space-between">${hoy?`<button class="btn" id="hpNo">No he leído hoy</button>`:"<span></span>"}<span style="display:flex;gap:10px"><button class="btn" id="hpCerrar">Cerrar</button><button class="btn primary" id="hpOk">Guardar</button></span></div></div></div>`;
+  const cer=()=>{root.innerHTML="";sheetId=null};
+  document.getElementById("hpCerrar").onclick=cer;document.getElementById("sheetBg").onclick=e=>{if(e.target.id==="sheetBg")cer()};
+  if(hoy)document.getElementById("hpNo").onclick=()=>{cer();desmarcarHoy();toast("Quitado el día de hoy")};
+  document.getElementById("hpOk").onclick=()=>{
+    root.querySelectorAll("[data-hp]").forEach(i=>{const id=i.dataset.hp;const v=parseInt(i.value,10);if(!isNaN(v)&&v!==(+S(id).pagina||0))setBook(id,{pagina:Math.min(v,BOOKS[id].p)})});
+    const x=parseInt(document.getElementById("hpExtra").value,10);if(x>0)sumarPaginas(x);
+    marcarHoy();cer();render();toast(PAGS[h]?"Hoy llevas "+PAGS[h]+" páginas":"Día apuntado");};
+  const f=root.querySelector("[data-hp]")||document.getElementById("hpExtra");f.focus({preventScroll:true});
+}
 let editObj=false;
 document.getElementById("hObjEdit").onclick=async ev=>{
   const btn=ev.currentTarget,box=btn.parentElement;
@@ -839,8 +902,8 @@ document.getElementById("hObjEdit").onclick=async ev=>{
   await guardarAjustes({objetivo:v});renderHabito();toast("Objetivo: "+v+" libros");
 };
 document.getElementById("misDatos").onclick=async()=>{
-  const [e,l,d,a]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*"),sb.from("lectura_dias").select("*"),sb.from("ajustes").select("*").eq("app","bitacora")]);
-  const blob=new Blob([JSON.stringify({app:"Bitácora",exportado:new Date().toISOString(),etapas:e.data,libros:l.data,dias:d.data,ajustes:a.data},null,2)],{type:"application/json"});
+  const [e,l,d,a,f]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*"),sb.from("lectura_dias").select("*"),sb.from("ajustes").select("*").eq("app","bitacora"),sb.from("frases").select("*")]);
+  const blob=new Blob([JSON.stringify({app:"Bitácora",exportado:new Date().toISOString(),etapas:e.data,libros:l.data,dias:d.data,frases:f.data,ajustes:a.data},null,2)],{type:"application/json"});
   const u=URL.createObjectURL(blob);const x=document.createElement("a");x.href=u;x.download="bitacora-mis-datos.json";document.body.appendChild(x);x.click();setTimeout(()=>{URL.revokeObjectURL(u);x.remove()},500);toast("Copia descargada");
 };
 
@@ -861,7 +924,7 @@ function formLibro(id){
   const MS=Object.keys(MOODS).filter(k=>k!=="corto");
   const root=document.getElementById("sheetRoot");sheetId="__form";
   const def=b?b.stage.id:((STAGES.find(x=>!x.extra)||STAGES[0]||{}).id);
-  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="fT" style="--sc:var(--s1)">
+  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="fT" style="--sc:var(--gold)">
     <div><span class="eyebrow">${b?"Editar libro":"Nuevo libro"}</span><h3 id="fT">${b?esc(b.t):"Añadir a la bitácora"}</h3></div>
     <div class="field lookup"><label for="lQ">${b?"Busca tu edición o escanea su código":"Busca el libro o escanea su código"}</label><div class="row2"><input type="text" id="lQ" placeholder="Título, autor o ISBN" autocomplete="off" enterkeyhint="search"><button type="button" class="btn" id="lScan">Escanear</button></div>
       <div class="sug" id="lSug" hidden></div><div class="cover-prev" id="lCov" ${b&&b.cov?"":"hidden"}>${b&&b.cov?`<img src="${esc(b.cov)}" alt="">`:""}<span class="hint" style="margin:0">Portada y datos de tu edición</span></div></div>
@@ -933,8 +996,8 @@ async function empezar(conPlan){
 /* Arranque */
 async function cargar(){
   const desde=new Date();desde.setDate(desde.getDate()-400);
-  const [e,l,d,a]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*"),sb.from("lectura_dias").select("dia").gte("dia",diaISO(desde)),sb.from("ajustes").select("datos").eq("app","bitacora").maybeSingle()]);
-  DIAS=new Set((d.data||[]).map(x=>x.dia));AJ=(a.data&&a.data.datos)||{};
+  const [e,l,d,a]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*"),sb.from("lectura_dias").select("dia,paginas").gte("dia",diaISO(desde)),sb.from("ajustes").select("datos").eq("app","bitacora").maybeSingle()]);
+  DIAS=new Set((d.data||[]).map(x=>x.dia));PAGS={};(d.data||[]).forEach(x=>{if(x.paginas)PAGS[x.dia]=x.paginas});AJ=(a.data&&a.data.datos)||{};
   if(e.error||l.error){document.getElementById("view").innerHTML='<p class="cargando">No se pudo cargar. Comprueba la conexión y vuelve a abrir la app.</p>';return}
   if(!e.data.length){vistaEmpezar();return}
   document.body.classList.remove("nuevo");  construir(e.data,l.data);if(!sheetId)render();
