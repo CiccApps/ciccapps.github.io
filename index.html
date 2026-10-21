@@ -56,10 +56,15 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 .a-vin { background: radial-gradient(130% 130% at 20% 0%, #24335A, #0F1528 65%); --acento: #D9B878; }
 .a-vin h2 { font-family: "DM Serif Display", Georgia, serif; }
 .a-vin p { font-family: "Karla", system-ui, sans-serif; }
-.a-ic { background: #FFFFFF; color: #003366; box-shadow: inset 0 0 0 1px #D9DEE7; --acento: #7E6024; }
+.a-ic { background: #FFFFFF; color: #003366; box-shadow: inset 0 0 0 1px #D9DEE7; --acento: #007A7A; }
 .a-ic h2 { font-family: "Segoe UI Black", "Segoe UI", "Open Sans", system-ui, sans-serif; font-weight: 800; letter-spacing: -.01em; }
 .a-ic p { font-family: "Segoe UI", "Open Sans", system-ui, sans-serif; color: #4A5A70; opacity: 1; }
 .app img { box-shadow: none; }
+/* Tarjetas centradas, con el icono como protagonista */
+.app { align-items: center; text-align: center; }
+.app .ico { align-self: center; margin-bottom: 4px; }
+.app img { width: 84px; height: 84px; }
+.app small { align-self: center; }
 /* Cada app con su letra, pero todas del mismo tamaño a la vista: se iguala la altura de las minúsculas */
 .app h2 { font-size-adjust: 0.5; }
 .app p { font-size-adjust: 0.53; text-wrap: pretty; }
@@ -67,7 +72,7 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
   .wrap { padding-block: 32px 28px; gap: 32px; }
   .app { padding: 24px 14px 14px; gap: 10px; }
   .app small { font-size: 10.5px; letter-spacing: .06em; }
-  .app img { width: 54px; height: 54px; }
+  .app img { width: 68px; height: 68px; }
   .app h2 { font-size: 19px; }
   .app p { font-size: 13px; }
   .instalar { grid-template-columns: 1fr; gap: 14px; }
@@ -86,9 +91,9 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 
   <main class="apps">
     <a class="app a-bit" href="bitacora/"><span class="ico"><img src="iconos/bitacora-192.png?v=5" alt=""></span><h2>Bitácora</h2><p>Tu plan de lectura, los libros que te faltan y tu ritmo.</p><small>¿Qué leo ahora?</small></a>
-    <a class="app a-pla" href="platea/"><span class="ico"><img src="iconos/platea-192.png?v=5" alt=""></span><h2>Platea</h2><p>Tu diario de cine y series, con la cartelera de la semana.</p><small>¿Qué veo ahora?</small></a>
+    <a class="app a-pla" href="platea/"><span class="ico"><img src="iconos/platea-192.png?v=5" alt=""></span><h2>Platea</h2><p>Tu diario de cine y series, con watchlist y cartelera.</p><small>¿Qué veo ahora?</small></a>
     <a class="app a-vin" href="vinilo/"><span class="ico"><img src="iconos/vinilo-192.png?v=5" alt=""></span><h2>Vinilo</h2><p>Música para cada hora del día, con tus listas de Spotify.</p><small>¿Qué escucho ahora?</small></a>
-    <a class="app a-ic" href="interes-compuesto/"><span class="ico"><img src="iconos/interes-compuesto-192.png?v=5" alt=""></span><h2>Interés compuesto</h2><p>La simulación de ahorro para enseñar en tus reuniones.</p><small>¿Cuánto crecerá?</small></a>
+    <a class="app a-ic" href="interes-compuesto/"><span class="ico"><img src="iconos/interes-compuesto-192.png?v=5" alt=""></span><h2>Interés compuesto</h2><p>La simulación de ahorro para enseñar en tus reuniones.</p><small>¿Y si empiezas hoy?</small></a>
   </main>
 
   <section class="instalar" aria-label="Cómo instalar">
