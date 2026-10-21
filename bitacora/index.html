@@ -177,6 +177,17 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .toggle{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
 .toggle input{width:18px;height:18px;accent-color:var(--gold)}
 .picks{display:flex;flex-direction:column;gap:10px}
+.ia{display:flex;flex-direction:column;gap:12px;padding:18px;border:1px solid var(--line);border-radius:8px;background:var(--card);margin-top:8px}
+.ia h2{font-size:26px}
+.ia textarea{font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%;resize:vertical;min-height:84px}
+.ia textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
+.ia .btn.primary{align-self:stretch}
+.ia-pick{cursor:default}
+.ia-why{font-size:13.5px;color:var(--ink);opacity:.85}
+.ia-acc{margin-top:8px}
+.ia-ok{font-size:13px;font-weight:600;color:var(--ok)}
+.ia-info{margin:0}
+
 .pick{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;text-align:left;width:100%}
 .pick.top{border-color:var(--gold)}
 .pick h3{font-size:21px;line-height:1.15}
@@ -538,7 +549,44 @@ function viewMood(){
   <div class="mood-actions">
     <label class="toggle"><input type="checkbox" id="onlyOwned" ${onlyOwned?"checked":""}> Solo los que tengo</label>
     <div class="two"><button class="btn" id="moodClear">Limpiar</button><button class="btn primary" id="moodRandom">Sorpréndeme</button></div></div>
-  <div class="picks">${picks}</div>`;
+  <div class="picks">${picks}</div>
+  ${viewIA()}`;
+}
+/* Créame una lista (IA) */
+const IA={res:[],info:"",busy:false,txt:""};
+function viewIA(){
+  const res=IA.res.map((l,i)=>`<article class="pick ia-pick"><span class="spine-mini" style="background:var(--gold)"></span>
+    <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><h3>${esc(l.titulo)}</h3><span class="why2">${esc(l.autor)}${l.paginas?` · ≈${l.paginas} páginas`:""}</span>
+    ${l.por_que?`<span class="ia-why">${esc(l.por_que)}</span>`:""}
+    <span class="ia-acc">${l.added?`<span class="ia-ok">Añadido a Intercalables</span>`:`<button class="btn sm primary" data-ia-add="${i}">Añadir a mi lista</button>`}</span></span></article>`).join("");
+  return `<section class="ia" aria-labelledby="iaH"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Con inteligencia artificial</span><h2 id="iaH">Créame una lista</h2>
+    <p class="hint">Cuéntame qué te apetece y te propongo cinco libros que no estén ya en tu bitácora.</p></div>
+    <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: novelas cortas de misterio ambientadas en Japón">${esc(IA.txt)}</textarea>
+    <button class="btn primary" id="iaGo" ${IA.busy?"disabled":""}>${IA.busy?"Pensando…":"Créame una lista"}</button>
+    ${IA.info?`<p class="hint ia-info">${esc(IA.info)}</p>`:""}
+    ${res?`<div class="picks">${res}</div>`:""}</section>`;
+}
+async function pedirIA(){
+  const t=(document.getElementById("iaTxt")||{}).value||"";IA.txt=t;
+  if(t.trim().length<3){toast("Cuéntame qué te apetece");return}
+  IA.busy=true;IA.info="";renderView();
+  const leidos=ALL.filter(b=>st(b.id)==="leido").map(b=>b.t+" — "+b.a);
+  const pendientes=ALL.filter(b=>st(b.id)!=="leido").map(b=>b.t);
+  try{
+    const r=await sb.functions.invoke("ia-lista",{body:{peticion:t,leidos,pendientes}});
+    if(r.error){let m="La IA no ha podido responder. Prueba en un rato.";try{const j=await r.error.context.json();if(j&&j.mensaje)m=j.mensaje}catch(_){}IA.info=m}
+    else{IA.res=r.data.libros||[];const q=r.data.limite-r.data.usados;IA.info=q>0?`Te quedan ${q} ${q===1?"lista":"listas"} este mes.`:"Era tu última lista de este mes."}
+  }catch(err){IA.info="No se pudo conectar con la IA."}
+  IA.busy=false;renderView();
+}
+async function anadirIA(i){
+  const l=IA.res[i];if(!l||l.added)return;
+  const etapa=STAGES.some(z=>z.id==="ex")?"ex":(STAGES[STAGES.length-1]||{}).id;
+  const row={titulo:l.titulo,autor:l.autor||null,paginas:l.paginas||null,etapa,grupo:"Sugeridos por la IA",moods:l.moods||[],
+    edicion:l.edicion?{ed:l.edicion,why:"",alt:""}:null,orden:Date.now()%2147483647,tengo:false};
+  const r=await sb.from("libros").insert(row);
+  if(r.error){toast("No se pudo añadir");return}
+  l.added=true;toast("Añadido");cargar();
 }
 
 /* Compras */
@@ -635,10 +683,13 @@ document.addEventListener("click",e=>{
   if(x=g("[data-stage]")){const s=STAGES.find(z=>z.id===x.dataset.stage);openSt[s.id]=!isOpen(s);try{localStorage.setItem(LS+"-open",JSON.stringify(openSt))}catch(err){}renderView();return}
   if(x=g("[data-mood]")){const k=x.dataset.mood;moodSel.has(k)?moodSel.delete(k):moodSel.add(k);renderView();return}
   if(g("#moodClear")){moodSel.clear();renderView();return}
+  if(g("#iaGo")){pedirIA();return}
+  if(x=g("[data-ia-add]")){anadirIA(+x.dataset.iaAdd);return}
   if(g("#nuevoLibro")){formLibro(null);return}
   if(x=g("[data-plantilla]")){empezar(x.dataset.plantilla==="1");return}
   if(g("#moodRandom")){const l=ranked().slice(0,8);if(l.length)openSheet(l[Math.floor(Math.random()*l.length)].b.id,"¿Qué tal este?");return}
 });
+document.addEventListener("input",e=>{if(e.target.id==="iaTxt")IA.txt=e.target.value});
 document.addEventListener("change",e=>{if(e.target.id==="onlyOwned"){onlyOwned=e.target.checked;renderView()}});
 document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("row")){e.preventDefault();openSheet(e.target.dataset.open)}});
 
