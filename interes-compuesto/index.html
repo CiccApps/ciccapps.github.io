@@ -1,4 +1,17 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Interés compuesto</title>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+/* móvil: pasos en una fila de cuatro, el contador encima y el resto en una fila que se reparte por igual */
+@media (max-width: 760px) {
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bar .nav { flex: 1 1 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .bar .nav .stepinfo { grid-column: 1 / -1; order: -1; text-align: center; }
+  .bar > button { flex: 1 1 0; min-width: 0; }
+  .bar button { justify-content: center; padding-inline: 6px; font-size: 13px; }
+  .bar .grow { display: none; }
+}
+@media (max-width: 760px) { .note, .note * { white-space: normal !important; } .bar > button .lbl { display: none; } #toggleData::after { content: "Datos"; } #full::after { content: "Ampliar"; } #reset::after { content: "Reiniciar"; } .hint-pc { display: none; } .tablewrap { -webkit-overflow-scrolling: touch; } }
+@media (max-width: 430px) { .bar .nav .nlbl { display: none; } }
+.hint-movil { display: none; } @media (max-width: 760px) { .hint-movil { display: block; } }
+</style><title>Interés compuesto</title>
 <meta name="description" content="Presentación interactiva de interés compuesto para clientes.">
 <meta name="theme-color" content="#E9ECF2">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -342,7 +355,8 @@ td.wy { color: var(--pink); }
     <button id="full" title="Pantalla completa"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path class="fs-in" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="fs-out" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg><span class="lbl" id="fullTxt">Pantalla completa</span></button>
     <button type="button" id="reset" title="Vuelve al ejemplo, al primer paso y con los datos ocultos, como al abrir la página"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4v4.5H8"/></svg><span class="lbl">Reiniciar</span></button>
   </div>
-  <p class="hint">Haz clic en una cifra de la diapositiva para cambiarla; el resto está en «Datos». Avanza con → o espacio (← para volver). En pantalla completa, mueve el ratón para ver los botones.</p>
+  <p class="hint hint-movil">Toca una cifra de la diapositiva para cambiarla; el resto está en «Datos». Desliza la tabla para ver todas las columnas.</p>
+  <p class="hint hint-pc">Haz clic en una cifra de la diapositiva para cambiarla; el resto está en «Datos». Avanza con → o espacio (← para volver). En pantalla completa, mueve el ratón para ver los botones.</p>
 
   <form class="panel" id="panel" autocomplete="off" hidden>
     <h2>Datos</h2>
@@ -796,4 +810,5 @@ td.wy { color: var(--pink); }
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script>
+<script>(function(){var f=document.getElementById('full');if(f&&!(document.fullscreenEnabled||document.webkitFullscreenEnabled))f.hidden=true;})();</script>
 </body></html>
