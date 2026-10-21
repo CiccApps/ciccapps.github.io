@@ -14,17 +14,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/la-taquilla-180.png?v=3">
 <link rel="icon" type="image/png" href="../iconos/la-taquilla-192.png?v=3">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=10">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=11">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
 :root{
   --bg:#F3EFE4; --card:#FFFFFF; --ink:#24161A; --muted:#6C6266; --line:#E0D7C6;
   --red:#6E1E2B; --red-soft:#F1DEDC; --bulb:#B8913F; --stub:#EDE5D6; --ok:#2E6B4F;
-  --f-display:"Bebas Neue",Impact,"Arial Narrow",sans-serif;
-  --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --f-display:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#150D10; --card:#1F1518; --ink:#F1E9E4; --muted:#A7999E; --line:#3A2A2F;
@@ -119,14 +117,38 @@ textarea{min-height:80px;resize:vertical}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;z-index:30;white-space:nowrap}
 footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px;color:var(--muted)}
 @media (min-width:760px){.sheet-bg{align-items:center;padding:24px}.sheet{border-radius:12px;max-height:86vh}}
+
+/* ===== CiccApps · capa común: misma rejilla, márgenes y tipografía en todas las apps ===== */
+body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.55}
+@media (min-width:900px){body{font-size:16px}}
+.wrap{max-width:1040px!important;margin-inline:auto!important;padding-block:28px 72px!important;padding-left:max(20px,env(safe-area-inset-left,0px))!important;padding-right:max(20px,env(safe-area-inset-right,0px))!important;gap:32px!important}
+@media (min-width:768px){.wrap{padding-top:44px!important;padding-left:max(32px,env(safe-area-inset-left,0px))!important;padding-right:max(32px,env(safe-area-inset-right,0px))!important}}
+.cab{display:flex;flex-direction:column;gap:8px;max-width:680px}
+.cab .eyebrow{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:11px;line-height:16px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.cab h1{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400;font-size:clamp(40px,10vw,64px);line-height:1;letter-spacing:0;margin:0;text-wrap:balance}
+.cab .lema{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(19px,4.8vw,24px);line-height:1.25;color:var(--red);margin:0}
+.cab .lede{margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
+h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400}
+.cc-firma{padding-top:24px}
+.marquee{padding:22px 20px 20px}
+.stats b{font-family:"Libre Caslon Display",Georgia,serif}
+.ticket h3{font-family:"Libre Caslon Display",Georgia,serif;font-weight:400;font-size:20px}
+.ticket .stub b{font-family:"Libre Caslon Display",Georgia,serif}
+.month{font-size:24px;letter-spacing:0}
+.dia{display:flex;flex-direction:column;gap:14px}
+@media (min-width:900px){.tickets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tickets>.ticket:last-child:nth-child(odd){grid-column:1/-1}}
 </style>
 
 </head>
 <body>
 <div class="wrap">
-  <section class="marquee" aria-label="Resumen">
-    <span class="eyebrow" style="color:#FFF6EE;opacity:.8;margin-top:6px">Cada película, una entrada</span>
+  <header class="cab">
+    <span class="eyebrow">Diario de cine y series</span>
     <h1>La Taquilla</h1>
+    <p class="lema">Cada película, una entrada</p>
+    <p class="lede">Apunta lo que ves, guarda lo pendiente por mood y sigue tus series capítulo a capítulo.</p>
+  </header>
+  <section class="marquee" aria-label="Resumen">
     <div class="stats">
       <div><b id="stYear" class="mono">0</b><span>películas este año</span></div>
       <div><b id="stCine" class="mono">0</b><span>en el cine este mes</span></div>
@@ -156,7 +178,7 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=10"></script>
+<script src="../compartido/cuenta.js?v=11"></script>
 <script>
 const MOODS={risa:"Reírme",tension:"Tensión",pensar:"Pensar",llorar:"Emocionarme",accion:"Acción",epico:"Épica",ligera:"Ligera",clasico:"Clásico pendiente"};
 const WHERE={cine:"Cine",streaming:"Streaming",casa:"En casa"};
@@ -188,9 +210,10 @@ function render(){
   if(tab==="diario"){
     const d=L.filter(x=>x.estado==="vista").sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
     if(!d.length){v.innerHTML=empty("Aún no hay sesiones","Cada película o serie que termines queda aquí como una entrada, con nota y reseña. Empieza por la última que viste en Cinesa.","vista");return}
-    let html="",cur="";
-    d.forEach(x=>{const k=(x.fecha||"").slice(0,7);if(k!==cur){cur=k;html+=`<div class="month">${k?MESL[+k.slice(5)-1]+" "+k.slice(0,4):"Sin fecha"}</div>`}html+=ticket(x)});
-    v.innerHTML=`<div class="tickets">${html}</div>`;
+    let html="",cur=null;
+    d.forEach(x=>{const k=(x.fecha||"").slice(0,7);if(k!==cur){if(cur!==null)html+=`</div>`;cur=k;html+=`<div class="month">${k?MESL[+k.slice(5)-1]+" "+k.slice(0,4):"Sin fecha"}</div><div class="tickets">`}html+=ticket(x)});
+    if(cur!==null)html+=`</div>`;
+    v.innerHTML=`<div class="dia">${html}</div>`;
   }else if(tab==="porver"){
     const chips=`<div class="chips" role="group" aria-label="Mood"><button class="chip" id="mood-all" data-mood="" aria-pressed="${!mood}">Cualquiera</button>${Object.entries(MOODS).map(([k,l])=>`<button class="chip" id="mood-${k}" data-mood="${k}" aria-pressed="${mood===k}">${l}</button>`).join("")}</div>`;
     let w=q.filter(x=>!mood||(x.moods||[]).includes(mood)).sort((a,b)=>(b.prio?1:0)-(a.prio?1:0)||(b.creado||"").localeCompare(a.creado||""));

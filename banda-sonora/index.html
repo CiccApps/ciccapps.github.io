@@ -8,12 +8,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/banda-sonora-180.png?v=3">
 <link rel="icon" type="image/png" href="../iconos/banda-sonora-192.png?v=3">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=10">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=11">
 </head><body>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Karla:wght@400;500;700&display=swap">
 <style>
 /* Layout: a record-shop shelf at night — an energy ladder of all 12 sleeves, then the sleeves grouped by moment of the day. Deliberately dark-only so the covers glow. */
 :root {
@@ -24,9 +21,9 @@
   --line: #283454;
   --accent: #D9B878;
   --dim-dot: #33405F;
-  --display: "DM Serif Display", Georgia, serif;
-  --body: "Karla", "Helvetica Neue", Arial, sans-serif;
-  --tag: "Bebas Neue", "Arial Narrow", sans-serif;
+  --display: "Libre Caslon Display","Libre Caslon Text",Georgia,serif;
+  --body: "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --tag: "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -99,13 +96,27 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
   .card img { width: 96px; height: 96px; }
 }
 @media (prefers-reduced-motion: reduce) { .shelf img, .card { transition: none; } }
+
+/* ===== CiccApps · capa común: misma rejilla, márgenes y tipografía en todas las apps ===== */
+body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.55}
+@media (min-width:900px){body{font-size:16px}}
+.wrap{max-width:1040px!important;margin-inline:auto!important;padding-block:28px 72px!important;padding-left:max(20px,env(safe-area-inset-left,0px))!important;padding-right:max(20px,env(safe-area-inset-right,0px))!important;gap:32px!important}
+@media (min-width:768px){.wrap{padding-top:44px!important;padding-left:max(32px,env(safe-area-inset-left,0px))!important;padding-right:max(32px,env(safe-area-inset-right,0px))!important}}
+.cab{display:flex;flex-direction:column;gap:8px;max-width:680px}
+.cab .eyebrow{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:11px;line-height:16px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.cab h1{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400;font-size:clamp(40px,10vw,64px);line-height:1;letter-spacing:0;margin:0;text-wrap:balance}
+.cab .lema{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(19px,4.8vw,24px);line-height:1.25;color:var(--accent);margin:0}
+.cab .lede{margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
+h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400}
+.cc-firma{padding-top:24px}
+header.cab h1{font-size:clamp(40px,10vw,64px);line-height:1}
 </style>
 
 <div class="wrap">
-  <header>
+  <header class="cab">
     <div class="eyebrow">12 listas · un día completo</div>
     <h1>Banda Sonora</h1>
-    <p class="kicker">¿Qué suena ahora?</p>
+    <p class="lema">¿Qué suena ahora?</p>
     <p class="lede">La colección sigue el día de la mañana a la noche, más seis listas para planes concretos. Si no sabes cuál elegir, mira la energía que te apetece o filtra por plan.</p>
   </header>
 
