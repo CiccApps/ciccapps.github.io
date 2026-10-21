@@ -12,9 +12,9 @@
 <meta name="apple-mobile-web-app-title" content="Bitácora">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="../iconos/bitacora-180.png">
-<link rel="icon" type="image/png" href="../iconos/bitacora-192.png">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=8">
+<link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=2">
+<link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=2">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=9">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
@@ -267,7 +267,7 @@ footer{font-size:12px;color:var(--muted);text-align:center;display:flex;flex-dir
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=8"></script>
+<script src="../compartido/cuenta.js?v=9"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -712,7 +712,7 @@ async function cargar(){
   if(!e.data.length){vistaEmpezar();return}
   document.body.classList.remove("nuevo");  construir(e.data,l.data);if(!sheetId)render();
 }
-CiccCuenta.iniciar({app:"Bitácora",icono:"../iconos/bitacora-192.png",lema:"¿Qué leo hoy?"}).then(async r=>{
+CiccCuenta.iniciar({app:"Bitácora",icono:"../iconos/bitacora-192.png?v=2",lema:"¿Qué leo hoy?"}).then(async r=>{
   sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!sheetId)cargar()});
 });
