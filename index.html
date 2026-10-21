@@ -37,6 +37,9 @@ header p { margin: 0; font-family: var(--cc-serif); font-style: italic; font-siz
 .instalar { border-top: 1px solid var(--cc-linea); padding-top: 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .instalar h3 { margin: 0 0 6px; font-family: var(--cc-display); font-weight: 400; font-size: 19px; }
 .instalar p { margin: 0; font-size: 14px; color: var(--cc-tinta-suave); }
+.pie { text-align: center; font-size: 13px; color: var(--cc-tinta-suave); }
+.pie a { color: var(--cc-tinta-suave); text-decoration: none; }
+.pie a:hover { color: var(--cc-oro); }
 @media (max-width: 520px) {
   .wrap { padding-block: 32px 28px; gap: 32px; }
   .app { padding: 14px; gap: 10px; }
@@ -67,6 +70,7 @@ header p { margin: 0; font-family: var(--cc-serif); font-style: italic; font-siz
     <div><h3>En el iPhone</h3><p>Abre la app en Safari, pulsa Compartir y elige «Añadir a pantalla de inicio». Se abrirá a pantalla completa, con su icono.</p></div>
     <div><h3>En el ordenador</h3><p>En Chrome o Edge, pulsa el icono de instalar de la barra de direcciones. En Safari para Mac: Archivo › Añadir al Dock.</p></div>
   </section>
+  <footer class="pie"><a href="privacidad/">Privacidad</a> · <a href="mailto:info.ciccapps@gmail.com">info.ciccapps@gmail.com</a></footer>
 </div>
 <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});</script>
 </body>
