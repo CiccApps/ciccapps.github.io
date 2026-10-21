@@ -25,6 +25,7 @@
 .cc-firma { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin: 0; padding-block: 12px 8px; text-align: center; font-family: var(--cc-serif); font-style: italic; font-size: 14px; color: var(--cc-tinta-suave); }
 .cc-firma img { width: 30px; height: auto; display: block; }
 .cc-firma .txt { display: block; }
+.cc-firma a { order: 2; }
 .cc-firma .sep { color: var(--cc-oro); font-style: normal; }
 .cc-firma .osc { display: none; }
 @media (prefers-color-scheme: dark) { .cc-firma .cla { display: none; } .cc-firma .osc { display: block; } }
