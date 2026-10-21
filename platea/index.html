@@ -226,9 +226,9 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
 .eur input{padding-right:30px;-moz-appearance:textfield;appearance:textfield}
 .eur input::-webkit-inner-spin-button,.eur input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .eur span{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
-.cin-act{display:flex;justify-content:flex-end;gap:10px}
-.mq-cin{margin:0;font:600 12.5px/1.4 var(--f-body);color:var(--bulb);letter-spacing:.01em;text-wrap:balance}
-.mq-cin b{color:#FFF6EE;font-weight:700}
+.pie-links{display:flex;align-items:center;justify-content:center;gap:2px}
+.pf-cuenta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pf-mail{font-size:16px;font-weight:600;overflow-wrap:anywhere}
 </style>
 
 </head>
@@ -244,7 +244,6 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
       <div><b id="stQueue" class="mono">0</b><span>por ver</span></div>
       <div><b id="stSeries" class="mono">0</b><span>series en curso</span></div>
     </div>
-    <p class="mq-cin" id="mqCin" hidden></p>
     <div class="res-btns"><button class="anio-btn" id="mesBtn" type="button">Tu mes →</button><button class="anio-btn" id="anioBtn" type="button">Tu año en cine →</button></div>
   </section>
 
@@ -262,7 +261,7 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
   <footer id="pie" style="flex-direction:column;align-items:center">
     <div class="pie-acc"><button class="chip" id="expDiary">Exportar diario</button><button class="chip" id="expWatch">Exportar watchlist</button></div>
     <span id="sync" style="text-align:center">Archivos CSV para importar en Letterboxd · sincronizado en todos tus dispositivos.</span>
-    <button class="salir" id="salir">Cerrar sesión</button>
+    <div class="pie-links"><button class="salir" id="perfilBtn" type="button">Tu perfil</button><span aria-hidden="true">·</span><button class="salir" id="salir">Cerrar sesión</button></div>
   </footer>
 </div>
 <div id="sheetRoot"></div>
@@ -288,6 +287,27 @@ const stars=n=>n?"★".repeat(Math.floor(n))+(n%1?"½":""):"";
 const lb=x=>`https://letterboxd.com/search/${encodeURIComponent(x.titulo+(x.anio?" "+x.anio:""))}/`;
 const jw=x=>`https://www.justwatch.com/es/buscar?q=${encodeURIComponent(x.titulo)}`;
 const all=()=>Object.entries(items).map(([id,x])=>Object.assign({id},x));
+/* Dónde verla: plataformas de España (nombres canónicos en «plataforma», separados por comas) y el cine (donde = "cine") */
+const PLATS=["Netflix","Prime Video","HBO Max","Disney+","Movistar Plus+","Apple TV+","Filmin","SkyShowtime","RTVE Play","Atresplayer"];
+function canonPlat(t){const s=normT(t);if(!s)return "";
+  if(/^(cine|cinesa|yelmo|kinepolis|ocine|enelcine)/.test(s))return "Cine";
+  if(s.includes("netflix"))return "Netflix";
+  if(s.includes("filmin"))return "Filmin";
+  if(s.includes("hbo")||/^max/.test(s))return "HBO Max";
+  if(s.includes("disney"))return "Disney+";
+  if(s.includes("movistar"))return "Movistar Plus+";
+  if(s.includes("apple"))return "Apple TV+";
+  if(s.includes("skyshowtime")||s==="sky")return "SkyShowtime";
+  if(s.includes("rtve"))return "RTVE Play";
+  if(s.includes("atres"))return "Atresplayer";
+  if(s.includes("prime")||s.includes("amazon"))return "Prime Video";
+  return String(t).trim()}
+function leePlats(str){const o=[];String(str||"").split(/[,;\/|·]| y /).forEach(t=>{const c=canonPlat(t);if(c&&!o.includes(c))o.push(c)});return o}
+const ordenPlats=a=>[...PLATS.filter(p=>a.includes(p)),...a.filter(p=>p!=="Cine"&&!PLATS.includes(p)),...(a.includes("Cine")?["Cine"]:[])];
+function platsDe(x){const a=leePlats(x.plataforma);if(x.donde==="cine"&&!a.includes("Cine"))a.push("Cine");return a}
+const platTexto=a=>ordenPlats(a).filter(p=>p!=="Cine").join(", ");
+const dondeDe=(a,prev)=>a.includes("Cine")?"cine":a.some(p=>PLATS.includes(p))?"streaming":prev==="casa"?"casa":a.length?"streaming":null;
+const enCartelera=x=>!!(CART&&CART.lista.some(f=>(f.tmdb_id&&x.tmdb_id&&+f.tmdb_id===+x.tmdb_id)||(normT(f.titulo)===normT(x.titulo)&&(!f.anio||!x.anio||Math.abs(+f.anio-+x.anio)<=1))));
 
 function render(){
   if(!listo)return;
@@ -297,8 +317,6 @@ function render(){
   document.getElementById("stCine").textContent=seen.filter(x=>x.donde==="cine"&&(x.fecha||"").startsWith(m)).length;
   const q=L.filter(x=>x.estado==="porver");document.getElementById("stQueue").textContent=q.length;document.getElementById("ctQ").textContent=q.length||"";
   const sc=L.filter(x=>x.tipo==="serie"&&x.estado==="viendo");document.getElementById("stSeries").textContent=sc.length;document.getElementById("ctS").textContent=sc.length||"";
-  const cq=cuentaCinesa(m),mq=document.getElementById("mqCin");mq.hidden=!cq;
-  if(cq)mq.innerHTML=`Cinesa Unlimited · ${cq.ahorro>0?`este mes te has ahorrado <b>${eur(cq.ahorro)}</b>`:cq.ahorro===0?"este mes ya la has amortizado":`te ${cq.faltan===1?"falta <b>1 película</b>":`faltan <b>${cq.faltan} películas</b>`} para amortizarla`}`;
   document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.tab===tab));
   const v=document.getElementById("view");
   if(tab==="diario"){
@@ -327,13 +345,13 @@ function stubHtml(x){
 }
 function ticket(x){
   const stub=stubHtml(x);
-  const meta=[x.anio?`<span class="mono">${esc(x.anio)}</span>`:"",x.tipo==="serie"?`<span class="badge alt">Serie</span>`:"",x.donde?`<span class="badge ${x.donde==="cine"?"":"alt"}">${WHERE[x.donde]}</span>`:"",x.plataforma?`<span>${esc(x.plataforma)}</span>`:"",x.rewatch?`<span class="badge alt">Revisionado</span>`:"",x.nota?`<span class="stars">${stars(x.nota)}</span>`:"",x.estado==="porver"&&x.prio?`<span class="badge">En cartelera</span>`:""].filter(Boolean).join("");
+  const meta=[x.anio?`<span class="mono">${esc(x.anio)}</span>`:"",x.tipo==="serie"?`<span class="badge alt">Serie</span>`:"",x.donde?`<span class="badge ${x.donde==="cine"?"":"alt"}">${WHERE[x.donde]}</span>`:"",x.plataforma?`<span>${esc(platTexto(leePlats(x.plataforma)).replace(/, /g," · "))}</span>`:"",x.rewatch?`<span class="badge alt">Revisionado</span>`:"",x.nota?`<span class="stars">${stars(x.nota)}</span>`:"",x.estado==="porver"&&x.prio?`<span class="badge">En cartelera</span>`:""].filter(Boolean).join("");
   const prog=x.tipo==="serie"&&x.temps&&x.temp&&x.estado==="viendo"?`<div class="prog"><i style="width:${Math.min(100,Math.round((x.temp-1)/x.temps*100+(1/x.temps)*50))}%"></i></div>`:"";
   return `<button class="ticket${x.poster?" con-poster":""}" data-open="${x.id}"><span class="stub">${stub}</span><span class="body"><h3>${esc(x.titulo)}</h3><span class="meta">${meta}</span>${x.resena?`<p class="rev">${esc(x.resena)}</p>`:""}${prog}</span>${x.poster?`<img class="poster" src="${esc(x.poster)}" alt="" loading="lazy">`:""}</button>`;
 }
 
 /* Hoja de alta / edición */
-let editId=null,draft=null;
+let editId=null,draft=null,pintaPl=()=>{};
 function openSheet(id,kind){
   editId=id;
   draft=id?Object.assign({},items[id]):{tipo:kind==="serie"?"serie":"peli",estado:kind==="vista"?"vista":kind==="serie"?"viendo":"porver",titulo:"",anio:"",donde:"cine",plataforma:"",fecha:today(),nota:0,resena:"",rewatch:false,moods:[],prio:false,temp:"",cap:"",temps:""};
@@ -348,16 +366,15 @@ function openSheet(id,kind){
     <div class="field"><span class="lbl">Estado</span><div class="seg" role="group" aria-label="Estado"><button id="es-porver" data-es="porver">Por ver</button><button id="es-viendo" data-es="viendo">Viendo</button><button id="es-vista" data-es="vista">Vista</button></div></div>
     <div id="secSerie" class="grid3"><div class="field"><label for="fTp">Temporada</label><input type="number" id="fTp" min="1" value="${esc(draft.temp)}"></div><div class="field"><label for="fCp">Capítulo</label><input type="number" id="fCp" min="1" value="${esc(draft.cap)}"></div><div class="field"><label for="fTs">Temporadas</label><input type="number" id="fTs" min="1" value="${esc(draft.temps)}"></div></div>
     <div id="secVista" style="display:flex;flex-direction:column;gap:14px">
-      <div class="grid2"><div class="field"><label for="fD">Fecha</label><input type="date" id="fD" value="${esc(draft.fecha)}"></div>
-      <div class="field"><label for="fW">Dónde</label><select id="fW">${Object.entries(WHERE).map(([k,l])=>`<option value="${k}" ${draft.donde===k?"selected":""}>${l}</option>`).join("")}</select></div></div>
+      <div class="field"><label for="fD">Fecha</label><input type="date" id="fD" value="${esc(draft.fecha)}"></div>
       <div class="field"><label for="fR">Nota (como en Letterboxd)</label><div class="rate"><input type="range" id="fR" min="0" max="10" step="1" value="${Math.round((draft.nota||0)*2)}"><output id="fRo">${stars(draft.nota)||"Sin nota"}</output></div></div>
       <div class="field"><label for="fRv">Reseña o apuntes</label><textarea id="fRv">${esc(draft.resena)}</textarea></div>
       <label class="toggle"><input type="checkbox" id="fRw" ${draft.rewatch?"checked":""}> Ya la había visto antes</label>
     </div>
-    <div class="field"><label for="fP">Plataforma o cine</label><input type="text" id="fP" value="${esc(draft.plataforma)}" placeholder="Cinesa, Netflix, Max…"></div>
+    <div class="field"><span class="lbl" id="fPlL">Dónde verla</span><div class="chips" id="fPl" role="group" aria-labelledby="fPlL"></div></div>
     <div id="secPorver" style="display:flex;flex-direction:column;gap:10px">
       <div class="field"><span class="lbl">Mood</span><div class="chips">${Object.entries(MOODS).map(([k,l])=>`<button class="chip" id="mo-${k}" data-mo="${k}" aria-pressed="${(draft.moods||[]).includes(k)}">${l}</button>`).join("")}</div></div>
-      <label class="toggle"><input type="checkbox" id="fPr" ${draft.prio?"checked":""}> En cartelera ahora (para verla con el Unlimited)</label>
+      <label class="toggle" id="fPrW"><input type="checkbox" id="fPr" ${draft.prio?"checked":""}> En cartelera ahora (para verla con el Unlimited)</label>
     </div>
     ${id?`<div class="links"><a href="${lb(draft)}" target="_blank" rel="noopener">Letterboxd ↗</a><a href="${jw(draft)}" target="_blank" rel="noopener">Dónde verla (JustWatch) ↗</a></div>`:""}
     <div class="actions">${id?`<button class="btn danger" id="del">Eliminar</button>`:"<span></span>"}<span style="display:flex;gap:10px"><button class="btn" id="cancel">Cerrar</button><button class="btn primary" id="save">Guardar</button></span></div>
@@ -370,7 +387,14 @@ function openSheet(id,kind){
     document.getElementById("secSerie").hidden=draft.tipo!=="serie"||draft.estado==="porver";
     document.getElementById("secVista").hidden=draft.estado!=="vista";
     document.getElementById("secPorver").hidden=draft.estado!=="porver";
+    document.getElementById("fPrW").hidden=draft.tipo==="serie";if(draft.tipo==="serie")document.getElementById("fPr").checked=false;
   };
+  draft.plats=id?platsDe(draft):kind==="vista"?["Cine"]:[];
+  const pl=document.getElementById("fPl");
+  pintaPl=()=>{const extra=draft.plats.filter(p=>p!=="Cine"&&!PLATS.includes(p));
+    pl.innerHTML=["Cine",...PLATS,...extra].map(p=>`<button type="button" class="chip" data-pl="${esc(p)}" aria-pressed="${draft.plats.includes(p)}">${esc(p)}</button>`).join("")};
+  pl.onclick=e=>{const b=e.target.closest("[data-pl]");if(!b)return;const k=b.dataset.pl;draft.plats=draft.plats.includes(k)?draft.plats.filter(z=>z!==k):[...draft.plats,k];b.setAttribute("aria-pressed",draft.plats.includes(k))};
+  pintaPl();
   syncSheet=sync;
   r.querySelectorAll("[data-ty]").forEach(b=>b.onclick=()=>{draft.tipo=b.dataset.ty;sync()});
   r.querySelectorAll("[data-es]").forEach(b=>b.onclick=()=>{draft.estado=b.dataset.es;if(draft.estado==="vista"){const fd=document.getElementById("fD");if(fd&&!fd.value)fd.value=today()}sync()});
@@ -382,9 +406,9 @@ function openSheet(id,kind){
   document.getElementById("save").onclick=()=>{
     const t=document.getElementById("fT").value.trim();if(!t){document.getElementById("fT").focus();toast("Ponle un título");return}
     const v=k=>document.getElementById(k).value;
-    const x={tipo:draft.tipo,estado:draft.estado,titulo:t,anio:v("fY").trim(),plataforma:v("fP").trim(),moods:draft.moods||[],creado:draft.creado||today(),poster:draft.poster||null,tmdb_id:draft.tmdb_id||null};
-    if(draft.estado==="vista"){Object.assign(x,{fecha:v("fD"),donde:v("fW"),nota:+v("fR")/2,resena:v("fRv").trim(),rewatch:document.getElementById("fRw").checked})}
-    if(draft.estado==="porver")x.prio=document.getElementById("fPr").checked;
+    const x={tipo:draft.tipo,estado:draft.estado,titulo:t,anio:v("fY").trim(),plataforma:platTexto(draft.plats),donde:dondeDe(draft.plats,draft.donde),moods:draft.moods||[],creado:draft.creado||today(),poster:draft.poster||null,tmdb_id:draft.tmdb_id||null};
+    if(draft.estado==="vista"){Object.assign(x,{fecha:v("fD"),nota:+v("fR")/2,resena:v("fRv").trim(),rewatch:document.getElementById("fRw").checked})}
+    x.prio=draft.estado==="porver"&&draft.tipo!=="serie"&&document.getElementById("fPr").checked;
     if(draft.tipo==="serie"){x.temp=+v("fTp")||"";x.cap=+v("fCp")||"";x.temps=+v("fTs")||""}
     const prev=editId&&items[editId]?Object.assign({},items[editId]):null;
     const pasaVista=x.estado==="vista"&&(!prev||prev.estado!=="vista");
@@ -424,13 +448,15 @@ async function remove(id){const r=await sb.from("titulos").delete().eq("id",id);
 /* Buscar película o serie: póster, año, tipo y plataforma */
 function conectarFicha(){
   const q=document.getElementById("fQ"),sug=document.getElementById("fSug"),pv=document.getElementById("fPv");let tm,res=[];
-  const pinta=()=>{sug.hidden=!res.length;sug.innerHTML=res.map((x,i)=>`<button type="button" data-fi="${i}">${x.poster?`<img src="${esc(x.poster)}" alt="" loading="lazy">`:"<i></i>"}<span><b>${esc(x.titulo)}</b><span>${[x.anio,x.tipo==="serie"?"Serie":"Película",x.plataforma].filter(Boolean).map(esc).join(" · ")}</span></span></button>`).join("")};
+  const pinta=()=>{sug.hidden=!res.length;sug.innerHTML=res.map((x,i)=>`<button type="button" data-fi="${i}">${x.poster?`<img src="${esc(x.poster)}" alt="" loading="lazy">`:"<i></i>"}<span><b>${esc(x.titulo)}</b><span>${[x.anio,x.tipo==="serie"?"Serie":"Película",platTexto(leePlats(x.plataforma)).replace(/, /g," · ")].filter(Boolean).map(esc).join(" · ")}</span></span></button>`).join("")};
   sug.onclick=e=>{const t=e.target.closest("[data-fi]");if(!t)return;const x=res[+t.dataset.fi];
-    draft.titulo=x.titulo;draft.anio=x.anio?String(x.anio):"";draft.tipo=x.tipo;draft.poster=x.poster;draft.tmdb_id=x.tmdb_id;if(x.plataforma&&!document.getElementById("fP").value)document.getElementById("fP").value=x.plataforma;
+    draft.titulo=x.titulo;draft.anio=x.anio?String(x.anio):"";draft.tipo=x.tipo;draft.poster=x.poster;draft.tmdb_id=x.tmdb_id;
+    const enCart=x.tipo!=="serie"&&(x.en_cartelera===true||enCartelera(x));const np=leePlats(x.plataforma);if(enCart)np.push("Cine");
+    np.forEach(p=>{if(!draft.plats.includes(p))draft.plats.push(p)});pintaPl();if(enCart)document.getElementById("fPr").checked=true;
     document.getElementById("fT").value=x.titulo;document.getElementById("fY").value=draft.anio;
     document.querySelectorAll("[data-ty]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ty===draft.tipo));
     if(typeof syncSheet==="function")syncSheet();
-    pv.hidden=!x.poster;pv.innerHTML=x.poster?`<img src="${esc(x.poster)}" alt=""><span class="hint">${esc([x.anio,x.plataforma].filter(Boolean).join(" · ")||"Póster y datos rellenados")}</span>`:"";
+    pv.hidden=!x.poster;pv.innerHTML=x.poster?`<img src="${esc(x.poster)}" alt=""><span class="hint">${esc([x.anio,platTexto(leePlats(x.plataforma)).replace(/, /g," · "),enCart?"En cartelera":""].filter(Boolean).join(" · ")||"Póster y datos rellenados")}</span>`:"";
     sug.hidden=true;q.value="";toast("Datos rellenados")};
   q.oninput=()=>{clearTimeout(tm);const v=q.value.trim();if(v.length<2){res=[];pinta();return}
     tm=setTimeout(async()=>{try{const r=await sb.functions.invoke("ficha",{body:{q:v}});res=(r.data&&r.data.resultados)||[];pinta()}catch(_){}} ,350)};
@@ -459,7 +485,7 @@ function tuMes(){
     :`<p class="hint">${cerrado?"No apuntaste nada ese mes.":"Aún no has apuntado nada este mes."} Cuando lo hagas, aquí verás tu resumen.</p><div id="cinBox"></div>`}
     <div class="sheet-actions"><button class="add" id="anClose">Cerrar</button></div></div></div>`;
   document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")r.innerHTML=""};document.getElementById("anClose").onclick=()=>r.innerHTML="";
-  pintaCinesa(pre,false);
+  pintaCinesa(pre);
   try{localStorage.setItem("platea-mes-visto",pre)}catch(_){}document.getElementById("mesBtn").classList.remove("nuevo");
 }
 /* Cinesa Unlimited: cuota y precio de entrada en ajustes (app "platea") */
@@ -470,31 +496,41 @@ function cuentaCinesa(pre){const c=AJ.cinesa||{};if(!c.activa||!(c.cuota>0)||!(c
   const n=all().filter(x=>x.estado==="vista"&&x.donde==="cine"&&String(x.fecha||"").startsWith(pre)).length;
   const valor=Math.round(n*c.entrada*100)/100,ahorro=Math.round((valor-c.cuota)*100)/100;
   return {n,valor,cuota:c.cuota,entrada:c.entrada,ahorro,faltan:ahorro<0?Math.ceil((c.cuota-valor)/c.entrada-1e-9):0}}
-function pintaCinesa(pre,editar){
-  const box=document.getElementById("cinBox");if(!box)return;const c=AJ.cinesa||{};const k=cuentaCinesa(pre);
-  if(editar){
-    box.innerHTML=`<section class="cin" aria-labelledby="cinH"><span class="eyebrow" id="cinH">Cinesa Unlimited</span>
-      <label class="toggle"><input type="checkbox" id="cinOn" ${c.activa||!c.cuota?"checked":""}> Tengo Cinesa Unlimited</label>
+function pintaCinesa(pre){
+  const box=document.getElementById("cinBox");if(!box)return;const k=cuentaCinesa(pre);
+  if(!k){box.innerHTML="";box.hidden=true;return}
+  box.hidden=false;
+  const fr=k.ahorro>0?`Te has ahorrado <b>${eur(k.ahorro)}</b>.`:k.ahorro===0?"La has amortizado justo.":`Te ${k.faltan===1?"falta <b>1 película</b>":`faltan <b>${k.faltan} películas</b>`} para amortizarla.`;
+  box.innerHTML=`<section class="cin" aria-labelledby="cinH"><div class="cin-h"><span class="eyebrow" id="cinH">Cinesa Unlimited</span><button class="cin-aj" id="cinAj" type="button">Ajustar</button></div>
+    <div class="cin-n"><div><b>${k.n}</b><span>${k.n===1?"película":"películas"} en el cine</span></div><div><b>${eur(k.valor)}</b><span>en entradas</span></div><div><b>${eur(k.cuota)}</b><span>de cuota</span></div></div>
+    <p class="cin-f">${fr}</p></section>`;
+  document.getElementById("cinAj").onclick=()=>perfil(tuMes);
+}
+/* Tu perfil: correo de la cuenta y el abono de Cinesa */
+let USUARIO=null;
+function perfil(volver){
+  const r=document.getElementById("sheetRoot");const c=AJ.cinesa||{};
+  const cerrar=()=>{if(typeof volver==="function")volver();else r.innerHTML=""};
+  r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pfH">
+    <h2 id="pfH">Tu perfil</h2>
+    <div class="pf-cuenta"><span class="lbl">Tu cuenta</span><span class="pf-mail" id="pfMail">${esc(USUARIO&&USUARIO.email||"Cargando…")}</span></div>
+    <section class="cin" aria-labelledby="cinH"><span class="eyebrow" id="cinH">Cinesa Unlimited</span>
+      <label class="toggle"><input type="checkbox" id="cinOn" ${c.activa?"checked":""}> Tengo Cinesa Unlimited</label>
       <div class="cin-form"><div class="field"><label for="cinC">Cuota mensual</label><div class="eur"><input type="number" id="cinC" inputmode="decimal" step="0.01" min="0" placeholder="Cuota al mes" value="${c.cuota>0?c.cuota.toFixed(2):""}"><span>€</span></div></div>
       <div class="field"><label for="cinE">Entrada sin la suscripción</label><div class="eur"><input type="number" id="cinE" inputmode="decimal" step="0.01" min="0" placeholder="Precio de una entrada" value="${c.entrada>0?c.entrada.toFixed(2):""}"><span>€</span></div></div></div>
-      <div class="cin-act"><button class="btn" id="cinX" type="button">Cancelar</button><button class="btn primary" id="cinG" type="button">Guardar</button></div></section>`;
-    document.getElementById("cinX").onclick=()=>pintaCinesa(pre,false);
-    document.getElementById("cinG").onclick=async()=>{
-      const num=id=>{const v=parseFloat(String(document.getElementById(id).value).replace(",","."));return v>0?Math.round(v*100)/100:null};
-      const on=document.getElementById("cinOn").checked,cu=num("cinC"),en=num("cinE");
-      if(on&&(!cu||!en)){toast("Pon la cuota y el precio de una entrada");(cu?document.getElementById("cinE"):document.getElementById("cinC")).focus();return}
-      AJ=Object.assign({},AJ,{cinesa:{activa:on,cuota:cu,entrada:en}});
-      const r=await sb.from("ajustes").upsert({app:"platea",datos:AJ,actualizado:new Date().toISOString()},{onConflict:"user_id,app"});
-      if(r&&r.error){toast("No se pudo guardar");return}
-      toast("Guardado");pintaCinesa(pre,false);render()};
-    return}
-  if(!k){box.innerHTML=`<section class="cin" aria-labelledby="cinH"><div class="cin-h"><span class="eyebrow" id="cinH">Cinesa Unlimited</span><button class="cin-aj" id="cinAj" type="button">Configurar</button></div>
-      <p class="hint">Apunta tu cuota y lo que cuesta una entrada y verás cada mes cuánto le sacas a la suscripción.</p></section>`}
-  else{const fr=k.ahorro>0?`Te has ahorrado <b>${eur(k.ahorro)}</b>.`:k.ahorro===0?"La has amortizado justo.":`Te ${k.faltan===1?"falta <b>1 película</b>":`faltan <b>${k.faltan} películas</b>`} para amortizarla.`;
-    box.innerHTML=`<section class="cin" aria-labelledby="cinH"><div class="cin-h"><span class="eyebrow" id="cinH">Cinesa Unlimited</span><button class="cin-aj" id="cinAj" type="button">Ajustar</button></div>
-      <div class="cin-n"><div><b>${k.n}</b><span>${k.n===1?"película":"películas"} en el cine</span></div><div><b>${eur(k.valor)}</b><span>en entradas</span></div><div><b>${eur(k.cuota)}</b><span>de cuota</span></div></div>
-      <p class="cin-f">${fr}</p></section>`}
-  document.getElementById("cinAj").onclick=()=>pintaCinesa(pre,true);
+      <p class="hint">Con el abono activo, en “Tu mes” verás cuánto te ahorras.</p></section>
+    <div class="actions"><span></span><span style="display:flex;gap:10px"><button class="btn" id="pfX" type="button">Cerrar</button><button class="btn primary" id="cinG" type="button">Guardar</button></span></div></div></div>`;
+  document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")cerrar()};document.getElementById("pfX").onclick=cerrar;
+  document.getElementById("cinG").onclick=async()=>{
+    const num=id=>{const v=parseFloat(String(document.getElementById(id).value).replace(",","."));return v>0?Math.round(v*100)/100:null};
+    const on=document.getElementById("cinOn").checked,cu=num("cinC"),en=num("cinE");
+    if(on&&(!cu||!en)){toast("Pon la cuota y el precio de una entrada");(cu?document.getElementById("cinE"):document.getElementById("cinC")).focus();return}
+    AJ=Object.assign({},AJ,{cinesa:{activa:on,cuota:cu,entrada:en}});
+    const x=await sb.from("ajustes").upsert({app:"platea",datos:AJ,actualizado:new Date().toISOString()},{onConflict:"user_id,app"});
+    if(x&&x.error){toast("No se pudo guardar");return}
+    toast("Guardado");render();cerrar()};
+  if(!USUARIO||!USUARIO.email)(async()=>{try{const g=await sb.auth.getUser();if(g&&g.data&&g.data.user)USUARIO=g.data.user}catch(_){}
+    const m=document.getElementById("pfMail");if(m)m.textContent=USUARIO&&USUARIO.email||"Sin correo"})();
 }
 function marcarMesNuevo(){const {y:yy,m,cerrado}=mesResumen();const b=document.getElementById("mesBtn");if(!b)return;
   b.textContent=(cerrado?"Tu "+MESL[m].toLowerCase():"Tu mes")+" →";
@@ -573,7 +609,7 @@ function pintaCart(){
     return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3>${f.anio?`<span class="mono">${esc(f.anio)}</span>`:""}</div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-ca="${i}">La quiero ver</button>`}</div>`}).join("");
 }
 async function quieroVer(i,b){const f=CART&&CART.lista[i];if(!f||enLista(f))return;b.disabled=true;
-  const x={poster:f.poster||null,tmdb_id:f.tmdb_id||null,tipo:"peli",estado:"porver",titulo:f.titulo,anio:f.anio||"",donde:"cine",plataforma:"",fecha:null,nota:0,resena:"",rewatch:false,moods:[],prio:true};
+  const x={poster:f.poster||null,tmdb_id:f.tmdb_id||null,tipo:"peli",estado:"porver",titulo:f.titulo,anio:f.anio||"",donde:"cine",plataforma:platTexto(leePlats(f.plataforma)),fecha:null,nota:0,resena:"",rewatch:false,moods:[],prio:true};
   const r=await sb.from("titulos").insert(aFila(x)).select().single();if(r.error){b.disabled=false;toast("No se pudo añadir");return}
   items[r.data.id]=deFila(r.data);toast("Añadida a Por ver");pintaCart();render()}
 
@@ -602,7 +638,9 @@ async function pedirIA(){
 }
 async function anadirIA(i){const l=IA.res[i];if(!l||l.added)return;
   let f=null;try{const r=await sb.functions.invoke("ficha",{body:{q:l.titulo}});f=(r.data&&r.data.resultados||[]).find(z=>!l.anio||!z.anio||Math.abs(z.anio-l.anio)<=1)||null}catch(_){}
-  const x={poster:f&&f.poster||null,tmdb_id:f&&f.tmdb_id||null,tipo:l.tipo,estado:"porver",titulo:l.titulo,anio:l.anio||"",donde:l.donde,plataforma:l.plataforma||"",fecha:null,nota:0,resena:"",rewatch:false,moods:l.moods||[],prio:l.donde==="cine"};
+  const pl=leePlats([l.plataforma,f&&f.plataforma].filter(Boolean).join(","));
+  const cin=l.tipo!=="serie"&&(l.donde==="cine"||!!(f&&f.en_cartelera)||enCartelera({titulo:l.titulo,anio:l.anio,tmdb_id:f&&f.tmdb_id}));if(cin&&!pl.includes("Cine"))pl.push("Cine");
+  const x={poster:f&&f.poster||null,tmdb_id:f&&f.tmdb_id||null,tipo:l.tipo,estado:"porver",titulo:l.titulo,anio:l.anio||"",donde:dondeDe(pl,l.donde)||l.donde||null,plataforma:platTexto(pl),fecha:null,nota:0,resena:"",rewatch:false,moods:l.moods||[],prio:cin};
   const r=await sb.from("titulos").insert(aFila(x)).select().single();if(r.error){toast("No se pudo añadir");return}
   l.added=true;toast("Añadida a Por ver");cargar();}
 let tt;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2200)}
@@ -618,6 +656,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#anioBtn")){anioEnCine();return}
   if(e.target.closest("#mesBtn")){tuMes();return}
   if(e.target.closest("#cartBtn")){cartelera();return}
+  if(e.target.closest("#perfilBtn")){perfil();return}
   if(x=e.target.closest("[data-ia-add]")){anadirIA(+x.dataset.iaAdd);return}
 });
 
@@ -640,7 +679,7 @@ async function cargar(){
 const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FFFFFF",hundido:"#EDE5D6",linea:"#E0D7C6","linea-fuerte":"#9C8F92",tinta:"#24161A","tinta-suave":"#6C6266",oro:"#6E1E2B",primario:"#6E1E2B","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"},
   oscuro:{fondo:"#150D10","fondo-alto":"#1F1518",hundido:"#2A1C20",linea:"#3A2A2F","linea-fuerte":"#6B5A5F",tinta:"#F1E9E4","tinta-suave":"#A7999E",oro:"#D9B878",primario:"#B8475A","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"}};
 CiccCuenta.iniciar({app:"Platea",icono:"../iconos/platea-192.png?v=5",lema:"¿Qué veo ahora?",tema:TEMA_ACCESO}).then(async r=>{
-  sb=r.sb;CiccCuenta.firma("Platea",document.getElementById("pie"));await cargar();marcarMesNuevo();
+  sb=r.sb;USUARIO=r.usuario||null;CiccCuenta.firma("Platea",document.getElementById("pie"));await cargar();marcarMesNuevo();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!editId)cargar()});
 });
 </script>
