@@ -12,9 +12,9 @@
 <meta name="apple-mobile-web-app-title" content="Platea">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="../iconos/la-taquilla-180.png?v=3">
-<link rel="icon" type="image/png" href="../iconos/la-taquilla-192.png?v=3">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=15">
+<link rel="apple-touch-icon" href="../iconos/platea-180.png?v=5">
+<link rel="icon" type="image/png" href="../iconos/platea-192.png?v=5">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=16">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
 :root{
@@ -207,7 +207,7 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=15"></script>
+<script src="../compartido/cuenta.js?v=16"></script>
 <script>
 const MOODS={risa:"Reírme",tension:"Tensión",pensar:"Pensar",llorar:"Emocionarme",accion:"Acción",epico:"Épica",ligera:"Ligera",clasico:"Clásico pendiente"};
 const WHERE={cine:"Cine",streaming:"Streaming",casa:"En casa"};
@@ -463,7 +463,7 @@ async function cargar(){
 }
 const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FFFFFF",hundido:"#EDE5D6",linea:"#E0D7C6","linea-fuerte":"#9C8F92",tinta:"#24161A","tinta-suave":"#6C6266",oro:"#6E1E2B",primario:"#6E1E2B","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"},
   oscuro:{fondo:"#150D10","fondo-alto":"#1F1518",hundido:"#2A1C20",linea:"#3A2A2F","linea-fuerte":"#6B5A5F",tinta:"#F1E9E4","tinta-suave":"#A7999E",oro:"#D9B878",primario:"#B8475A","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"}};
-CiccCuenta.iniciar({app:"Platea",icono:"../iconos/la-taquilla-192.png?v=3",lema:"¿Qué veo hoy?",tema:TEMA_ACCESO}).then(async r=>{
+CiccCuenta.iniciar({app:"Platea",icono:"../iconos/platea-192.png?v=5",lema:"¿Qué veo hoy?",tema:TEMA_ACCESO}).then(async r=>{
   sb=r.sb;CiccCuenta.firma("Platea",document.getElementById("pie"));await cargar();marcarMesNuevo();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!editId)cargar()});
 });

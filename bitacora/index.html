@@ -6,19 +6,19 @@
 <title>Bitácora</title>
 <meta name="description" content="Plan de lectura, libros por comprar y qué leer según el mood. Una CiccApp.">
 <meta name="theme-color" content="#F3EFE4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0F1A17" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#17110C" media="(prefers-color-scheme: dark)">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Bitácora">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=3">
-<link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=3">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=15">
+<link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=5">
+<link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=5">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=16">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
-  --paper:#F3EFE4; --card:#FBF8F0; --ink:#1D3A32; --muted:#5F665E; --line:#E0D9C8;
+  --paper:#F3EFE4; --card:#FBF8F0; --ink:#4B2E19; --muted:#6B5E52; --line:#E0D9C8;
   --gold:#9C7630; --gold-soft:#F2E6C9; --shelf:#C9BFA8; --empty:#E9E3D3;
   --s1:#2F5D50; --s2:#2B3A5E; --s3:#7A2633; --s4:#8A6A2A; --s5:#34413C; --sx:#6B6A5E;
   --ok:#2F6B45; --warn:#9A5B12;
@@ -27,13 +27,13 @@
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --paper:#0F1A17; --card:#16241F; --ink:#EDE6D3; --muted:#9DA89F; --line:#263A33;
-  --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A4234; --empty:#1E2E28;
+  --paper:#17110C; --card:#221912; --ink:#EDE6D3; --muted:#ADA092; --line:#3A2C20;
+  --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A3A2A; --empty:#2A2018;
   --s1:#5E9B88; --s2:#8497C4; --s3:#C2707E; --s4:#C99A45; --s5:#A3AFA8; --sx:#A39F8E;
   --ok:#6FBF8A; --warn:#E0A25A; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --paper:#0F1A17; --card:#16241F; --ink:#EDE6D3; --muted:#9DA89F; --line:#263A33;
-  --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A4234; --empty:#1E2E28;
+  --paper:#17110C; --card:#221912; --ink:#EDE6D3; --muted:#ADA092; --line:#3A2C20;
+  --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A3A2A; --empty:#2A2018;
   --s1:#5E9B88; --s2:#8497C4; --s3:#C2707E; --s4:#C99A45; --s5:#A3AFA8; --sx:#A39F8E;
   --ok:#6FBF8A; --warn:#E0A25A; color-scheme:dark}
 
@@ -333,7 +333,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=15"></script>
+<script src="../compartido/cuenta.js?v=16"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -932,7 +932,9 @@ async function cargar(){
   if(!e.data.length){vistaEmpezar();return}
   document.body.classList.remove("nuevo");  construir(e.data,l.data);if(!sheetId)render();
 }
-CiccCuenta.iniciar({app:"Bitácora",icono:"../iconos/bitacora-192.png?v=3",lema:"¿Qué leo hoy?"}).then(async r=>{
+const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FBF8F0",hundido:"#EDE5D6",linea:"#E0D9C8","linea-fuerte":"#9A8B7C",tinta:"#4B2E19","tinta-suave":"#6B5E52",oro:"#9C7630",primario:"#4B2E19","sobre-primario":"#F3EFE4"},
+  oscuro:{fondo:"#17110C","fondo-alto":"#221912",hundido:"#2A2018",linea:"#3A2C20","linea-fuerte":"#6B5A48",tinta:"#EDE6D3","tinta-suave":"#ADA092",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#17110C"}};
+CiccCuenta.iniciar({tema:TEMA_ACCESO,app:"Bitácora",icono:"../iconos/bitacora-192.png?v=5",lema:"¿Qué leo hoy?"}).then(async r=>{
   sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!sheetId)cargar()});
 });
