@@ -298,6 +298,41 @@ td.wy { color: var(--pink); }
 .sub[aria-disabled="true"] { opacity: .45; }
 @media (max-width: 760px) { table.dense td, table.xdense td { font-size: 13px; padding-block: 7px; } }
 </style>
+<style>
+/* ---------- exportar en PDF: botón verde azulado (como «Reiniciar» en rosa), junto a las demás herramientas ---------- */
+#pdf { color: #007A7A; border-color: rgba(0, 153, 153, .45); background: #F0FAFA; }
+#pdf:hover { border-color: #007A7A; background: #E0F4F4; }
+.wrap:fullscreen #pdf { display: none; }        /* como «Reiniciar»: en pantalla completa se presenta, no se exporta */
+.pfoot, .ppage { display: none; }
+.printing * { transition: none !important; }
+/* pantallas medianas: la navegación en una fila y las cuatro herramientas en otra (sin botones sueltos) */
+@media (max-width: 1199px) { .bar { flex-wrap: wrap; } }
+@media (min-width: 761px) and (max-width: 1199px) { .bar .nav { flex: 1 1 100%; } .bar .grow { display: none; } }
+@media (max-width: 760px) { #pdf::after { content: "PDF"; } }
+/* móvil estrecho con las cuatro herramientas: dos filas de dos, alineadas con las columnas de los pasos */
+@media (max-width: 480px) {
+  .bar:has(> #full:not([hidden])) > button { flex: 1 1 calc(50% - 5px); }
+  .bar:has(> #full:not([hidden])) > #reset { margin-left: 0; }
+}
+
+/* ---------- impresión / PDF: la diapositiva tal como se ve, en A4 apaisado, sin controles ---------- */
+@media print {
+  @page { size: A4 landscape; margin: 12mm; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; transition: none !important; animation: none !important; }
+  :root { padding: 0 !important; }
+  html, body { background: #fff !important; }
+  body { margin: 0; padding: 0 !important; }
+  .bar, .hint, .panel { display: none !important; }
+  .wrap, .ppage { max-width: none; width: 100%; height: 185mm; margin: 0; padding: 0; gap: 0;
+    display: flex !important; flex-direction: column; justify-content: center; break-inside: avoid; overflow: hidden; }
+  .ppage { break-before: page; }
+  .stage { width: 100%; aspect-ratio: 16 / 9; flex: none; box-shadow: none; border: 1px solid var(--line); border-radius: 6px; }
+  .note { position: static !important; top: auto !important; bottom: auto !important; }
+  .ed, .ed:hover, .ed:focus { border-bottom-color: transparent !important; background: transparent !important; }
+  .comp { background: #fff; }
+  .pfoot { display: flex; justify-content: space-between; gap: 6mm; margin: 3mm 1mm 0; font-size: 9pt; color: var(--muted); }
+}
+</style>
 
 <div class="wrap" id="app">
   <section class="stage" id="stage" aria-label="Diapositiva de interés compuesto">
@@ -341,6 +376,7 @@ td.wy { color: var(--pink); }
       </div>
     </div>
   </section>
+  <p class="pfoot" id="pfoot"></p>
 
   <div class="bar">
     <div class="nav" role="group" aria-label="Pasos de la presentación">
@@ -353,6 +389,7 @@ td.wy { color: var(--pink); }
     <span class="grow"></span>
     <button id="toggleData" title="Mostrar datos" aria-expanded="false" aria-controls="panel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path class="eye" d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle class="eye" cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg><span class="lbl" id="toggleTxt">Mostrar datos</span></button>
     <button id="full" title="Pantalla completa"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path class="fs-in" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="fs-out" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg><span class="lbl" id="fullTxt">Pantalla completa</span></button>
+    <button type="button" id="pdf" title="Exportar la simulación en PDF" aria-label="Exportar la simulación en PDF"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M12 11v6.5M9 14.5l3 3 3-3"/></svg><span class="lbl">Exportar PDF</span></button>
     <button type="button" id="reset" title="Vuelve al ejemplo, al primer paso y con los datos ocultos, como al abrir la página"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4v4.5H8"/></svg><span class="lbl">Reiniciar</span></button>
   </div>
   <p class="hint hint-movil">Toca una cifra de la diapositiva para cambiarla; el resto está en «Datos». Desliza la tabla para ver todas las columnas.</p>
@@ -804,6 +841,56 @@ td.wy { color: var(--pink); }
     $('toggleData').title = p.hidden ? 'Mostrar datos' : 'Ocultar datos';
     $('toggleData').setAttribute('aria-expanded', String(!p.hidden));
   });
+
+  // ---------- exportar en PDF (diálogo de impresión → «Guardar como PDF») ----------
+  // Se imprime lo que se está enseñando. Dos excepciones: sin nada revelado (paso 0) sale la simulación entera,
+  // y en el último paso «¿Y sin interés compuesto?» (que tapa la tabla) salen dos hojas: la diapositiva completa y la comparación.
+  function printFit() {
+    // en móvil la diapositiva no es 16:9 y fit() no calcula el alto de fila: se calcula aquí para la hoja
+    if (!window.matchMedia('(max-width: 760px)').matches) return;
+    const W = validW().map(w => w.year);
+    const maxRows = Math.max(ROWS, yearsList(S.two ? Math.max(S.A.years, S.B.years) : S.A.years, W).length);
+    $('tbl').style.setProperty('--rowh', Math.max(1.6, Math.min(2.85, (56.25 - PRINT_FIXED) / maxRows)).toFixed(3));
+  }
+  const PRINT_FIXED = 27.4;   // alto de la diapositiva (en % del ancho) que no es filas de la tabla: márgenes, título, cajas, cabecera y etiquetas
+  let restorePrint = null;
+  function exportPDF() {
+    if (restorePrint) return;
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    const root = document.documentElement, saved = step, title = document.title, m = maxStep();
+    root.classList.add('printing');
+    if (step <= 0 || step > m) step = m;
+    const now = new Date();
+    const fecha = now.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+    $('pfoot').innerHTML = '<span>Simulación orientativa: las rentabilidades no están garantizadas.</span><span>' + fecha + '</span>';
+    let extra = null;
+    if (S.comp && step >= m) {
+      render();
+      extra = document.createElement('div'); extra.className = 'ppage';
+      const c = $('stage').cloneNode(true), f = $('pfoot').cloneNode(true);
+      [c, f].forEach(n => { n.removeAttribute('id'); n.querySelectorAll('[id]').forEach(e => e.removeAttribute('id')); });
+      c.removeAttribute('aria-label');
+      extra.append(c, f); document.body.appendChild(extra);
+      step = m - 1;
+    }
+    render(); printFit();
+    const p2 = n => String(n).padStart(2, '0');
+    document.title = 'Interés compuesto – ' + p2(now.getDate()) + '-' + p2(now.getMonth() + 1) + '-' + now.getFullYear();
+    restorePrint = () => {
+      if (!restorePrint) return;
+      restorePrint = null;
+      window.removeEventListener('afterprint', done);
+      if (extra) extra.remove();
+      document.title = title; step = saved; render();
+      root.classList.remove('printing');
+    };
+    const done = () => { if (restorePrint) restorePrint(); };
+    window.addEventListener('afterprint', done);
+    window.print();
+    // si el navegador no avisa al cerrar el diálogo, se restaura al volver a tocar la página
+    if (restorePrint) ['pointerdown', 'keydown'].forEach(ev => document.addEventListener(ev, done, { once: true, capture: true }));
+  }
+  $('pdf').addEventListener('click', exportPDF);
 
   render();
 })();
