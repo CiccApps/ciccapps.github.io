@@ -236,6 +236,7 @@ body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif
 .cab{display:flex;flex-direction:column;gap:8px;max-width:680px}
 .cab .eyebrow{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:11px;line-height:16px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .cab h1{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400;font-size:clamp(40px,10vw,64px);line-height:1;letter-spacing:0;margin:0;text-wrap:balance}
+.cab h1 .desc{font-family:"Libre Caslon Text",Georgia,serif;font-size:.4em;color:var(--muted);letter-spacing:.01em;white-space:nowrap}
 .cab .lema{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(19px,4.8vw,24px);line-height:1.25;color:var(--gold);margin:0}
 .cab .lede{margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
 @media (min-width:900px){.shelf{zoom:1.45}}
@@ -248,7 +249,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="wrap">
   <header class="cab">
     <span class="eyebrow" id="planCount">Plan de lectura</span>
-    <h1>Bitácora</h1>
+    <h1>Bitácora <span class="desc">de lectura</span></h1>
     <p class="lema">¿Qué leo hoy?</p>
     <p class="lede">Toca un libro para abrir su ficha. El círculo de cada fila avanza su estado de un toque.</p>
   </header>
