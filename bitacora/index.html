@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=5">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=5">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=17">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=18">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
@@ -317,7 +317,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
   <header class="cab">
     <span class="eyebrow" id="planCount">Plan de lectura</span>
     <h1>Bitácora</h1>
-    <p class="lema">¿Qué leo hoy?</p>
+    <p class="lema">¿Qué leo ahora?</p>
     <p class="lede">Toca un libro para abrir su ficha. El círculo de cada fila avanza su estado de un toque.</p>
   </header>
 
@@ -358,7 +358,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=17"></script>
+<script src="../compartido/cuenta.js?v=18"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -1004,7 +1004,7 @@ async function cargar(){
 }
 const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FBF8F0",hundido:"#EDE5D6",linea:"#E0D9C8","linea-fuerte":"#9A8B7C",tinta:"#4B2E19","tinta-suave":"#6B5E52",oro:"#9C7630",primario:"#4B2E19","sobre-primario":"#F3EFE4"},
   oscuro:{fondo:"#17110C","fondo-alto":"#221912",hundido:"#2A2018",linea:"#3A2C20","linea-fuerte":"#6B5A48",tinta:"#EDE6D3","tinta-suave":"#ADA092",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#17110C"}};
-CiccCuenta.iniciar({tema:TEMA_ACCESO,app:"Bitácora",icono:"../iconos/bitacora-192.png?v=5",lema:"¿Qué leo hoy?"}).then(async r=>{
+CiccCuenta.iniciar({tema:TEMA_ACCESO,app:"Bitácora",icono:"../iconos/bitacora-192.png?v=5",lema:"¿Qué leo ahora?"}).then(async r=>{
   sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!sheetId)cargar()});
 });

@@ -1,5 +1,5 @@
 /* CiccApps — conexión con Supabase y pantalla de acceso compartida.
-   Uso: CiccCuenta.iniciar({ app: 'Bitácora', icono: '../iconos/bitacora-192.png', lema: '¿Qué leo hoy?' }).then(({ sb, usuario }) => …) */
+   Uso: CiccCuenta.iniciar({ app: 'Bitácora', icono: '../iconos/bitacora-192.png', lema: '¿Qué leo ahora?' }).then(({ sb, usuario }) => …) */
 (function () {
   'use strict';
   var URL_SB = 'https://chgrpztvvbhawzdqscru.supabase.co';
