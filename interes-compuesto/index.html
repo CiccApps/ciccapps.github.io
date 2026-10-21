@@ -915,6 +915,11 @@ td.wy { color: var(--pink); }
     void c.offsetHeight;
     if (d.fonts && d.fonts.ready) await Promise.race([d.fonts.ready, sleep(3000)]);
     fitCopy(d);
+    // aviso discreto solo en el PDF, en el margen inferior de la diapositiva
+    const sl = d.getElementById('slide'), av = d.createElement('div');
+    av.textContent = 'Simulación orientativa: las rentabilidades no están garantizadas · ' + new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+    av.style.cssText = 'position:absolute;right:7.3cqw;bottom:1.05cqw;font-size:.78cqw;line-height:1;color:#6B7A8F;letter-spacing:.01em;white-space:nowrap';
+    sl.appendChild(av);
     void c.offsetHeight;
     if (opts.fontEmbedCSS == null) opts.fontEmbedCSS = await window.htmlToImage.getFontEmbedCSS(c).catch(() => '');   // fuentes web, una sola vez
     return window.htmlToImage.toJpeg(c, Object.assign({ pixelRatio: 3, width: REF_W, height: REF_H, backgroundColor: '#ffffff', quality: 0.95 }, opts));   // JPEG: jsPDF lo incrusta sin recomprimir (rápido)
