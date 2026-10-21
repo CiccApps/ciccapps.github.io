@@ -1,6 +1,6 @@
 # CiccApps
 
-Una colección de apps hechas a medida: **Bitácora**, **La Taquilla**, **Banda Sonora** e **Interés compuesto**.
+Una colección de apps hechas a medida: **Bitácora**, **Platea**, **Vinilo** e **Interés compuesto**.
 
 Web: https://ciccapps.github.io
 

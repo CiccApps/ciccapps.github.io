@@ -8,6 +8,19 @@
 @font-face { font-family: "IBM Plex Mono"; src: url(fuentes/IBMPlexMono-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "IBM Plex Mono"; src: url(fuentes/IBMPlexMono-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
 
+/* Fuentes propias de cada app (alojadas aquí: funcionan sin conexión) */
+@font-face { font-family: "Limelight"; src: url(fuentes/Limelight-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Manrope"; src: url(fuentes/Manrope-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Manrope"; src: url(fuentes/Manrope-600.woff2) format("woff2"); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: "Manrope"; src: url(fuentes/Manrope-700.woff2) format("woff2"); font-weight: 700 800; font-display: swap; }
+@font-face { font-family: "JetBrains Mono"; src: url(fuentes/JetBrainsMono-400.woff2) format("woff2"); font-weight: 400 500; font-display: swap; }
+@font-face { font-family: "DM Serif Display"; src: url(fuentes/DMSerifDisplay-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "DM Serif Display"; src: url(fuentes/DMSerifDisplay-400i.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Karla"; src: url(fuentes/Karla-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Karla"; src: url(fuentes/Karla-500.woff2) format("woff2"); font-weight: 500 600; font-display: swap; }
+@font-face { font-family: "Karla"; src: url(fuentes/Karla-700.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Bebas Neue"; src: url(fuentes/BebasNeue-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+
 :root {
   --cc-fondo: #F3EFE4; --cc-fondo-alto: #FBF8F0; --cc-hundido: #E9E3D3; --cc-linea: #E0D9C8; --cc-linea-fuerte: #8F8A78;
   --cc-tinta: #1B2420; --cc-tinta-suave: #5A615A; --cc-oro: #7E6024; --cc-oro-claro: #D9B878;
@@ -65,3 +78,7 @@
 .cc-pie { display: flex; justify-content: center; margin-top: -8px; }
 .cc-enlace { border: 0; background: none; color: var(--cc-oro); font: 600 13px var(--cc-sans); cursor: pointer; padding: 4px 8px; line-height: 20px; }
 :focus-visible { outline-color: var(--cc-oro); }
+
+/* Casilla del resumen mensual */
+.cc-resumen { display: flex; align-items: center; justify-content: center; gap: 8px; font: 13px var(--cc-sans); color: inherit; opacity: .8; cursor: pointer; padding: 6px 0; }
+.cc-resumen input { width: 18px; height: 18px; accent-color: currentColor; }

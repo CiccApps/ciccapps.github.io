@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=3">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=3">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=13">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=14">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
@@ -53,7 +53,7 @@ body{margin:0}
 input[type=text],select{font:inherit;font-size:16px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%;min-width:0}
 .btn.danger{color:var(--s3);border-color:transparent;padding-left:0}
 .cargando{padding:48px 0;text-align:center;color:var(--muted)}
-body.nuevo .summary,body.nuevo .now,body.nuevo .tabs,body.nuevo .foot-actions{display:none}
+body.nuevo .summary,body.nuevo .habito,body.nuevo .now,body.nuevo .tabs,body.nuevo .foot-actions{display:none}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
 .wrap{max-width:860px;margin:0 auto;padding-block:24px 64px;
   padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));
@@ -177,6 +177,28 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .toggle{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
 .toggle input{width:18px;height:18px;accent-color:var(--gold)}
 .picks{display:flex;flex-direction:column;gap:10px}
+.habito{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hab{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.hab b{font-family:var(--f-display);font-weight:400;font-size:32px;line-height:1.1}
+.hab>span:not(.eyebrow){font-size:12.5px;color:var(--muted)}
+.hab .bar{margin:6px 0 2px}
+.hab .btn{margin-top:auto;align-self:stretch;padding-top:7px;padding-bottom:7px;font-size:13px}
+.hab .btn.hecho{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.hab input{font:inherit;font-size:16px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);margin-top:6px}
+.resumen{justify-content:center;font-size:13px;color:var(--muted)}
+.salir-link{border:0;background:none;color:var(--muted);font:600 13px var(--f-body);cursor:pointer;padding:6px}
+.lookup{display:flex;flex-direction:column;gap:6px}
+.lookup .row2{display:grid;grid-template-columns:1fr auto;gap:8px}
+.sug{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--paper)}
+.sug button{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:center;text-align:left;padding:8px 10px;border:0;border-bottom:1px solid var(--line);background:transparent;cursor:pointer;color:var(--ink)}
+.sug button:last-child{border-bottom:0}
+.sug img,.sug i{width:34px;height:50px;object-fit:cover;border-radius:2px;background:var(--empty);display:block}
+.sug b{font-weight:600;font-size:14px;display:block}.sug span{font-size:12px;color:var(--muted)}
+.cover-prev{display:flex;gap:12px;align-items:center}.cover-prev img{width:56px;height:84px;object-fit:cover;border-radius:3px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.scan{position:fixed;inset:0;z-index:40;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px}
+.scan video{width:min(92vw,480px);aspect-ratio:3/4;object-fit:cover;border-radius:12px;border:2px solid var(--gold)}
+.scan p{color:#fff;margin:0;font-size:14px;text-align:center}
+.scan button{border:0;border-radius:999px;padding:10px 22px;font:600 15px var(--f-body);background:#fff;color:#111;cursor:pointer}
 .ia{display:flex;flex-direction:column;gap:12px;padding:18px;border:1px solid var(--line);border-radius:8px;background:var(--card);margin-top:8px}
 .ia h2{font-size:26px}
 .ia textarea{font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%;resize:vertical;min-height:84px}
@@ -259,8 +281,8 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <body class="nuevo">
 <div class="wrap">
   <header class="cab">
-    <span class="eyebrow" id="planCount">Plan de 5 etapas</span>
-    <h1>Bitácora <span class="desc">de lectura</span></h1>
+    <span class="eyebrow" id="planCount">Plan de lectura</span>
+    <h1>Bitácora</h1>
     <p class="lema">¿Qué leo hoy?</p>
     <p class="lede">Toca un libro para abrir su ficha. El círculo de cada fila avanza su estado de un toque.</p>
   </header>
@@ -270,6 +292,11 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
     <div class="stat"><b id="sPages" class="mono">0</b><span>páginas leídas</span></div>
     <div class="stat"><b id="sStage">1</b><span id="sStageName">etapa actual</span></div>
     <div class="stat"><b id="sOwned" class="mono">0</b><span>en casa sin leer</span></div>
+  </section>
+
+  <section class="habito" aria-label="Hábito">
+    <div class="hab"><span class="eyebrow">Racha</span><b id="hRacha" class="mono">0</b><span id="hRachaTxt">días seguidos leyendo</span><button class="btn sm" id="hHoy" type="button">He leído hoy</button></div>
+    <div class="hab"><span class="eyebrow" id="hObjAnio">Objetivo</span><b id="hObj" class="mono">0</b><span id="hObjTxt">libros este año</span><div class="bar"><i id="hObjBar" style="width:0%"></i></div><button class="btn sm" id="hObjEdit" type="button">Cambiar</button></div>
   </section>
 
   <section class="now" aria-label="Ahora">
@@ -286,7 +313,9 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
   <div id="view" class="view"><p class="cargando">Abriendo tu bitácora…</p></div>
 
   <footer id="pie">
-    <div class="foot-actions"><button class="chip" id="exportGR">Exportar a Goodreads</button><button class="chip" id="salir">Cerrar sesión</button></div>
+    <div class="foot-actions"><button class="chip" id="exportGR">Exportar a Goodreads</button><button class="chip" id="misDatos">Descargar mis datos</button></div>
+    <div id="resumenSlot"></div>
+    <button class="salir-link" id="salir" type="button">Cerrar sesión</button>
     <span id="syncNote">Sincronizado en todos tus dispositivos · páginas aproximadas según ediciones habituales en español.</span>
   </footer>
 </div>
@@ -295,7 +324,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=13"></script>
+<script src="../compartido/cuenta.js?v=14"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -399,7 +428,7 @@ function construir(etapas,libros){
     if(!groups.length)groups.push([null,[]]);
     st_._groups=groups.map(([label,arr])=>[label,arr.map(l=>{
       const m=[...(l.moods||[])];if((l.paginas||0)<=220&&!m.includes("corto"))m.push("corto");
-      const bk={id:l.id,clave:l.clave,t:l.titulo,a:l.autor||"",p:l.paginas||250,tag:l.etiqueta||"",moods:m,stage:st_,n:st_.extra?null:++num,orden:l.orden};
+      const bk={id:l.id,clave:l.clave,cov:l.portada||"",isbn:l.isbn||"",t:l.titulo,a:l.autor||"",p:l.paginas||250,tag:l.etiqueta||"",moods:m,stage:st_,n:st_.extra?null:++num,orden:l.orden};
       BOOKS[l.id]=bk;if(l.edicion)EDS[l.id]=l.edicion;
       state[l.id]={estado:l.estado,tengo:l.tengo,pagina:l.pagina??"",inicio:l.inicio||"",fin:l.fin||"",nota:l.nota||0,comentario:l.comentario||""};
       return bk})]);
@@ -438,7 +467,7 @@ const ICON={pendiente:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor
  abandonado:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h8"/></svg>'};
 const LABEL={pendiente:"Pendiente",leyendo:"Leyendo",leido:"Leído",abandonado:"Abandonado"};
 
-function render(){renderTop();renderView()}
+function render(){renderTop();renderView();try{renderHabito()}catch(_){}}
 
 function renderTop(){
   const read=MAIN.filter(b=>st(b.id)==="leido");
@@ -446,7 +475,7 @@ function renderTop(){
   const extra=allRead.length-read.length;
   document.getElementById("sRead").textContent=read.length+(extra?`+${extra}`:"");
   document.getElementById("sReadOf").textContent=`de ${MAIN.length} leídos`;
-  document.getElementById("planCount").textContent=`Plan · ${MAIN.length} libros en 5 etapas`;
+  document.getElementById("planCount").textContent=`Plan de lectura · ${MAIN.length} libros`;
   document.getElementById("sBar").style.width=(read.length/MAIN.length*100)+"%";
   document.getElementById("sPages").textContent=allRead.reduce((s,b)=>s+b.p,0).toLocaleString("es-ES");
   const cs=curStage();
@@ -560,7 +589,7 @@ function viewIA(){
     ${l.por_que?`<span class="ia-why">${esc(l.por_que)}</span>`:""}
     <span class="ia-acc">${l.added?`<span class="ia-ok">Añadido a Intercalables</span>`:`<button class="btn sm primary" data-ia-add="${i}">Añadir a mi lista</button>`}</span></span></article>`).join("");
   return `<section class="ia" aria-labelledby="iaH"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Con inteligencia artificial</span><h2 id="iaH">Créame una lista</h2>
-    <p class="hint">Cuéntame qué te apetece y te propongo cinco libros que no estén ya en tu bitácora.</p></div>
+    <p class="hint">Cuéntame qué te apetece y te propongo diez libros que no estén ya en tu bitácora.</p></div>
     <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: novelas cortas de misterio ambientadas en Japón">${esc(IA.txt)}</textarea>
     <button class="btn primary" id="iaGo" ${IA.busy?"disabled":""}>${IA.busy?"Pensando…":"Créame una lista"}</button>
     ${IA.info?`<p class="hint ia-info">${esc(IA.info)}</p>`:""}
@@ -582,7 +611,8 @@ async function pedirIA(){
 async function anadirIA(i){
   const l=IA.res[i];if(!l||l.added)return;
   const etapa=STAGES.some(z=>z.id==="ex")?"ex":(STAGES[STAGES.length-1]||{}).id;
-  const row={titulo:l.titulo,autor:l.autor||null,paginas:l.paginas||null,etapa,grupo:"Sugeridos por la IA",moods:l.moods||[],
+  let g=null;try{g=(await buscarLibros(l.titulo+" "+(l.autor||"")))[0]||null}catch(_){}
+  const row={titulo:l.titulo,autor:l.autor||null,paginas:l.paginas||(g&&g.paginas)||null,portada:g&&g.portada||null,isbn:g&&g.isbn||null,etapa,grupo:"Sugeridos por la IA",moods:l.moods||[],
     edicion:l.edicion?{ed:l.edicion,why:"",alt:""}:null,orden:Date.now()%2147483647,tengo:false};
   const r=await sb.from("libros").insert(row);
   if(r.error){toast("No se pudo añadir");return}
@@ -611,6 +641,7 @@ function viewBuy(){
 
 /* Guardado en la base de datos */
 async function persist(id,patch){
+  if("pagina" in patch||patch.estado==="leyendo"||patch.estado==="leido")marcarHoy();
   const p={};for(const k in patch){let v=patch[k];if((k==="inicio"||k==="fin")&&!v)v=null;if(k==="pagina"&&(v===""||v==null))v=null;if(k==="nota"&&!v)v=0;p[k]=v}
   const r=await sb.from("libros").update(p).eq("id",id);
   if(r.error)toast("No se pudo guardar. Revisa la conexión.");
@@ -633,7 +664,7 @@ function openSheet(id,msg){
   const e=EDS[id];
   const root=document.getElementById("sheetRoot");
   root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT" style="--sc:var(${b.stage.c})">
-    <div><span class="eyebrow">${b.n?"Nº "+b.n+" · Etapa "+b.stage.n:"Intercalable"} · ≈${b.p} páginas</span><h3 id="shT">${esc(b.t)}</h3><div class="by">${esc(b.a)}</div></div>
+    <div class="cover-prev">${b.cov?`<img src="${esc(b.cov)}" alt="" loading="lazy">`:""}<div><span class="eyebrow">${b.n?"Nº "+b.n+" · Etapa "+b.stage.n:"Intercalable"} · ≈${b.p} páginas</span><h3 id="shT">${esc(b.t)}</h3><div class="by">${esc(b.a)}</div></div></div>
     ${msg?`<p class="why">${esc(msg)}</p>`:""}
     <div class="field"><span class="lbl">Estado</span><div class="seg" role="group" aria-label="Estado">${["pendiente","leyendo","leido","abandonado"].map(k=>`<button id="seg-${k}" data-seg="${k}" aria-pressed="${draft.estado===k}">${LABEL[k]}</button>`).join("")}</div></div>
     <div class="field"><span class="lbl">¿Lo tienes?</span><div class="seg two" role="group" aria-label="Lo tienes">
@@ -693,6 +724,79 @@ document.addEventListener("input",e=>{if(e.target.id==="iaTxt")IA.txt=e.target.v
 document.addEventListener("change",e=>{if(e.target.id==="onlyOwned"){onlyOwned=e.target.checked;renderView()}});
 document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("row")){e.preventDefault();openSheet(e.target.dataset.open)}});
 
+
+
+/* Buscar un libro (Google Books) y escanear su código de barras */
+async function buscarLibros(q){
+  const isbn=q.replace(/[^0-9Xx]/g,"");const consulta=(isbn.length===10||isbn.length===13)&&/^[0-9]/.test(q.trim())?"isbn:"+isbn:q;
+  const r=await fetch("https://www.googleapis.com/books/v1/volumes?maxResults=6&printType=books&q="+encodeURIComponent(consulta));
+  if(!r.ok)return[];const j=await r.json();
+  return (j.items||[]).map(it=>{const v=it.volumeInfo||{};const ids=v.industryIdentifiers||[];const i13=(ids.find(x=>x.type==="ISBN_13")||ids.find(x=>x.type==="ISBN_10")||{}).identifier||null;
+    const img=v.imageLinks&&(v.imageLinks.thumbnail||v.imageLinks.smallThumbnail);
+    return {titulo:v.title+(v.subtitle&&v.title.length<30?". "+v.subtitle:""),autor:(v.authors||[]).join(", "),paginas:v.pageCount||null,portada:img?img.replace("http://","https://").replace("&edge=curl",""):null,isbn:i13,editorial:v.publisher||"",anio:(v.publishedDate||"").slice(0,4)}});
+}
+function conectarBusqueda(extra){
+  const q=document.getElementById("lQ"),sug=document.getElementById("lSug"),cov=document.getElementById("lCov");let tm,res=[];
+  const elegir=x=>{document.getElementById("lT").value=x.titulo||"";document.getElementById("lA").value=x.autor||"";if(x.paginas)document.getElementById("lP").value=x.paginas;
+    extra.portada=x.portada;extra.isbn=x.isbn;sug.hidden=true;q.value="";
+    cov.hidden=!x.portada;cov.innerHTML=x.portada?`<img src="${esc(x.portada)}" alt=""><span class="hint" style="margin:0">${esc([x.editorial,x.anio].filter(Boolean).join(" · ")||"Portada y datos de tu edición")}</span>`:"";toast("Datos rellenados")};
+  const pinta=()=>{sug.hidden=!res.length;sug.innerHTML=res.map((x,i)=>`<button type="button" data-sug="${i}">${x.portada?`<img src="${esc(x.portada)}" alt="">`:"<i></i>"}<span><b>${esc(x.titulo)}</b><span>${esc([x.autor,x.editorial,x.anio].filter(Boolean).join(" · "))}${x.paginas?` · ${x.paginas} págs.`:""}</span></span></button>`).join("")};
+  sug.onclick=e=>{const t=e.target.closest("[data-sug]");if(t)elegir(res[+t.dataset.sug])};
+  q.oninput=()=>{clearTimeout(tm);const v=q.value.trim();if(v.length<3){res=[];pinta();return}tm=setTimeout(async()=>{try{res=await buscarLibros(v);pinta()}catch(_){}} ,350)};
+  document.getElementById("lScan").onclick=()=>escanear(async code=>{try{const r=await buscarLibros(code);if(r.length)elegir(r[0]);else{extra.isbn=code;toast("No encuentro ese ISBN; rellénalo a mano")}}catch(_){toast("Sin conexión")}});
+}
+async function escanear(cuando){
+  const capa=document.createElement("div");capa.className="scan";capa.innerHTML=`<video playsinline muted></video><p>Apunta al código de barras de la contraportada</p><button type="button">Cancelar</button>`;
+  document.body.appendChild(capa);const video=capa.querySelector("video");let stream=null,parar=false,lector=null;
+  const cerrar=()=>{parar=true;try{lector&&lector.reset()}catch(_){}if(stream)stream.getTracks().forEach(t=>t.stop());capa.remove()};
+  capa.querySelector("button").onclick=cerrar;
+  try{
+    if("BarcodeDetector" in window){
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});video.srcObject=stream;await video.play();
+      const det=new BarcodeDetector({formats:["ean_13","ean_8","upc_a"]});
+      const bucle=async()=>{if(parar)return;try{const c=await det.detect(video);if(c.length){const v=c[0].rawValue;cerrar();cuando(v);return}}catch(_){}requestAnimationFrame(bucle)};bucle();
+    }else{
+      if(!window.ZXing){await new Promise((ok,ko)=>{const sc=document.createElement("script");sc.src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js";sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc)})}
+      lector=new ZXing.BrowserMultiFormatReader();
+      lector.decodeFromVideoDevice(null,video,(r)=>{if(r&&!parar){const v=r.getText();cerrar();cuando(v)}});
+    }
+  }catch(err){cerrar();toast("No se pudo abrir la cámara")}
+}
+
+/* Hábito: racha de días leyendo y objetivo anual */
+let DIAS=new Set(),AJ={};
+const hoyISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
+const diaISO=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+function racha(){let n=0;const d=new Date();if(!DIAS.has(diaISO(d)))d.setDate(d.getDate()-1);while(DIAS.has(diaISO(d))){n++;d.setDate(d.getDate()-1)}return n}
+async function marcarHoy(){const h=hoyISO();if(DIAS.has(h))return;DIAS.add(h);renderHabito();const r=await sb.from("lectura_dias").insert({dia:h});if(r.error&&!/duplicate/i.test(r.error.message))toast("No se pudo guardar el día")}
+async function desmarcarHoy(){const h=hoyISO();DIAS.delete(h);renderHabito();await sb.from("lectura_dias").delete().eq("dia",h)}
+async function guardarAjustes(patch){AJ=Object.assign({},AJ,patch);const r=await sb.from("ajustes").upsert({app:"bitacora",datos:AJ,actualizado:new Date().toISOString()});if(r.error)toast("No se pudo guardar")}
+function renderHabito(){
+  const n=racha();const hoy=DIAS.has(hoyISO());
+  document.getElementById("hRacha").textContent=n;
+  document.getElementById("hRachaTxt").textContent=n===1?"día leyendo":"días seguidos leyendo";
+  const b=document.getElementById("hHoy");b.textContent=hoy?"Leído hoy ✓":"He leído hoy";b.classList.toggle("hecho",hoy);
+  const y=new Date().getFullYear();const meta=+AJ.objetivo||12;
+  const hechos=ALL.filter(x=>st(x.id)==="leido"&&String(S(x.id).fin||"").startsWith(String(y))).length;
+  document.getElementById("hObjAnio").textContent="Objetivo "+y;
+  document.getElementById("hObj").textContent=hechos+" de "+meta;
+  document.getElementById("hObjTxt").textContent=hechos>=meta?"¡objetivo cumplido!":"libros este año";
+  document.getElementById("hObjBar").style.width=Math.min(100,hechos/meta*100)+"%";
+}
+document.getElementById("hHoy").onclick=()=>DIAS.has(hoyISO())?desmarcarHoy():marcarHoy();
+let editObj=false;
+document.getElementById("hObjEdit").onclick=async ev=>{
+  const btn=ev.currentTarget,box=btn.parentElement;
+  if(!editObj){editObj=true;const i=document.createElement("input");i.type="number";i.min="1";i.max="200";i.inputMode="numeric";i.id="hObjIn";i.value=+AJ.objetivo||12;i.setAttribute("aria-label","Libros que quieres leer este año");box.insertBefore(i,btn);btn.textContent="Guardar";i.focus();i.select();return}
+  const i=document.getElementById("hObjIn");const v=Math.max(1,Math.min(200,parseInt(i&&i.value,10)||12));if(i)i.remove();btn.textContent="Cambiar";editObj=false;
+  await guardarAjustes({objetivo:v});renderHabito();toast("Objetivo: "+v+" libros");
+};
+document.getElementById("misDatos").onclick=async()=>{
+  const [e,l,d,a]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*"),sb.from("lectura_dias").select("*"),sb.from("ajustes").select("*").eq("app","bitacora")]);
+  const blob=new Blob([JSON.stringify({app:"Bitácora",exportado:new Date().toISOString(),etapas:e.data,libros:l.data,dias:d.data,ajustes:a.data},null,2)],{type:"application/json"});
+  const u=URL.createObjectURL(blob);const x=document.createElement("a");x.href=u;x.download="bitacora-mis-datos.json";document.body.appendChild(x);x.click();setTimeout(()=>{URL.revokeObjectURL(u);x.remove()},500);toast("Copia descargada");
+};
+
 /* Exportación a Goodreads */
 function goodreadsCSV(){
   const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;const gd=d=>d?d.replace(/-/g,"/"):"";
@@ -712,6 +816,8 @@ function formLibro(id){
   const def=b?b.stage.id:((STAGES.find(x=>!x.extra)||STAGES[0]||{}).id);
   root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="fT" style="--sc:var(--s1)">
     <div><span class="eyebrow">${b?"Editar libro":"Nuevo libro"}</span><h3 id="fT">${b?esc(b.t):"Añadir a la bitácora"}</h3></div>
+    <div class="field lookup"><label for="lQ">${b?"Busca tu edición o escanea su código":"Busca el libro o escanea su código"}</label><div class="row2"><input type="text" id="lQ" placeholder="Título, autor o ISBN" autocomplete="off" enterkeyhint="search"><button type="button" class="btn" id="lScan">Escanear</button></div>
+      <div class="sug" id="lSug" hidden></div><div class="cover-prev" id="lCov" ${b&&b.cov?"":"hidden"}>${b&&b.cov?`<img src="${esc(b.cov)}" alt="">`:""}<span class="hint" style="margin:0">Portada y datos de tu edición</span></div></div>
     <div class="field"><label for="lT">Título</label><input type="text" id="lT" value="${b?esc(b.t):""}" autocomplete="off"></div>
     <div class="dates"><div class="field"><label for="lA">Autor</label><input type="text" id="lA" value="${b?esc(b.a):""}" autocomplete="off"></div>
     <div class="field"><label for="lP">Páginas</label><input type="number" id="lP" inputmode="numeric" min="1" value="${b?b.p:""}" placeholder="≈ 250"></div></div>
@@ -723,11 +829,13 @@ function formLibro(id){
   document.getElementById("sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")closeSheet()});
   root.querySelectorAll("[data-fm]").forEach(x=>x.onclick=()=>{const k=x.dataset.fm;moods.has(k)?moods.delete(k):moods.add(k);x.setAttribute("aria-pressed",moods.has(k))});
   document.getElementById("lCancel").onclick=closeSheet;
+  const extra={portada:b?b.cov||null:null,isbn:b?b.isbn||null:null};
+  conectarBusqueda(extra);
   if(b){let armed=false;document.getElementById("lDel").onclick=async ev=>{if(!armed){armed=true;ev.target.textContent="Toca otra vez para eliminar";return}
     const r=await sb.from("libros").delete().eq("id",id);if(r.error){toast("No se pudo eliminar");return}closeSheet();toast("Eliminado");cargar()}}
   document.getElementById("lSave").onclick=async()=>{
     const t=document.getElementById("lT").value.trim();if(!t){document.getElementById("lT").focus();toast("Ponle un título");return}
-    const row={titulo:t,autor:document.getElementById("lA").value.trim()||null,paginas:parseInt(document.getElementById("lP").value,10)||null,etapa:document.getElementById("lE").value,moods:[...moods]};
+    const row={titulo:t,autor:document.getElementById("lA").value.trim()||null,paginas:parseInt(document.getElementById("lP").value,10)||null,etapa:document.getElementById("lE").value,moods:[...moods],portada:extra.portada,isbn:extra.isbn};
     let r;
     if(b){if(row.etapa!==b.stage.id)row.orden=Date.now()%2147483647;r=await sb.from("libros").update(row).eq("id",id)}
     else{row.orden=Date.now()%2147483647;row.tengo=document.getElementById("lO").checked;r=await sb.from("libros").insert(row)}
@@ -777,13 +885,15 @@ async function empezar(conPlan){
 
 /* Arranque */
 async function cargar(){
-  const [e,l]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*")]);
+  const desde=new Date();desde.setDate(desde.getDate()-400);
+  const [e,l,d,a]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*"),sb.from("lectura_dias").select("dia").gte("dia",diaISO(desde)),sb.from("ajustes").select("datos").eq("app","bitacora").maybeSingle()]);
+  DIAS=new Set((d.data||[]).map(x=>x.dia));AJ=(a.data&&a.data.datos)||{};
   if(e.error||l.error){document.getElementById("view").innerHTML='<p class="cargando">No se pudo cargar. Comprueba la conexión y vuelve a abrir la app.</p>';return}
   if(!e.data.length){vistaEmpezar();return}
   document.body.classList.remove("nuevo");  construir(e.data,l.data);if(!sheetId)render();
 }
 CiccCuenta.iniciar({app:"Bitácora",icono:"../iconos/bitacora-192.png?v=3",lema:"¿Qué leo hoy?"}).then(async r=>{
-  sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
+  sb=r.sb;CiccCuenta.casillaResumen(document.getElementById("resumenSlot"),toast);CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!sheetId)cargar()});
 });
 </script>

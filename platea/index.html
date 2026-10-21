@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Platea · de cine y series</title>
+<title>Platea</title>
 <meta name="description" content="Diario de cine y series. Una CiccApp.">
 <meta name="theme-color" content="#F3EFE4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#150D10" media="(prefers-color-scheme: dark)">
@@ -14,15 +14,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/la-taquilla-180.png?v=3">
 <link rel="icon" type="image/png" href="../iconos/la-taquilla-192.png?v=3">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=13">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=14">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
 :root{
   --bg:#F3EFE4; --card:#FFFFFF; --ink:#24161A; --muted:#6C6266; --line:#E0D7C6;
   --red:#6E1E2B; --red-soft:#F1DEDC; --bulb:#B8913F; --stub:#EDE5D6; --ok:#2E6B4F;
-  --f-display:"Bebas Neue",Impact,"Arial Narrow",sans-serif;
+  --f-display:"Limelight","Bebas Neue",Georgia,serif;
   --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
 }
@@ -52,7 +50,7 @@ button{font:inherit;color:inherit}
 .marquee{border-radius:10px;background:radial-gradient(120% 140% at 25% 15%,#8A2A3A,#5E1A26 55%,#3A0E17);color:#FFF6EE;padding:18px 20px 16px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px}
 .marquee::before,.marquee::after{content:"";position:absolute;left:10px;right:10px;height:6px;background:radial-gradient(circle,var(--bulb) 2.2px,transparent 2.6px) 0 0/14px 6px repeat-x}
 .marquee::before{top:6px}.marquee::after{bottom:6px}
-.marquee h1{font-family:var(--f-display);font-weight:400;font-size:clamp(44px,11vw,72px);line-height:.9;letter-spacing:.02em;margin:6px 0 0}
+.marquee h1{font-family:var(--f-display);font-weight:400;font-size:clamp(44px,11vw,68px);line-height:1;letter-spacing:.02em;margin:6px 0 0}
 .marquee .lema{margin:-2px 0 2px;font-weight:600;font-style:italic;font-size:17px;color:var(--bulb);letter-spacing:.01em}
 .marquee .sub{font-size:13px;opacity:.85}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -121,6 +119,27 @@ textarea{min-height:80px;resize:vertical}
 footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px;color:var(--muted)}
 @media (min-width:760px){.sheet-bg{align-items:center;padding:24px}.sheet{border-radius:12px;max-height:86vh}}
 
+.look{position:relative}
+.sug{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.sug button{display:grid;grid-template-columns:38px 1fr;gap:10px;align-items:center;text-align:left;padding:8px 10px;border:0;border-bottom:1px solid var(--line);background:transparent;cursor:pointer;color:var(--ink);font:inherit}
+.sug button:last-child{border-bottom:0}
+.sug img,.sug i{width:38px;height:56px;object-fit:cover;border-radius:3px;background:var(--stub);display:block}
+.sug b{font-weight:700;font-size:14px;display:block}.sug span span{font-size:12px;color:var(--muted)}
+.pv{display:flex;gap:12px;align-items:center}.pv img{width:54px;height:80px;object-fit:cover;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.2)}.pv .hint{margin:0}
+.ticket.con-poster{grid-template-columns:64px 1fr 58px}
+.ticket .poster{width:58px;height:100%;min-height:84px;object-fit:cover;display:block;border-left:1px solid var(--line)}
+.anio-btn{align-self:flex-start;border:1px solid rgba(255,246,238,.5);background:transparent;color:#FFF6EE;border-radius:999px;padding:6px 14px;font:700 13px var(--f-body);cursor:pointer;margin-top:4px}
+.anio h2{font-size:56px}
+.an-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.an-grid div{background:var(--stub);border-radius:8px;padding:12px 10px;display:flex;flex-direction:column}
+.an-grid b{font-family:var(--f-display);font-weight:400;font-size:30px;line-height:1}.an-grid span{font-size:11.5px;color:var(--muted)}
+.an-mes{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;height:110px;align-items:end}
+.an-mes div{display:flex;flex-direction:column;justify-content:flex-end;height:100%;gap:4px;text-align:center}
+.an-mes i{display:block;background:var(--red);border-radius:3px 3px 0 0;min-height:2px}.an-mes span{font-size:10px;color:var(--muted)}
+.an-frase{margin:0;font-size:15px}
+.an-top{display:flex;flex-direction:column;gap:8px}
+.an-row{display:grid;grid-template-columns:18px 32px 1fr auto;gap:10px;align-items:center}
+.an-row img{width:32px;height:48px;object-fit:cover;border-radius:3px}.an-row b{font-weight:700;font-size:14px}
 .ia{display:flex;flex-direction:column;gap:10px;margin-top:10px;padding:18px;border-radius:10px;background:var(--card);border:1px solid var(--line);position:relative}
 .ia::before{content:"";position:absolute;left:10px;right:10px;top:6px;height:6px;background:radial-gradient(circle,var(--bulb) 2.2px,transparent 2.6px) 0 0/14px 6px repeat-x;opacity:.7}
 .ia .eyebrow{margin-top:8px}
@@ -137,6 +156,8 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 .ia-add{align-self:flex-start;padding:8px 12px;font-size:13px}
 .ia-ok{font-size:13px;font-weight:700;color:var(--ok)}
 @media (min-width:900px){.ia-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Limelight solo para títulos: las cifras van en Manrope para que se lean bien */
+.stats b,.ticket .stub b,.an-grid b{font-family:var(--f-body)!important;font-weight:800;letter-spacing:-.01em}
 /* ===== CiccApps · rejilla común (márgenes y ancho); la tipografía y el carácter son de cada app ===== */
 .wrap{max-width:1040px!important;margin-inline:auto!important;padding-block:28px 72px!important;padding-left:max(20px,env(safe-area-inset-left,0px))!important;padding-right:max(20px,env(safe-area-inset-right,0px))!important}
 @media (min-width:768px){.wrap{padding-top:44px!important;padding-left:max(32px,env(safe-area-inset-left,0px))!important;padding-right:max(32px,env(safe-area-inset-right,0px))!important}}
@@ -149,7 +170,7 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 <body>
 <div class="wrap">
   <section class="marquee" aria-label="Resumen">
-    <span class="eyebrow" style="color:#FFF6EE;opacity:.8;margin-top:6px">de cine y series</span>
+    <span class="eyebrow" style="color:#FFF6EE;opacity:.8;margin-top:6px">Diario de cine y series</span>
     <h1>Platea</h1>
     <p class="lema">¿Qué veo hoy?</p>
     <div class="stats">
@@ -158,6 +179,7 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
       <div><b id="stQueue" class="mono">0</b><span>por ver</span></div>
       <div><b id="stSeries" class="mono">0</b><span>series en curso</span></div>
     </div>
+    <button class="anio-btn" id="anioBtn" type="button">Tu año en cine →</button>
   </section>
 
   <div class="bar">
@@ -181,18 +203,19 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=13"></script>
+<script src="../compartido/cuenta.js?v=14"></script>
 <script>
 const MOODS={risa:"Reírme",tension:"Tensión",pensar:"Pensar",llorar:"Emocionarme",accion:"Acción",epico:"Épica",ligera:"Ligera",clasico:"Clásico pendiente"};
 const WHERE={cine:"Cine",streaming:"Streaming",casa:"En casa"};
+let syncSheet=null;
 const MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
 const MESL=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 let items={};let tab="diario";let mood=null;let sb=null;let listo=false;
 const LS="sala-miguel-v1";
 try{const t=localStorage.getItem(LS+"-tab");if(t)tab=t}catch(e){}
 /* filas de la base de datos <-> entradas */
-const deFila=r=>({tipo:r.tipo,estado:r.estado,titulo:r.titulo,anio:r.anio?String(r.anio):"",donde:r.donde||"",plataforma:r.plataforma||"",fecha:r.fecha||"",nota:+r.nota||0,resena:r.resena||"",rewatch:r.rewatch,moods:r.moods||[],prio:r.prio,temp:r.temporada||"",cap:r.capitulo||"",temps:r.temporadas||"",creado:r.creado});
-const aFila=x=>({tipo:x.tipo,estado:x.estado,titulo:x.titulo,anio:parseInt(x.anio,10)||null,donde:x.donde||null,plataforma:x.plataforma||null,fecha:x.fecha||null,nota:x.nota||null,resena:x.resena||null,rewatch:!!x.rewatch,moods:x.moods||[],prio:!!x.prio,temporada:+x.temp||null,capitulo:+x.cap||null,temporadas:+x.temps||null});
+const deFila=r=>({tipo:r.tipo,estado:r.estado,titulo:r.titulo,anio:r.anio?String(r.anio):"",donde:r.donde||"",plataforma:r.plataforma||"",fecha:r.fecha||"",nota:+r.nota||0,resena:r.resena||"",rewatch:r.rewatch,moods:r.moods||[],prio:r.prio,temp:r.temporada||"",cap:r.capitulo||"",temps:r.temporadas||"",creado:r.creado,poster:r.poster||"",tmdb_id:r.tmdb_id||null});
+const aFila=x=>({tipo:x.tipo,estado:x.estado,titulo:x.titulo,anio:parseInt(x.anio,10)||null,donde:x.donde||null,plataforma:x.plataforma||null,fecha:x.fecha||null,nota:x.nota||null,resena:x.resena||null,rewatch:!!x.rewatch,moods:x.moods||[],prio:!!x.prio,temporada:+x.temp||null,capitulo:+x.cap||null,temporadas:+x.temps||null,poster:x.poster||null,tmdb_id:x.tmdb_id||null});
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
 const stars=n=>n?"★".repeat(Math.floor(n))+(n%1?"½":""):"";
@@ -235,7 +258,7 @@ function ticket(x){
   const stub=x.estado==="vista"&&d?`<b>${d.getDate()}</b><span>${MES[d.getMonth()]}</span>`:x.tipo==="serie"?`<b>${x.temp?"T"+x.temp:"—"}</b><span>${x.cap?"cap "+x.cap:"serie"}</span>`:`<b>${x.prio?"!":"·"}</b><span>${x.prio?"cartel":"por ver"}</span>`;
   const meta=[x.anio?`<span class="mono">${esc(x.anio)}</span>`:"",x.tipo==="serie"?`<span class="badge alt">Serie</span>`:"",x.donde?`<span class="badge ${x.donde==="cine"?"":"alt"}">${WHERE[x.donde]}</span>`:"",x.plataforma?`<span>${esc(x.plataforma)}</span>`:"",x.rewatch?`<span class="badge alt">Revisionado</span>`:"",x.nota?`<span class="stars">${stars(x.nota)}</span>`:"",x.estado==="porver"&&x.prio?`<span class="badge">En cartelera</span>`:""].filter(Boolean).join("");
   const prog=x.tipo==="serie"&&x.temps&&x.temp&&x.estado==="viendo"?`<div class="prog"><i style="width:${Math.min(100,Math.round((x.temp-1)/x.temps*100+(1/x.temps)*50))}%"></i></div>`:"";
-  return `<button class="ticket" data-open="${x.id}"><span class="stub">${stub}</span><span class="body"><h3>${esc(x.titulo)}</h3><span class="meta">${meta}</span>${x.resena?`<p class="rev">${esc(x.resena)}</p>`:""}${prog}</span></button>`;
+  return `<button class="ticket${x.poster?" con-poster":""}" data-open="${x.id}"><span class="stub">${stub}</span><span class="body"><h3>${esc(x.titulo)}</h3><span class="meta">${meta}</span>${x.resena?`<p class="rev">${esc(x.resena)}</p>`:""}${prog}</span>${x.poster?`<img class="poster" src="${esc(x.poster)}" alt="" loading="lazy">`:""}</button>`;
 }
 
 /* Hoja de alta / edición */
@@ -246,6 +269,8 @@ function openSheet(id,kind){
   const r=document.getElementById("sheetRoot");
   r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shH">
     <h2 id="shH">${id?"Editar":"Nueva entrada"}</h2>
+    <div class="field look"><label for="fQ">Busca la película o serie</label><input type="text" id="fQ" placeholder="Escribe el título y elige" autocomplete="off" enterkeyhint="search"><div class="sug" id="fSug" hidden></div>
+      <div class="pv" id="fPv" ${draft.poster?"":"hidden"}>${draft.poster?`<img src="${esc(draft.poster)}" alt="">`:""}<span class="hint">Póster y datos rellenados</span></div></div>
     <div class="seg" role="group" aria-label="Tipo"><button id="ty-peli" data-ty="peli">Película</button><button id="ty-serie" data-ty="serie">Serie</button></div>
     <div class="grid2" style="grid-template-columns:1fr 90px"><div class="field"><label for="fT">Título</label><input type="text" id="fT" value="${esc(draft.titulo)}" placeholder="Título"></div>
     <div class="field"><label for="fY">Año</label><input type="number" id="fY" inputmode="numeric" value="${esc(draft.anio)}" placeholder="2026"></div></div>
@@ -275,6 +300,7 @@ function openSheet(id,kind){
     document.getElementById("secVista").hidden=draft.estado!=="vista";
     document.getElementById("secPorver").hidden=draft.estado!=="porver";
   };
+  syncSheet=sync;
   r.querySelectorAll("[data-ty]").forEach(b=>b.onclick=()=>{draft.tipo=b.dataset.ty;sync()});
   r.querySelectorAll("[data-es]").forEach(b=>b.onclick=()=>{draft.estado=b.dataset.es;sync()});
   r.querySelectorAll("[data-mo]").forEach(b=>b.onclick=()=>{const k=b.dataset.mo;draft.moods=(draft.moods||[]).includes(k)?draft.moods.filter(z=>z!==k):[...(draft.moods||[]),k];b.setAttribute("aria-pressed",draft.moods.includes(k))});
@@ -285,14 +311,15 @@ function openSheet(id,kind){
   document.getElementById("save").onclick=()=>{
     const t=document.getElementById("fT").value.trim();if(!t){document.getElementById("fT").focus();toast("Ponle un título");return}
     const v=k=>document.getElementById(k).value;
-    const x={tipo:draft.tipo,estado:draft.estado,titulo:t,anio:v("fY").trim(),plataforma:v("fP").trim(),moods:draft.moods||[],creado:draft.creado||today()};
+    const x={tipo:draft.tipo,estado:draft.estado,titulo:t,anio:v("fY").trim(),plataforma:v("fP").trim(),moods:draft.moods||[],creado:draft.creado||today(),poster:draft.poster||null,tmdb_id:draft.tmdb_id||null};
     if(draft.estado==="vista"){Object.assign(x,{fecha:v("fD"),donde:v("fW"),nota:+v("fR")/2,resena:v("fRv").trim(),rewatch:document.getElementById("fRw").checked})}
     if(draft.estado==="porver")x.prio=document.getElementById("fPr").checked;
     if(draft.tipo==="serie"){x.temp=+v("fTp")||"";x.cap=+v("fCp")||"";x.temps=+v("fTs")||""}
     save(editId,x);close();toast(draft.estado==="vista"?"Entrada guardada":"Guardado");
     tab=x.estado==="vista"?"diario":x.estado==="porver"?"porver":"series";render();
   };
-  sync();if(!id)document.getElementById("fT").focus({preventScroll:true});
+  conectarFicha();
+  sync();if(!id)document.getElementById("fQ").focus({preventScroll:true});
 }
 function close(){document.getElementById("sheetRoot").innerHTML="";editId=null}
 document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
@@ -304,6 +331,46 @@ async function save(id,x){
 }
 async function remove(id){const r=await sb.from("titulos").delete().eq("id",id);if(r.error){toast("No se pudo eliminar");return}delete items[id];render()}
 
+
+/* Buscar película o serie: póster, año, tipo y plataforma */
+function conectarFicha(){
+  const q=document.getElementById("fQ"),sug=document.getElementById("fSug"),pv=document.getElementById("fPv");let tm,res=[];
+  const pinta=()=>{sug.hidden=!res.length;sug.innerHTML=res.map((x,i)=>`<button type="button" data-fi="${i}">${x.poster?`<img src="${esc(x.poster)}" alt="" loading="lazy">`:"<i></i>"}<span><b>${esc(x.titulo)}</b><span>${[x.anio,x.tipo==="serie"?"Serie":"Película",x.plataforma].filter(Boolean).map(esc).join(" · ")}</span></span></button>`).join("")};
+  sug.onclick=e=>{const t=e.target.closest("[data-fi]");if(!t)return;const x=res[+t.dataset.fi];
+    draft.titulo=x.titulo;draft.anio=x.anio?String(x.anio):"";draft.tipo=x.tipo;draft.poster=x.poster;draft.tmdb_id=x.tmdb_id;if(x.plataforma&&!document.getElementById("fP").value)document.getElementById("fP").value=x.plataforma;
+    document.getElementById("fT").value=x.titulo;document.getElementById("fY").value=draft.anio;
+    document.querySelectorAll("[data-ty]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ty===draft.tipo));
+    if(typeof syncSheet==="function")syncSheet();
+    pv.hidden=!x.poster;pv.innerHTML=x.poster?`<img src="${esc(x.poster)}" alt=""><span class="hint">${esc([x.anio,x.plataforma].filter(Boolean).join(" · ")||"Póster y datos rellenados")}</span>`:"";
+    sug.hidden=true;q.value="";toast("Datos rellenados")};
+  q.oninput=()=>{clearTimeout(tm);const v=q.value.trim();if(v.length<2){res=[];pinta();return}
+    tm=setTimeout(async()=>{try{const r=await sb.functions.invoke("ficha",{body:{q:v}});res=(r.data&&r.data.resultados)||[];pinta()}catch(_){}} ,350)};
+}
+
+/* Tu año en cine */
+function anioEnCine(){
+  const y=new Date().getFullYear();const V=all().filter(x=>x.estado==="vista"&&String(x.fecha||"").startsWith(String(y)));
+  const pelis=V.filter(x=>x.tipo==="peli"),series=V.filter(x=>x.tipo==="serie");
+  const cine=V.filter(x=>x.donde==="cine").length;const notas=V.filter(x=>x.nota>0);
+  const media=notas.length?(notas.reduce((a,x)=>a+x.nota,0)/notas.length):0;
+  const porMes=Array(12).fill(0);V.forEach(x=>porMes[+x.fecha.slice(5,7)-1]++);const max=Math.max(1,...porMes);
+  const mejorMes=porMes.indexOf(Math.max(...porMes));
+  const plats={};V.forEach(x=>{const k=x.donde==="cine"?"Cine":(x.plataforma||"").split(",")[0].trim();if(k)plats[k]=(plats[k]||0)+1});
+  const topP=Object.entries(plats).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const moods={};V.forEach(x=>(x.moods||[]).forEach(m=>moods[m]=(moods[m]||0)+1));const topM=Object.entries(moods).sort((a,b)=>b[1]-a[1])[0];
+  const top=[...notas].sort((a,b)=>b.nota-a.nota).slice(0,5);
+  const r=document.getElementById("sheetRoot");
+  r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet anio" role="dialog" aria-modal="true" aria-labelledby="anH">
+    <span class="eyebrow">Tu año en cine</span><h2 id="anH">${y}</h2>
+    ${V.length?`<div class="an-grid"><div><b>${pelis.length}</b><span>películas</span></div><div><b>${series.length}</b><span>series</span></div><div><b>${cine}</b><span>en el cine</span></div><div><b>${media?media.toFixed(1):"—"}</b><span>nota media</span></div></div>
+    <div class="an-mes" aria-label="Por meses">${porMes.map((n,i)=>`<div title="${MESL[i]}: ${n}"><i style="height:${n/max*100}%"></i><span>${MES[i].slice(0,1)}</span></div>`).join("")}</div>
+    <p class="an-frase">Tu mes más cinéfilo fue <b>${MESL[mejorMes].toLowerCase()}</b>${topP.length?`, y donde más viste fue <b>${esc(topP[0][0])}</b>`:""}${topM?`. Tu mood del año: <b>${esc(MOODS[topM[0]]||topM[0])}</b>`:""}.</p>
+    ${top.length?`<div class="an-top"><span class="eyebrow">Tus mejor valoradas</span>${top.map((x,i)=>`<div class="an-row"><span class="mono">${i+1}</span>${x.poster?`<img src="${esc(x.poster)}" alt="">`:""}<b>${esc(x.titulo)}</b><span class="stars">${stars(x.nota)}</span></div>`).join("")}</div>`:""}`
+    :`<p class="hint">Aún no hay nada visto este año. Cuando apuntes tus primeras entradas, aquí verás tu resumen.</p>`}
+    <div class="sheet-actions"><button class="add" id="anClose">Cerrar</button></div></div></div>`;
+  document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")r.innerHTML=""};document.getElementById("anClose").onclick=()=>r.innerHTML="";
+}
+
 /* Créame una watchlist (IA) */
 const IA={res:[],info:"",busy:false,txt:""};
 function viewIA(){
@@ -311,7 +378,7 @@ function viewIA(){
     ${l.por_que?`<p class="ia-why">${esc(l.por_que)}</p>`:""}
     ${l.added?`<span class="ia-ok">En tu lista «Por ver»</span>`:`<button class="add ia-add" data-ia-add="${i}">Añadir a Por ver</button>`}</article>`).join("");
   return `<section class="ia" aria-labelledby="iaH"><span class="eyebrow">Con inteligencia artificial</span><h2 id="iaH">Créame una watchlist</h2>
-    <p class="hint">Cuéntame qué te apetece y te propongo seis películas o series que no tengas ya apuntadas.</p>
+    <p class="hint">Cuéntame qué te apetece y te propongo diez películas o series que no tengas ya apuntadas.</p>
     <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: thrillers de los 90 para ver en pareja">${esc(IA.txt)}</textarea>
     <button class="add ia-go" id="iaGo" ${IA.busy?"disabled":""}>${IA.busy?"Pensando…":"Créame una watchlist"}</button>
     ${IA.info?`<p class="hint">${esc(IA.info)}</p>`:""}${res?`<div class="ia-list">${res}</div>`:""}</section>`;
@@ -328,7 +395,8 @@ async function pedirIA(){
   IA.busy=false;render();
 }
 async function anadirIA(i){const l=IA.res[i];if(!l||l.added)return;
-  const x={tipo:l.tipo,estado:"porver",titulo:l.titulo,anio:l.anio||"",donde:l.donde,plataforma:l.plataforma||"",fecha:null,nota:0,resena:"",rewatch:false,moods:l.moods||[],prio:l.donde==="cine"};
+  let f=null;try{const r=await sb.functions.invoke("ficha",{body:{q:l.titulo}});f=(r.data&&r.data.resultados||[]).find(z=>!l.anio||!z.anio||Math.abs(z.anio-l.anio)<=1)||null}catch(_){}
+  const x={poster:f&&f.poster||null,tmdb_id:f&&f.tmdb_id||null,tipo:l.tipo,estado:"porver",titulo:l.titulo,anio:l.anio||"",donde:l.donde,plataforma:l.plataforma||"",fecha:null,nota:0,resena:"",rewatch:false,moods:l.moods||[],prio:l.donde==="cine"};
   const r=await sb.from("titulos").insert(aFila(x)).select().single();if(r.error){toast("No se pudo añadir");return}
   l.added=true;toast("Añadida a Por ver");cargar();}
 let tt;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2200)}
@@ -341,6 +409,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#addBtn")){openSheet(null,tab==="diario"?"vista":tab==="series"?"serie":"porver");return}
   if(x=e.target.closest("[data-mood]")){mood=x.dataset.mood||null;render();return}
   if(e.target.closest("#iaGo")){pedirIA();return}
+  if(e.target.closest("#anioBtn")){anioEnCine();return}
   if(x=e.target.closest("[data-ia-add]")){anadirIA(+x.dataset.iaAdd);return}
 });
 
@@ -359,10 +428,10 @@ async function cargar(){
   if(r.error){document.getElementById("view").innerHTML='<p class="cargando">No se pudo cargar. Comprueba la conexión y vuelve a abrir la app.</p>';return}
   items={};r.data.forEach(x=>items[x.id]=deFila(x));listo=true;if(!editId)render();
 }
-const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FFFFFF",hundido:"#EDE5D6",linea:"#E0D7C6","linea-fuerte":"#9C8F92",tinta:"#24161A","tinta-suave":"#6C6266",oro:"#6E1E2B",primario:"#6E1E2B","sobre-primario":"#FFF6EE","display-app":'"Bebas Neue",Impact,"Arial Narrow",sans-serif',"display-tracking":".04em"},
-  oscuro:{fondo:"#150D10","fondo-alto":"#1F1518",hundido:"#2A1C20",linea:"#3A2A2F","linea-fuerte":"#6B5A5F",tinta:"#F1E9E4","tinta-suave":"#A7999E",oro:"#D9B878",primario:"#B8475A","sobre-primario":"#FFF6EE","display-app":'"Bebas Neue",Impact,"Arial Narrow",sans-serif',"display-tracking":".04em"}};
+const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FFFFFF",hundido:"#EDE5D6",linea:"#E0D7C6","linea-fuerte":"#9C8F92",tinta:"#24161A","tinta-suave":"#6C6266",oro:"#6E1E2B",primario:"#6E1E2B","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"},
+  oscuro:{fondo:"#150D10","fondo-alto":"#1F1518",hundido:"#2A1C20",linea:"#3A2A2F","linea-fuerte":"#6B5A5F",tinta:"#F1E9E4","tinta-suave":"#A7999E",oro:"#D9B878",primario:"#B8475A","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"}};
 CiccCuenta.iniciar({app:"Platea",icono:"../iconos/la-taquilla-192.png?v=3",lema:"¿Qué veo hoy?",tema:TEMA_ACCESO}).then(async r=>{
-  sb=r.sb;CiccCuenta.firma("Platea",document.getElementById("pie"));await cargar();
+  sb=r.sb;CiccCuenta.casillaResumen(document.getElementById("pie"),toast);CiccCuenta.firma("Platea",document.getElementById("pie"));await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!editId)cargar()});
 });
 </script>
