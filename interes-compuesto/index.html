@@ -303,7 +303,8 @@ td.wy { color: var(--pink); }
 #pdf { color: #007A7A; border-color: rgba(0, 153, 153, .45); background: #F0FAFA; }
 #pdf:hover { border-color: #007A7A; background: #E0F4F4; }
 .wrap:fullscreen #pdf { display: none; }        /* como «Reiniciar»: en pantalla completa se presenta, no se exporta */
-.pfoot, .ppage { display: none; }
+.ppage { display: none; }
+@media (max-width: 760px) { #pdf.busy::after { content: "Generando…"; } #pdf.busy .ic { display: none; } }
 .printing * { transition: none !important; }
 /* pantallas medianas: la navegación en una fila y las cuatro herramientas en otra (sin botones sueltos) */
 @media (max-width: 1199px) { .bar { flex-wrap: wrap; } }
@@ -315,22 +316,21 @@ td.wy { color: var(--pink); }
   .bar:has(> #full:not([hidden])) > #reset { margin-left: 0; }
 }
 
-/* ---------- impresión / PDF: la diapositiva tal como se ve, en A4 apaisado, sin controles ---------- */
+/* ---------- respaldo sin conexión (diálogo de impresión): la diapositiva sola, en una hoja 16:9 sin márgenes ---------- */
 @media print {
-  @page { size: A4 landscape; margin: 12mm; }
+  @page { size: 338.67mm 190.5mm; margin: 0; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; transition: none !important; animation: none !important; }
   :root { padding: 0 !important; }
   html, body { background: #fff !important; }
   body { margin: 0; padding: 0 !important; }
   .bar, .hint, .panel { display: none !important; }
-  .wrap, .ppage { max-width: none; width: 100%; height: 185mm; margin: 0; padding: 0; gap: 0;
-    display: flex !important; flex-direction: column; justify-content: center; break-inside: avoid; overflow: hidden; }
+  .wrap, .ppage { max-width: none; width: 100%; height: 190.5mm; margin: 0; padding: 0; gap: 0;
+    display: block !important; break-inside: avoid; overflow: hidden; }
   .ppage { break-before: page; }
-  .stage { width: 100%; aspect-ratio: 16 / 9; flex: none; box-shadow: none; border: 1px solid var(--line); border-radius: 6px; }
+  .stage { width: 100%; aspect-ratio: 16 / 9; box-shadow: none; border-radius: 0; }
   .note { position: static !important; top: auto !important; bottom: auto !important; }
   .ed, .ed:hover, .ed:focus { border-bottom-color: transparent !important; background: transparent !important; }
   .comp { background: #fff; }
-  .pfoot { display: flex; justify-content: space-between; gap: 6mm; margin: 3mm 1mm 0; font-size: 9pt; color: var(--muted); }
 }
 </style>
 
@@ -376,7 +376,6 @@ td.wy { color: var(--pink); }
       </div>
     </div>
   </section>
-  <p class="pfoot" id="pfoot"></p>
 
   <div class="bar">
     <div class="nav" role="group" aria-label="Pasos de la presentación">
@@ -842,40 +841,146 @@ td.wy { color: var(--pink); }
     $('toggleData').setAttribute('aria-expanded', String(!p.hidden));
   });
 
-  // ---------- exportar en PDF (diálogo de impresión → «Guardar como PDF») ----------
-  // Se imprime lo que se está enseñando. Dos excepciones: sin nada revelado (paso 0) sale la simulación entera,
+  // ---------- exportar en PDF ----------
+  // Se exporta lo que se está enseñando. Dos excepciones: sin nada revelado (paso 0) sale la simulación entera,
   // y en el último paso «¿Y sin interés compuesto?» (que tapa la tabla) salen dos hojas: la diapositiva completa y la comparación.
+  // Cada hoja es la diapositiva 16:9 tal como se ve en pantalla: se dibuja a 1600×900 (igual desde el móvil o el ordenador)
+  // con el propio navegador (html-to-image) y se pasa a un PDF 16:9 (jsPDF). Sin conexión, se usa el diálogo de impresión.
+  const LIBS = ['https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js',
+    'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'];
+  const REF_W = 1600, REF_H = 900, PAGE_W = 338.67, PAGE_H = 190.5;   // mm: 16:9
+  const libsOk = () => !!(window.htmlToImage && window.jspdf && window.jspdf.jsPDF);
+  let libsP = null;
+  function loadLibs() {
+    if (libsOk()) return Promise.resolve();
+    if (!libsP) {
+      libsP = Promise.all(LIBS.map(src => new Promise((ok, ko) => {
+        const sc = document.createElement('script'); sc.src = src; sc.async = true; sc.crossOrigin = 'anonymous';
+        sc.onload = ok; sc.onerror = () => { sc.remove(); ko(new Error('No se pudo cargar ' + src)); };
+        document.head.appendChild(sc);
+      }))).then(() => { if (!libsOk()) throw new Error('Librerías no disponibles'); })
+        .catch(e => { libsP = null; throw e; });
+    }
+    return libsP;
+  }
+  const exportSteps = () => {
+    const m = maxStep(), s = (step <= 0 || step > m) ? m : step;
+    return S.comp && s >= m ? [m - 1, m] : [s];
+  };
+  const p2 = n => String(n).padStart(2, '0');
+  const fileTitle = d => 'Interés compuesto – ' + p2(d.getDate()) + '-' + p2(d.getMonth() + 1) + '-' + d.getFullYear();
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const maxRowsAll = () => Math.max(ROWS, yearsList(S.two ? Math.max(S.A.years, S.B.years) : S.A.years, validW().map(w => w.year)).length);
+
+  // un documento aparte de 1600 px de ancho: la diapositiva siempre con el diseño de escritorio
+  async function makeFrame() {
+    const fr = document.createElement('iframe');
+    fr.setAttribute('aria-hidden', 'true'); fr.tabIndex = -1;
+    fr.style.cssText = 'position:fixed;left:-20000px;top:0;width:' + REF_W + 'px;height:' + REF_H + 'px;border:0;pointer-events:none;';
+    document.body.appendChild(fr);
+    const css = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]')).map(e => e.outerHTML).join('');
+    const d = fr.contentDocument;
+    d.open();
+    d.write('<!doctype html><html lang="es" class="printing"><head><meta charset="utf-8">' + css +
+      '<style>:root{padding:0!important}body{margin:0!important;padding:0!important;background:#fff!important}' +
+      '.stage{width:' + REF_W + 'px!important;height:' + REF_H + 'px;border-radius:0;box-shadow:none}</style></head><body></body></html>');
+    d.close();
+    const links = Array.from(d.querySelectorAll('link[rel="stylesheet"]')).filter(l => !l.sheet);
+    await Promise.race([Promise.all(links.map(l => new Promise(r => { l.onload = l.onerror = r; }))), sleep(3000)]);
+    return fr;
+  }
+  // como fit(), pero sobre la copia de 1600 px
+  function fitCopy(d) {
+    const g = id => d.getElementById(id);
+    const tbl = g('tbl'), note = g('note'), slide = g('slide');
+    const cq = slide.getBoundingClientRect().width / 100;
+    const top = tbl.getBoundingClientRect().top, head = g('thead').getBoundingClientRect().height;
+    const cs = d.defaultView.getComputedStyle(slide);
+    const gap = parseFloat(cs.rowGap) || 2.2 * cq;
+    const sr = slide.getBoundingClientRect(), padB = parseFloat(cs.paddingBottom) || 0;
+    note.style.top = 'auto'; note.style.bottom = '';
+    const room = sr.bottom - padB - note.getBoundingClientRect().height - gap - top - head;
+    const n = maxRowsAll(), rh = Math.max(1.6, Math.min(2.85, room / n / cq));
+    tbl.style.setProperty('--rowh', rh.toFixed(3));
+    note.style.top = (top - sr.top + head + n * rh * cq + gap) + 'px';
+    note.style.bottom = 'auto';
+  }
+  async function snapStep(fr, st, opts) {
+    step = st; render();
+    const d = fr.contentDocument;
+    d.body.textContent = '';
+    const c = d.importNode($('stage'), true);
+    c.querySelectorAll('.ed').forEach((e, i) => { e.value = $('stage').querySelectorAll('.ed')[i].value; });
+    d.body.appendChild(c);
+    void c.offsetHeight;
+    if (d.fonts && d.fonts.ready) await Promise.race([d.fonts.ready, sleep(3000)]);
+    fitCopy(d);
+    void c.offsetHeight;
+    if (opts.fontEmbedCSS == null) opts.fontEmbedCSS = await window.htmlToImage.getFontEmbedCSS(c).catch(() => '');   // fuentes web, una sola vez
+    return window.htmlToImage.toJpeg(c, Object.assign({ pixelRatio: 3, width: REF_W, height: REF_H, backgroundColor: '#ffffff', quality: 0.95 }, opts));   // JPEG: jsPDF lo incrusta sin recomprimir (rápido)
+  }
+  let busy = false;
+  async function exportPDF() {
+    if (busy || restorePrint) return;
+    busy = true;
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    const btn = $('pdf'), lbl = btn.querySelector('.lbl'), saved = step, root = document.documentElement;
+    btn.style.minWidth = btn.getBoundingClientRect().width + 'px';
+    btn.classList.add('busy'); btn.setAttribute('aria-busy', 'true'); btn.disabled = true; lbl.textContent = 'Generando…';
+    let fr = null, ok = false;
+    try {
+      await loadLibs();
+      root.classList.add('printing');
+      fr = await makeFrame();
+      const imgs = [], opts = {};
+      for (const st of exportSteps()) imgs.push(await snapStep(fr, st, opts));
+      const pdf = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: [PAGE_W, PAGE_H], compress: true });
+      imgs.forEach((img, i) => {
+        if (i) pdf.addPage([PAGE_W, PAGE_H], 'landscape');
+        pdf.addImage(img, 'JPEG', 0, 0, PAGE_W, PAGE_H);
+      });
+      const name = fileTitle(new Date());
+      pdf.setProperties({ title: name });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(pdf.output('blob')); a.download = name + '.pdf';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+      ok = true;
+    } catch (e) {
+      console.warn('Exportar PDF: se usa el diálogo de impresión', e);
+    } finally {
+      if (fr) fr.remove();
+      step = saved; render();
+      root.classList.remove('printing');
+      btn.classList.remove('busy'); btn.removeAttribute('aria-busy'); btn.disabled = false; lbl.textContent = 'Exportar PDF'; btn.style.minWidth = '';
+      busy = false;
+    }
+    if (!ok) exportPrint();
+  }
+
+  // respaldo: diálogo de impresión («Guardar como PDF»), hoja 16:9 sin márgenes
   function printFit() {
     // en móvil la diapositiva no es 16:9 y fit() no calcula el alto de fila: se calcula aquí para la hoja
     if (!window.matchMedia('(max-width: 760px)').matches) return;
-    const W = validW().map(w => w.year);
-    const maxRows = Math.max(ROWS, yearsList(S.two ? Math.max(S.A.years, S.B.years) : S.A.years, W).length);
-    $('tbl').style.setProperty('--rowh', Math.max(1.6, Math.min(2.85, (56.25 - PRINT_FIXED) / maxRows)).toFixed(3));
+    $('tbl').style.setProperty('--rowh', Math.max(1.6, Math.min(2.85, (56.25 - PRINT_FIXED) / maxRowsAll())).toFixed(3));
   }
   const PRINT_FIXED = 27.4;   // alto de la diapositiva (en % del ancho) que no es filas de la tabla: márgenes, título, cajas, cabecera y etiquetas
   let restorePrint = null;
-  function exportPDF() {
+  function exportPrint() {
     if (restorePrint) return;
-    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-    const root = document.documentElement, saved = step, title = document.title, m = maxStep();
+    const root = document.documentElement, saved = step, title = document.title, steps = exportSteps();
     root.classList.add('printing');
-    if (step <= 0 || step > m) step = m;
-    const now = new Date();
-    const fecha = now.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-    $('pfoot').innerHTML = '<span>Simulación orientativa: las rentabilidades no están garantizadas.</span><span>' + fecha + '</span>';
     let extra = null;
-    if (S.comp && step >= m) {
-      render();
+    if (steps.length > 1) {
+      step = steps[1]; render();
       extra = document.createElement('div'); extra.className = 'ppage';
-      const c = $('stage').cloneNode(true), f = $('pfoot').cloneNode(true);
-      [c, f].forEach(n => { n.removeAttribute('id'); n.querySelectorAll('[id]').forEach(e => e.removeAttribute('id')); });
+      const c = $('stage').cloneNode(true);
+      c.removeAttribute('id'); c.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
       c.removeAttribute('aria-label');
-      extra.append(c, f); document.body.appendChild(extra);
-      step = m - 1;
+      extra.append(c); document.body.appendChild(extra);
     }
-    render(); printFit();
-    const p2 = n => String(n).padStart(2, '0');
-    document.title = 'Interés compuesto – ' + p2(now.getDate()) + '-' + p2(now.getMonth() + 1) + '-' + now.getFullYear();
+    step = steps[0]; render(); printFit();
+    document.title = fileTitle(new Date());
     restorePrint = () => {
       if (!restorePrint) return;
       restorePrint = null;
