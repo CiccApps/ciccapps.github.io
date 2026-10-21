@@ -99,8 +99,7 @@
     try {
       await cargarGsi();
       var n = await nonces();
-      var oscuro = matchMedia('(prefers-color-scheme: dark)').matches;
-      google.accounts.id.initialize({
+            google.accounts.id.initialize({
         client_id: CLIENTE_GOOGLE, nonce: n.hash, use_fedcm_for_prompt: true, itp_support: true,
         callback: async function (resp) {
           msg('Entrando…');
@@ -108,8 +107,8 @@
         }
       });
       google.accounts.id.renderButton(caja, {
-        type: 'standard', theme: oscuro ? 'filled_black' : 'outline', size: 'large', text: 'continue_with',
-        shape: 'rectangular', logo_alignment: 'center', locale: 'es', width: Math.min(400, Math.round(caja.clientWidth || 340))
+        type: 'standard', theme: 'outline', size: 'large', text: 'continue_with',
+        shape: 'rectangular', logo_alignment: 'center', locale: 'es', width: Math.min(400, Math.round(caja.getBoundingClientRect().width || 340))
       });
     } catch (e) { alFallar(); }
   }
