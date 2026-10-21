@@ -168,6 +168,67 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 .cc-firma{padding-top:24px}
 .dia{display:flex;flex-direction:column;gap:14px}
 @media (min-width:900px){.tickets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tickets>.ticket:last-child:nth-child(odd){grid-column:1/-1}}
+
+/* Entrada rasgada: la matriz se separa por el troquel al pasar a «vista» */
+.ticket-roto{position:fixed;z-index:15;pointer-events:none;background:var(--stub);border:1px solid var(--line);border-right:0;border-radius:8px 0 0 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;transform-origin:100% 0;box-shadow:0 6px 16px rgba(0,0,0,.18);
+  -webkit-mask:radial-gradient(circle at 100% 50%,transparent 2.6px,#000 3.2px) 0 0/100% 9px repeat-y;mask:radial-gradient(circle at 100% 50%,transparent 2.6px,#000 3.2px) 0 0/100% 9px repeat-y}
+.ticket-roto b{font:800 30px/1 var(--f-body);letter-spacing:-.01em}
+.ticket-roto span{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+
+/* Tu sala: una butaca por título visto este año */
+.sala{display:flex;flex-direction:column;gap:10px}
+.sala-head{display:flex;flex-direction:column;gap:2px}
+.sala-room{--b:clamp(20px,6.2vw,26px);display:grid;justify-content:center;gap:12px;padding:16px 8px 14px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
+.pantalla{display:flex;flex-direction:column;align-items:center;gap:2px}
+.pantalla svg{display:block;width:100%;height:22px;overflow:visible}
+.pantalla span{font:600 10px var(--f-mono);letter-spacing:.32em;color:var(--muted);padding-left:.32em}
+.sala-g{display:grid;grid-template-columns:repeat(5,var(--b)) 20px repeat(5,var(--b));gap:6px 5px;justify-content:center;align-items:center}
+.sala-l{font:600 10px var(--f-mono);color:var(--muted);text-align:center}
+.butaca{display:block;width:var(--b);height:calc(var(--b)*.86);border-radius:7px 7px 3px 3px;border:1.5px solid color-mix(in srgb,var(--muted) 55%,transparent);background:transparent;padding:0;position:relative}
+button.butaca{cursor:pointer;background:var(--red);border-color:var(--red);box-shadow:inset 0 -3px 0 rgba(0,0,0,.22)}
+button.butaca.cine::after{content:"";position:absolute;left:50%;top:38%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:var(--bulb);box-shadow:0 0 0 1.5px var(--card)}
+button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:2px}
+.sala-ley{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.sala-ley span{display:flex;align-items:center;gap:6px}
+.sala-ley .butaca{--b:14px;border-radius:4px 4px 2px 2px}
+.sala-ley .butaca.ocu{background:var(--red);border-color:var(--red)}
+.sala-ley .butaca.cine::after{content:"";position:absolute;left:50%;top:45%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:var(--bulb);box-shadow:0 0 0 1px var(--card)}
+.sala-cap{margin:0;text-align:center;font-size:13px;color:var(--muted);min-height:1.5em}
+.sala-cap b{color:var(--ink)}
+
+/* Cartelera de la semana */
+.cart-card{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;text-align:left;padding:20px 18px 16px;border-radius:10px;background:var(--card);border:1px solid var(--line);cursor:pointer;position:relative}
+.cart-card::before{content:"";position:absolute;left:10px;right:10px;top:6px;height:6px;background:radial-gradient(circle,var(--bulb) 2.2px,transparent 2.6px) 0 0/14px 6px repeat-x;opacity:.7}
+.cart-card .cart-txt{display:flex;flex-direction:column;gap:4px;min-width:0}
+.cart-card b{font-family:var(--f-display);font-weight:400;font-size:24px;line-height:1.1;letter-spacing:.03em;text-wrap:balance}
+.cart-card .cart-go{flex:none;font-weight:700;font-size:20px;color:var(--red)}
+.cart-list{display:flex;flex-direction:column}
+.cart-row{display:grid;grid-template-columns:48px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.cart-row img,.cart-row i{width:48px;height:72px;object-fit:cover;border-radius:4px;background:var(--stub);display:block}
+.cart-row h3{margin:0;font-size:15px;font-weight:700;line-height:1.25}
+.cart-row .mono{font-size:12px;color:var(--muted)}
+.cart-row .btn{padding:8px 12px;font-size:13px;white-space:nowrap}
+.cart-ok{font-size:13px;font-weight:700;color:var(--ok);white-space:nowrap}
+
+/* Contador de Cinesa Unlimited */
+.cin{display:flex;flex-direction:column;gap:12px;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
+.cin-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cin-aj{border:0;background:none;padding:4px 0;font:700 13px var(--f-body);color:var(--red);cursor:pointer}
+.cin-n{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cin-n div{display:flex;flex-direction:column;min-width:0;border-left:2px solid var(--line);padding-left:8px}
+.cin-n b{font:800 20px/1.1 var(--f-body);letter-spacing:-.01em;white-space:nowrap}
+.cin-n span{font-size:11.5px;color:var(--muted)}
+.cin-f{margin:0;font-size:15px}
+.cin-f b{color:var(--red)}
+.cin-form{display:grid;grid-template-columns:1fr;gap:10px}
+@media (min-width:480px){.cin-form{grid-template-columns:1fr 1fr}}
+.eur{position:relative}
+.eur input{padding-right:30px;-moz-appearance:textfield;appearance:textfield}
+.eur input::-webkit-inner-spin-button,.eur input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.eur span{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.cin-act{display:flex;justify-content:flex-end;gap:10px}
+.mq-cin{margin:0;font:600 12.5px/1.4 var(--f-body);color:var(--bulb);letter-spacing:.01em;text-wrap:balance}
+.mq-cin b{color:#FFF6EE;font-weight:700}
 </style>
 
 </head>
@@ -183,6 +244,7 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
       <div><b id="stQueue" class="mono">0</b><span>por ver</span></div>
       <div><b id="stSeries" class="mono">0</b><span>series en curso</span></div>
     </div>
+    <p class="mq-cin" id="mqCin" hidden></p>
     <div class="res-btns"><button class="anio-btn" id="mesBtn" type="button">Tu mes →</button><button class="anio-btn" id="anioBtn" type="button">Tu año en cine →</button></div>
   </section>
 
@@ -235,6 +297,8 @@ function render(){
   document.getElementById("stCine").textContent=seen.filter(x=>x.donde==="cine"&&(x.fecha||"").startsWith(m)).length;
   const q=L.filter(x=>x.estado==="porver");document.getElementById("stQueue").textContent=q.length;document.getElementById("ctQ").textContent=q.length||"";
   const sc=L.filter(x=>x.tipo==="serie"&&x.estado==="viendo");document.getElementById("stSeries").textContent=sc.length;document.getElementById("ctS").textContent=sc.length||"";
+  const cq=cuentaCinesa(m),mq=document.getElementById("mqCin");mq.hidden=!cq;
+  if(cq)mq.innerHTML=`Cinesa Unlimited · ${cq.ahorro>0?`este mes te has ahorrado <b>${eur(cq.ahorro)}</b>`:cq.ahorro===0?"este mes ya la has amortizado":`te ${cq.faltan===1?"falta <b>1 película</b>":`faltan <b>${cq.faltan} películas</b>`} para amortizarla`}`;
   document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.tab===tab));
   const v=document.getElementById("view");
   if(tab==="diario"){
@@ -247,8 +311,8 @@ function render(){
   }else if(tab==="porver"){
     const chips=`<div class="chips" role="group" aria-label="Mood"><button class="chip" id="mood-all" data-mood="" aria-pressed="${!mood}">Cualquiera</button>${Object.entries(MOODS).map(([k,l])=>`<button class="chip" id="mood-${k}" data-mood="${k}" aria-pressed="${mood===k}">${l}</button>`).join("")}</div>`;
     let w=q.filter(x=>!mood||(x.moods||[]).includes(mood)).sort((a,b)=>(b.prio?1:0)-(a.prio?1:0)||(b.creado||"").localeCompare(a.creado||""));
-    if(!q.length){v.innerHTML=empty("La lista está vacía","Apunta aquí lo que quieras ver: estrenos para gastar el Unlimited, recomendaciones o clásicos pendientes. Etiquétalos por mood para elegir rápido.","porver")+viewIA();return}
-    v.innerHTML=`<p class="hint">¿Qué te apetece? Filtra por mood. Las marcadas como «En cartelera» van primero.</p>${chips}<div class="tickets">${w.length?w.map(ticket).join(""):`<p class="hint">Nada con ese mood en tu lista.</p>`}</div>${viewIA()}`;
+    if(!q.length){v.innerHTML=cartCard()+empty("La lista está vacía","Apunta aquí lo que quieras ver: estrenos para gastar el Unlimited, recomendaciones o clásicos pendientes. Etiquétalos por mood para elegir rápido.","porver")+viewIA();return}
+    v.innerHTML=`${cartCard()}<p class="hint">¿Qué te apetece? Filtra por mood. Las marcadas como «En cartelera» van primero.</p>${chips}<div class="tickets">${w.length?w.map(ticket).join(""):`<p class="hint">Nada con ese mood en tu lista.</p>`}</div>${viewIA()}`;
   }else{
     const s=L.filter(x=>x.tipo==="serie"&&x.estado!=="vista"&&x.estado!=="porver");
     const done=L.filter(x=>x.tipo==="serie"&&x.estado==="vista");
@@ -257,9 +321,12 @@ function render(){
   }
 }
 function empty(h,p,kind){return `<div class="empty"><h2>${h}</h2><p>${p}</p><button class="add" data-new="${kind}">+ Añadir la primera</button></div>`}
-function ticket(x){
+function stubHtml(x){
   const d=x.fecha?new Date(x.fecha+"T12:00"):null;
-  const stub=x.estado==="vista"&&d?`<b>${d.getDate()}</b><span>${MES[d.getMonth()]}</span>`:x.tipo==="serie"?`<b>${x.temp?"T"+x.temp:"—"}</b><span>${x.cap?"cap "+x.cap:"serie"}</span>`:`<b>${x.prio?"!":"·"}</b><span>${x.prio?"cartel":"por ver"}</span>`;
+  return x.estado==="vista"&&d?`<b>${d.getDate()}</b><span>${MES[d.getMonth()]}</span>`:x.tipo==="serie"?`<b>${x.temp?"T"+x.temp:"—"}</b><span>${x.cap?"cap "+x.cap:"serie"}</span>`:`<b>${x.prio?"!":"·"}</b><span>${x.prio?"cartel":"por ver"}</span>`;
+}
+function ticket(x){
+  const stub=stubHtml(x);
   const meta=[x.anio?`<span class="mono">${esc(x.anio)}</span>`:"",x.tipo==="serie"?`<span class="badge alt">Serie</span>`:"",x.donde?`<span class="badge ${x.donde==="cine"?"":"alt"}">${WHERE[x.donde]}</span>`:"",x.plataforma?`<span>${esc(x.plataforma)}</span>`:"",x.rewatch?`<span class="badge alt">Revisionado</span>`:"",x.nota?`<span class="stars">${stars(x.nota)}</span>`:"",x.estado==="porver"&&x.prio?`<span class="badge">En cartelera</span>`:""].filter(Boolean).join("");
   const prog=x.tipo==="serie"&&x.temps&&x.temp&&x.estado==="viendo"?`<div class="prog"><i style="width:${Math.min(100,Math.round((x.temp-1)/x.temps*100+(1/x.temps)*50))}%"></i></div>`:"";
   return `<button class="ticket${x.poster?" con-poster":""}" data-open="${x.id}"><span class="stub">${stub}</span><span class="body"><h3>${esc(x.titulo)}</h3><span class="meta">${meta}</span>${x.resena?`<p class="rev">${esc(x.resena)}</p>`:""}${prog}</span>${x.poster?`<img class="poster" src="${esc(x.poster)}" alt="" loading="lazy">`:""}</button>`;
@@ -306,7 +373,7 @@ function openSheet(id,kind){
   };
   syncSheet=sync;
   r.querySelectorAll("[data-ty]").forEach(b=>b.onclick=()=>{draft.tipo=b.dataset.ty;sync()});
-  r.querySelectorAll("[data-es]").forEach(b=>b.onclick=()=>{draft.estado=b.dataset.es;sync()});
+  r.querySelectorAll("[data-es]").forEach(b=>b.onclick=()=>{draft.estado=b.dataset.es;if(draft.estado==="vista"){const fd=document.getElementById("fD");if(fd&&!fd.value)fd.value=today()}sync()});
   r.querySelectorAll("[data-mo]").forEach(b=>b.onclick=()=>{const k=b.dataset.mo;draft.moods=(draft.moods||[]).includes(k)?draft.moods.filter(z=>z!==k):[...(draft.moods||[]),k];b.setAttribute("aria-pressed",draft.moods.includes(k))});
   document.getElementById("fR").oninput=e=>{document.getElementById("fRo").textContent=stars(e.target.value/2)||"Sin nota"};
   document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")close()};
@@ -319,7 +386,11 @@ function openSheet(id,kind){
     if(draft.estado==="vista"){Object.assign(x,{fecha:v("fD"),donde:v("fW"),nota:+v("fR")/2,resena:v("fRv").trim(),rewatch:document.getElementById("fRw").checked})}
     if(draft.estado==="porver")x.prio=document.getElementById("fPr").checked;
     if(draft.tipo==="serie"){x.temp=+v("fTp")||"";x.cap=+v("fCp")||"";x.temps=+v("fTs")||""}
-    save(editId,x);close();toast(draft.estado==="vista"?"Entrada guardada":"Guardado");
+    const prev=editId&&items[editId]?Object.assign({},items[editId]):null;
+    const pasaVista=x.estado==="vista"&&(!prev||prev.estado!=="vista");
+    const resto=prev?stubHtml(prev):`<b>·</b><span>entrada</span>`;
+    save(editId,x).then(nid=>{if(nid&&pasaVista&&tab==="diario")requestAnimationFrame(()=>rasgar(nid,resto))});
+    close();toast(draft.estado==="vista"?"Entrada guardada":"Guardado");
     tab=x.estado==="vista"?"diario":x.estado==="porver"?"porver":"series";render();
   };
   conectarFicha();
@@ -331,7 +402,21 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
 async function save(id,x){
   const r=id?await sb.from("titulos").update(aFila(x)).eq("id",id).select().single():await sb.from("titulos").insert(aFila(x)).select().single();
   if(r.error){toast("No se pudo guardar: "+r.error.message);return}
-  items[r.data.id]=deFila(r.data);render();
+  items[r.data.id]=deFila(r.data);render();return r.data.id;
+}
+/* La matriz se rasga por el troquel y cae; la entrada se queda en el diario. Solo es decorativo: los datos ya están guardados */
+const sinMov=()=>{try{return matchMedia("(prefers-reduced-motion: reduce)").matches}catch(_){return false}};
+function rasgar(id,resto){
+  if(sinMov()||!document.body.animate)return;
+  const el=document.querySelector(`.ticket[data-open="${id}"]`);if(!el)return;const st=el.querySelector(".stub");if(!st)return;
+  let r=el.getBoundingClientRect();if(r.top<64||r.bottom>innerHeight-16){el.scrollIntoView({block:"center"});r=el.getBoundingClientRect()}
+  const s=st.getBoundingClientRect();if(s.bottom<0||s.top>innerHeight)return;
+  const g=document.createElement("span");g.className="ticket-roto";g.setAttribute("aria-hidden","true");g.innerHTML=resto;
+  Object.assign(g.style,{left:s.left+"px",top:s.top+"px",width:s.width+"px",height:s.height+"px"});document.body.appendChild(g);
+  const fin=()=>g.remove();setTimeout(fin,1100);
+  g.animate([{transform:"none",opacity:1},{transform:"rotate(-5deg)",opacity:1,offset:.2},{transform:"translate(-10px,26px) rotate(-14deg)",opacity:1,offset:.45},{transform:"translate(-22px,130px) rotate(-30deg)",opacity:0}],{duration:760,easing:"cubic-bezier(.4,0,.75,1)",fill:"forwards"}).onfinish=fin;
+  st.animate([{opacity:0},{opacity:0,offset:.35},{opacity:1}],{duration:760,easing:"ease-out"});
+  el.animate([{transform:"none"},{transform:"translateX(6px)",offset:.3},{transform:"translateX(-2px)",offset:.7},{transform:"none"}],{duration:720,easing:"ease-out"});
 }
 async function remove(id){const r=await sb.from("titulos").delete().eq("id",id);if(r.error){toast("No se pudo eliminar");return}delete items[id];render()}
 
@@ -369,11 +454,47 @@ function tuMes(){
     ${V.length?`<div class="an-grid"><div><b>${pelis}</b><span>películas</span></div><div><b>${series}</b><span>series</span></div><div><b>${cine}</b><span>en el cine</span></div><div><b>${media?media.toFixed(1):"—"}</b><span>nota media</span></div></div>
     ${cmp?`<p class="an-cmp">${cmp}.</p>`:""}
     <p class="an-frase">${mejor?`Lo mejor del mes: <b>${esc(mejor.titulo)}</b> <span class="stars">${stars(mejor.nota)}</span>`:"Aún no has puntuado nada este mes"}${topP?`. Donde más viste: <b>${esc(topP[0])}</b>`:""}.</p>
+    <div id="cinBox"></div>
     <div class="an-top"><span class="eyebrow">Lo que viste</span>${lista.map(x=>`<div class="mes-row"><span class="mono">${x.fecha.slice(8,10)}</span>${x.poster?`<img src="${esc(x.poster)}" alt="">`:""}<b>${esc(x.titulo)}</b>${x.nota?`<span class="stars">${stars(x.nota)}</span>`:""}</div>`).join("")}</div>`
-    :`<p class="hint">${cerrado?"No apuntaste nada ese mes.":"Aún no has apuntado nada este mes."} Cuando lo hagas, aquí verás tu resumen.</p>`}
+    :`<p class="hint">${cerrado?"No apuntaste nada ese mes.":"Aún no has apuntado nada este mes."} Cuando lo hagas, aquí verás tu resumen.</p><div id="cinBox"></div>`}
     <div class="sheet-actions"><button class="add" id="anClose">Cerrar</button></div></div></div>`;
   document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")r.innerHTML=""};document.getElementById("anClose").onclick=()=>r.innerHTML="";
+  pintaCinesa(pre,false);
   try{localStorage.setItem("platea-mes-visto",pre)}catch(_){}document.getElementById("mesBtn").classList.remove("nuevo");
+}
+/* Cinesa Unlimited: cuota y precio de entrada en ajustes (app "platea") */
+let AJ={};
+const eurF=new Intl.NumberFormat("es-ES",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2});
+const eur=n=>eurF.format(n||0);
+function cuentaCinesa(pre){const c=AJ.cinesa||{};if(!c.activa||!(c.cuota>0)||!(c.entrada>0))return null;
+  const n=all().filter(x=>x.estado==="vista"&&x.donde==="cine"&&String(x.fecha||"").startsWith(pre)).length;
+  const valor=Math.round(n*c.entrada*100)/100,ahorro=Math.round((valor-c.cuota)*100)/100;
+  return {n,valor,cuota:c.cuota,entrada:c.entrada,ahorro,faltan:ahorro<0?Math.ceil((c.cuota-valor)/c.entrada-1e-9):0}}
+function pintaCinesa(pre,editar){
+  const box=document.getElementById("cinBox");if(!box)return;const c=AJ.cinesa||{};const k=cuentaCinesa(pre);
+  if(editar){
+    box.innerHTML=`<section class="cin" aria-labelledby="cinH"><span class="eyebrow" id="cinH">Cinesa Unlimited</span>
+      <label class="toggle"><input type="checkbox" id="cinOn" ${c.activa||!c.cuota?"checked":""}> Tengo Cinesa Unlimited</label>
+      <div class="cin-form"><div class="field"><label for="cinC">Cuota mensual</label><div class="eur"><input type="number" id="cinC" inputmode="decimal" step="0.01" min="0" placeholder="Cuota al mes" value="${c.cuota>0?c.cuota.toFixed(2):""}"><span>€</span></div></div>
+      <div class="field"><label for="cinE">Entrada sin la suscripción</label><div class="eur"><input type="number" id="cinE" inputmode="decimal" step="0.01" min="0" placeholder="Precio de una entrada" value="${c.entrada>0?c.entrada.toFixed(2):""}"><span>€</span></div></div></div>
+      <div class="cin-act"><button class="btn" id="cinX" type="button">Cancelar</button><button class="btn primary" id="cinG" type="button">Guardar</button></div></section>`;
+    document.getElementById("cinX").onclick=()=>pintaCinesa(pre,false);
+    document.getElementById("cinG").onclick=async()=>{
+      const num=id=>{const v=parseFloat(String(document.getElementById(id).value).replace(",","."));return v>0?Math.round(v*100)/100:null};
+      const on=document.getElementById("cinOn").checked,cu=num("cinC"),en=num("cinE");
+      if(on&&(!cu||!en)){toast("Pon la cuota y el precio de una entrada");(cu?document.getElementById("cinE"):document.getElementById("cinC")).focus();return}
+      AJ=Object.assign({},AJ,{cinesa:{activa:on,cuota:cu,entrada:en}});
+      const r=await sb.from("ajustes").upsert({app:"platea",datos:AJ,actualizado:new Date().toISOString()},{onConflict:"user_id,app"});
+      if(r&&r.error){toast("No se pudo guardar");return}
+      toast("Guardado");pintaCinesa(pre,false);render()};
+    return}
+  if(!k){box.innerHTML=`<section class="cin" aria-labelledby="cinH"><div class="cin-h"><span class="eyebrow" id="cinH">Cinesa Unlimited</span><button class="cin-aj" id="cinAj" type="button">Configurar</button></div>
+      <p class="hint">Apunta tu cuota y lo que cuesta una entrada y verás cada mes cuánto le sacas a la suscripción.</p></section>`}
+  else{const fr=k.ahorro>0?`Te has ahorrado <b>${eur(k.ahorro)}</b>.`:k.ahorro===0?"La has amortizado justo.":`Te ${k.faltan===1?"falta <b>1 película</b>":`faltan <b>${k.faltan} películas</b>`} para amortizarla.`;
+    box.innerHTML=`<section class="cin" aria-labelledby="cinH"><div class="cin-h"><span class="eyebrow" id="cinH">Cinesa Unlimited</span><button class="cin-aj" id="cinAj" type="button">Ajustar</button></div>
+      <div class="cin-n"><div><b>${k.n}</b><span>${k.n===1?"película":"películas"} en el cine</span></div><div><b>${eur(k.valor)}</b><span>en entradas</span></div><div><b>${eur(k.cuota)}</b><span>de cuota</span></div></div>
+      <p class="cin-f">${fr}</p></section>`}
+  document.getElementById("cinAj").onclick=()=>pintaCinesa(pre,true);
 }
 function marcarMesNuevo(){const {y:yy,m,cerrado}=mesResumen();const b=document.getElementById("mesBtn");if(!b)return;
   b.textContent=(cerrado?"Tu "+MESL[m].toLowerCase():"Tu mes")+" →";
@@ -397,11 +518,64 @@ function anioEnCine(){
     ${V.length?`<div class="an-grid"><div><b>${pelis.length}</b><span>películas</span></div><div><b>${series.length}</b><span>series</span></div><div><b>${cine}</b><span>en el cine</span></div><div><b>${media?media.toFixed(1):"—"}</b><span>nota media</span></div></div>
     <div class="an-mes" aria-label="Por meses">${porMes.map((n,i)=>`<div title="${MESL[i]}: ${n}"><i style="height:${n/max*100}%"></i><span>${MES[i].slice(0,1)}</span></div>`).join("")}</div>
     <p class="an-frase">Tu mes más cinéfilo fue <b>${MESL[mejorMes].toLowerCase()}</b>${topP.length?`, y donde más viste fue <b>${esc(topP[0][0])}</b>`:""}${topM?`. Tu mood del año: <b>${esc(MOODS[topM[0]]||topM[0])}</b>`:""}.</p>
+    ${salaHTML(V)}
     ${top.length?`<div class="an-top"><span class="eyebrow">Tus mejor valoradas</span>${top.map((x,i)=>`<div class="an-row"><span class="mono">${i+1}</span>${x.poster?`<img src="${esc(x.poster)}" alt="">`:""}<b>${esc(x.titulo)}</b><span class="stars">${stars(x.nota)}</span></div>`).join("")}</div>`:""}`
     :`<p class="hint">Aún no hay nada visto este año. Cuando apuntes tus primeras entradas, aquí verás tu resumen.</p>`}
     <div class="sheet-actions"><button class="add" id="anClose">Cerrar</button></div></div></div>`;
   document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")r.innerHTML=""};document.getElementById("anClose").onclick=()=>r.innerHTML="";
+  const g=document.getElementById("salaG");
+  if(g)g.onclick=e=>{const b=e.target.closest("[data-b]");if(!b)return;const x=SALA[+b.dataset.b];if(!x)return;
+    g.querySelectorAll("[aria-pressed]").forEach(z=>z.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");
+    const d=x.fecha?new Date(x.fecha+"T12:00"):null;
+    document.getElementById("salaCap").innerHTML=`<span class="mono">${esc(b.dataset.pos)}</span> · <b>${esc(x.titulo)}</b>${d?` · ${d.getDate()} ${MES[d.getMonth()]}`:""} · ${x.donde==="cine"?"en el cine":"en casa"}`};
 }
+/* Tu sala: una butaca por cada título del año, en orden; siempre quedan filas libres */
+let SALA=[];
+function salaHTML(V){
+  SALA=[...V].sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha))||String(a.creado||"").localeCompare(String(b.creado||"")));
+  const n=SALA.length,tot=Math.max(40,Math.ceil((n+1)/10)*10+10);
+  const fila=i=>{let s="",k=i;do{s=String.fromCharCode(65+k%26)+s;k=Math.floor(k/26)-1}while(k>=0);return s};
+  let h="";
+  for(let f=0;f<tot/10;f++)for(let c=0;c<10;c++){const i=f*10+c,x=SALA[i],pos=`Fila ${fila(f)}, butaca ${c+1}`;
+    if(c===5)h+=`<span class="sala-l" aria-hidden="true">${fila(f)}</span>`;
+    h+=x?`<button type="button" class="butaca${x.donde==="cine"?" cine":""}" data-b="${i}" data-pos="${pos}" aria-pressed="false" title="${esc(x.titulo)}" aria-label="${pos}: ${esc(x.titulo)}${x.donde==="cine"?", en el cine":""}"></button>`:`<i class="butaca" aria-hidden="true"></i>`}
+  return `<div class="sala"><div class="sala-head"><span class="eyebrow">Tu sala</span><p class="hint">Una butaca por cada título que has visto este año, por orden.</p></div>
+    <div class="sala-room"><div class="pantalla" aria-hidden="true"><svg viewBox="0 0 300 22" preserveAspectRatio="none"><defs><linearGradient id="salaLuz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--bulb);stop-opacity:.32"/><stop offset="1" style="stop-color:var(--bulb);stop-opacity:0"/></linearGradient></defs><path d="M4 18 Q150 -4 296 18 L296 22 L4 22Z" fill="url(#salaLuz)"/><path d="M4 18 Q150 -4 296 18" fill="none" style="stroke:var(--bulb)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg><span>PANTALLA</span></div>
+    <div class="sala-g" id="salaG" role="group" aria-label="${n} de ${tot} butacas ocupadas">${h}</div></div>
+    <div class="sala-ley" aria-hidden="true"><span><i class="butaca ocu cine"></i>En el cine</span><span><i class="butaca ocu"></i>En casa</span><span><i class="butaca"></i>Libre</span></div>
+    <p class="sala-cap" id="salaCap" aria-live="polite">Toca una butaca para ver qué título es.</p></div>`;
+}
+
+/* Cartelera de esta semana (TMDB, en cines de España) */
+let CART=null,cartCargando=false;
+function cartCard(){return `<button class="cart-card" id="cartBtn" type="button"><span class="cart-txt"><span class="eyebrow">En cines de España</span><b>Cartelera de esta semana</b></span><span class="cart-go" aria-hidden="true">→</span></button>`}
+const normT=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"");
+function enLista(f){return all().find(x=>(f.tmdb_id&&x.tmdb_id&&+x.tmdb_id===+f.tmdb_id)||(normT(x.titulo)===normT(f.titulo)&&(!x.anio||!f.anio||Math.abs(+x.anio-f.anio)<=1)))}
+async function cartelera(){
+  const r=document.getElementById("sheetRoot");
+  r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="caH">
+    <span class="eyebrow">En cines de España</span><h2 id="caH">Cartelera</h2>
+    <p class="hint">Lo que está en salas esta semana. Apunta lo que quieras ver con el Unlimited.</p>
+    <div id="cartL" class="cart-list"></div>
+    <div class="sheet-actions"><button class="add" id="anClose">Cerrar</button></div></div></div>`;
+  document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")r.innerHTML=""};document.getElementById("anClose").onclick=()=>r.innerHTML="";
+  document.getElementById("cartL").onclick=e=>{const b=e.target.closest("[data-ca]");if(b)quieroVer(+b.dataset.ca,b)};
+  pintaCart();
+  if(!CART&&!cartCargando){cartCargando=true;
+    try{const x=await sb.functions.invoke("ficha",{body:{modo:"cartelera"}});const d=x&&x.data||{};CART={lista:(d.resultados||[]).filter(f=>f&&f.titulo),sin:!!d.sin_clave}}catch(_){CART={lista:[],sin:false,fallo:true}}
+    cartCargando=false;if(CART.fallo)setTimeout(()=>{if(CART&&CART.fallo)CART=null},0);pintaCart()}
+}
+function pintaCart(){
+  const L=document.getElementById("cartL");if(!L)return;
+  if(!CART){L.innerHTML=`<p class="hint">Buscando la cartelera…</p>`;return}
+  if(!CART.lista.length){L.innerHTML=`<p class="hint">${CART.fallo?"Ahora no se puede consultar la cartelera. Prueba en un rato.":"La cartelera necesita la conexión con TMDB."}</p>`;return}
+  L.innerHTML=CART.lista.map((f,i)=>{const ya=enLista(f);
+    return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3>${f.anio?`<span class="mono">${esc(f.anio)}</span>`:""}</div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-ca="${i}">La quiero ver</button>`}</div>`}).join("");
+}
+async function quieroVer(i,b){const f=CART&&CART.lista[i];if(!f||enLista(f))return;b.disabled=true;
+  const x={poster:f.poster||null,tmdb_id:f.tmdb_id||null,tipo:"peli",estado:"porver",titulo:f.titulo,anio:f.anio||"",donde:"cine",plataforma:"",fecha:null,nota:0,resena:"",rewatch:false,moods:[],prio:true};
+  const r=await sb.from("titulos").insert(aFila(x)).select().single();if(r.error){b.disabled=false;toast("No se pudo añadir");return}
+  items[r.data.id]=deFila(r.data);toast("Añadida a Por ver");pintaCart();render()}
 
 /* Créame una watchlist (IA) */
 const IA={res:[],info:"",busy:false,txt:""};
@@ -443,6 +617,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#iaGo")){pedirIA();return}
   if(e.target.closest("#anioBtn")){anioEnCine();return}
   if(e.target.closest("#mesBtn")){tuMes();return}
+  if(e.target.closest("#cartBtn")){cartelera();return}
   if(x=e.target.closest("[data-ia-add]")){anadirIA(+x.dataset.iaAdd);return}
 });
 
@@ -457,7 +632,8 @@ document.getElementById("expWatch").onclick=()=>{descargar("letterboxd-watchlist
 document.addEventListener("input",e=>{if(e.target.id==="iaTxt")IA.txt=e.target.value});
 document.getElementById("salir").onclick=()=>CiccCuenta.salir();
 async function cargar(){
-  const r=await sb.from("titulos").select("*");
+  const [r,a]=await Promise.all([sb.from("titulos").select("*"),sb.from("ajustes").select("datos").eq("app","platea").maybeSingle().then(z=>z,()=>null)]);
+  if(a&&!a.error&&a.data&&a.data.datos&&typeof a.data.datos==="object")AJ=a.data.datos;
   if(r.error){document.getElementById("view").innerHTML='<p class="cargando">No se pudo cargar. Comprueba la conexión y vuelve a abrir la app.</p>';return}
   items={};r.data.forEach(x=>items[x.id]=deFila(x));listo=true;if(!editId)render();
 }
