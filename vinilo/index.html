@@ -211,7 +211,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
     <div class="plato-txt">
       <div class="eyebrow">Música para cada hora del día</div>
       <h1 id="vinH">Vinilo</h1>
-      <p class="kicker">¿Qué escucho hoy?</p>
+      <p class="kicker">¿Qué escucho ahora?</p>
       <div class="suena" id="ahora" aria-live="polite"></div>
     </div>
     <div class="dial-wrap">
@@ -408,7 +408,7 @@ TAGS.forEach(([key, label]) => {
     claro:{fondo:"#F4EEE2","fondo-alto":"#FBF8F1",hundido:"#ECE4D3",linea:"#E1D8C6","linea-fuerte":"#A9A08C",tinta:"#172038","tinta-suave":"#5B6378",oro:"#8A6A2B",primario:"#172038","sobre-primario":"#F4EEE2","display-app":DISP,"color-scheme":"light"}};
   let sb=null,res=[],busy=false;const $=id=>document.getElementById(id);
   const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=5",lema:"¿Qué escucho hoy?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs()});
+  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=5",lema:"¿Qué escucho ahora?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs()});
   function pinta(){
     $("iaGo").disabled=busy;$("iaGo").textContent=busy?"Pensando…":"Créame una playlist";
     $("iaList").innerHTML=res.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}${c.por_que?` — ${esc(c.por_que)}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("");
