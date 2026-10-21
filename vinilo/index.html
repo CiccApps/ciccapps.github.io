@@ -39,7 +39,7 @@ h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 6vw
 .kicker { font-family: var(--display); font-style: italic; font-size: clamp(1.35rem, 4.6vw, 1.7rem); line-height: 1.2; color: var(--accent); margin: -4px 0 2px; }
 header h1 { font-size: clamp(2.8rem, 12vw, 4.2rem); line-height: .95; }
 h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0; line-height: 1.1; }
-.sub { color: var(--muted); font-size: 15px; margin: 2px 0 0; }
+.sub { color: var(--muted); font-size: 15px; margin: 6px 0 0; }
 
 /* energy ladder */
 .ladder { display: grid; gap: 14px; }
@@ -150,8 +150,8 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .suena .acc{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .suena a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;font:700 14px var(--body);text-decoration:none;border:1px solid rgba(217,184,120,.55);color:#F1E6CF}
 .suena a.pri{background:#D9B878;border-color:#D9B878;color:#0F1528}
-.dial-wrap{display:grid;justify-items:center;gap:10px;position:relative}
-.dial{--d:min(100%,340px);width:var(--d);aspect-ratio:1;position:relative;border-radius:50%;
+.dial-wrap{display:grid;justify-items:center;gap:26px;position:relative;padding-top:10px}
+.dial{--d:min(calc(100% - 36px),330px);width:var(--d);aspect-ratio:1;position:relative;border-radius:50%;
   background:radial-gradient(circle,#0a0a0d 0 17%,transparent 17.4%),repeating-radial-gradient(circle,#15151b 0 2px,#1d1d25 2px 4px);box-shadow:0 0 0 2px rgba(217,184,120,.85),0 0 0 9px #0b0f1e,0 0 0 10px rgba(217,184,120,.35),0 14px 30px rgba(0,0,0,.45)}
 .dial::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 210deg,transparent 0 40deg,rgba(255,255,255,.07) 55deg,transparent 80deg,transparent 220deg,rgba(255,255,255,.05) 240deg,transparent 260deg);pointer-events:none}
 .etiqueta{position:absolute;left:50%;top:50%;width:34%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;box-shadow:0 0 0 3px #D9B878,0 0 0 5px rgba(0,0,0,.6);z-index:2}
@@ -168,12 +168,14 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .aguja{position:absolute;left:50%;top:50%;width:2px;height:47%;background:linear-gradient(#D9B878,rgba(217,184,120,0));transform-origin:50% 0;border-radius:1px;z-index:1;pointer-events:none}
 .aguja::after{content:"";position:absolute;left:50%;bottom:-2px;width:8px;height:8px;border-radius:50%;background:#D9B878;transform:translateX(-50%)}
 .brazo{position:absolute;right:2%;top:-3%;width:22%;height:56%;pointer-events:none;z-index:3}
-.dial-pie{margin:0;font-family:var(--display);font-style:italic;font-size:16px;color:rgba(217,184,120,.85)}
+.dial-pie{margin:0;font-family:var(--body);font-style:italic;font-weight:400;font-size:14px;letter-spacing:.02em;color:rgba(217,184,120,.8)}
 @media (min-width:760px){.plato{grid-template-columns:1fr minmax(300px,380px);align-items:center;padding:44px 44px 34px}.dial{--d:min(100%,330px)}}
 @media (prefers-reduced-motion:reduce){.etiqueta img{animation:none}}
 /* Secciones: la selección de la casa y las listas de cada uno */
-.sel-h{display:grid;gap:4px}
-.mis{display:grid;gap:14px}
+
+.mis{display:grid;gap:16px}
+.mis>div:first-child,.sel-h{display:grid;gap:6px}
+.mis h2{margin:0}
 .sp-con{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:14px 16px;border:1px dashed var(--line);border-radius:12px}
 .sp-con p{margin:0;flex:1 1 220px;color:var(--muted);font-size:14.5px}
 .sp-btn{appearance:none;border:0;border-radius:999px;background:#1DB954;color:#0b1a10;font:700 14px var(--body);padding:10px 16px;cursor:pointer;white-space:nowrap}
