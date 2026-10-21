@@ -12,8 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="La Taquilla">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="../iconos/la-taquilla-180.png?v=2">
-<link rel="icon" type="image/png" href="../iconos/la-taquilla-192.png?v=2">
+<link rel="apple-touch-icon" href="../iconos/la-taquilla-180.png?v=3">
+<link rel="icon" type="image/png" href="../iconos/la-taquilla-192.png?v=3">
 <link rel="stylesheet" href="../compartido/ciccapps.css?v=10">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -302,7 +302,7 @@ async function cargar(){
   if(r.error){document.getElementById("view").innerHTML='<p class="cargando">No se pudo cargar. Comprueba la conexión y vuelve a abrir la app.</p>';return}
   items={};r.data.forEach(x=>items[x.id]=deFila(x));listo=true;if(!editId)render();
 }
-CiccCuenta.iniciar({app:"La Taquilla",icono:"../iconos/la-taquilla-192.png?v=2",lema:"Cada película, una entrada"}).then(async r=>{
+CiccCuenta.iniciar({app:"La Taquilla",icono:"../iconos/la-taquilla-192.png?v=3",lema:"Cada película, una entrada"}).then(async r=>{
   sb=r.sb;CiccCuenta.firma("La Taquilla",document.getElementById("pie"));await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!editId)cargar()});
 });
