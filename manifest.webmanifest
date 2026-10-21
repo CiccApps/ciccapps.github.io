@@ -1,0 +1,29 @@
+{
+  "name": "CiccApps",
+  "short_name": "CiccApps",
+  "description": "Una colección de apps hechas a medida.",
+  "lang": "es",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F3EFE4",
+  "theme_color": "#1D3A32",
+  "icons": [
+    {
+      "src": "/iconos/ciccapps-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/iconos/ciccapps-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/iconos/ciccapps-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

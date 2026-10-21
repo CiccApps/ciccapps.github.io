@@ -1,0 +1,30 @@
+{
+  "name": "La Taquilla",
+  "short_name": "La Taquilla",
+  "description": "Diario de cine y series con watchlist por mood.",
+  "lang": "es",
+  "start_url": "/taquilla/",
+  "scope": "/taquilla/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3EFE4",
+  "theme_color": "#5E1A26",
+  "icons": [
+    {
+      "src": "/iconos/la-taquilla-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/iconos/la-taquilla-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/iconos/la-taquilla-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

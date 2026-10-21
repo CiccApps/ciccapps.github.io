@@ -1,0 +1,799 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><title>Interés compuesto</title>
+<meta name="description" content="Presentación interactiva de interés compuesto para clientes.">
+<meta name="theme-color" content="#E9ECF2">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Interés">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../iconos/interes-compuesto-180.png">
+<link rel="icon" type="image/png" href="../iconos/interes-compuesto-192.png">
+</head><body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: una «diapositiva» 16:9 como las de la presentación (título arriba a la izquierda, tres cajas lavanda,
+   tabla con cabecera azul marino) que se va revelando por pasos; debajo, la barra de control y el panel de datos. */
+:root {
+  --navy: #003366;      /* texto y cabeceras (dk2 de la plantilla) */
+  --teal: #009999;      /* positivo (accent1) */
+  --pink: #FF3399;      /* retiradas / negativo (accent2) */
+  --lav: #EBE0F5;       /* cajas lavanda de la plantilla */
+  --row1: #F4F6F9;      /* filas alternas */
+  --row2: #ECEEFA;
+  --line: #D9DEE7;
+  --muted: #6B7A8F;
+  --slide: #FFFFFF;
+  --page: #E9ECF2;
+  --font: "Segoe UI", "Segoe UI Variable Text", "Open Sans", system-ui, -apple-system, sans-serif;
+  --font-black: "Segoe UI Black", "Segoe UI", "Open Sans", system-ui, -apple-system, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  margin: 0; background: var(--page); color: var(--navy); font-family: var(--font);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 32px;
+}
+.wrap { max-width: 1240px; margin: 0 auto; display: grid; gap: 14px; }
+
+/* ---------- diapositiva ---------- */
+.stage {
+  container-type: inline-size;
+  background: var(--slide); border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 51, 102, .08), 0 8px 28px rgba(0, 51, 102, .10);
+  aspect-ratio: 16 / 9; width: 100%; overflow: hidden; position: relative;
+}
+.slide {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  padding: 3.1cqw 7.3cqw 3cqw 7.3cqw; gap: 2.2cqw;
+  font-size: 1.45cqw;
+}
+.slide:focus { outline: none; }
+.stage:fullscreen { aspect-ratio: auto; border-radius: 0; display: grid; place-items: center; background: var(--slide); }
+.stage:fullscreen .slide { position: relative; width: min(100vw, 177.78vh); height: min(56.25vw, 100vh); }
+h1 {
+  margin: 0; font-family: var(--font-black); font-weight: 900; font-size: 2.9cqw; letter-spacing: -.01em;
+  color: var(--navy); line-height: 1.1; text-wrap: balance;
+}
+.boxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6.6cqw; }
+.box {
+  background: var(--lav); min-height: 4.6cqw; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; padding: .5cqw 1cqw; text-align: center;
+}
+.big { font-family: var(--font-black); font-weight: 900; font-size: 2.35cqw; line-height: 1.15; white-space: nowrap;
+  display: inline-flex; align-items: baseline; gap: .1em; }
+.cap { font-size: .95cqw; color: var(--muted); margin-top: .15cqw; letter-spacing: .02em; }
+
+/* inputs que parecen texto */
+.ed {
+  font: inherit; color: inherit; background: transparent; border: 0; padding: 0 .08em; margin: 0;
+  text-align: right; border-bottom: 2px dotted transparent; border-radius: 2px; min-width: 1ch;
+  -moz-appearance: textfield; appearance: textfield;
+}
+.ed::-webkit-outer-spin-button, .ed::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.ed:hover { border-bottom-color: rgba(0, 51, 102, .35); cursor: text; }
+.ed:focus { outline: none; border-bottom-color: var(--teal); background: rgba(255, 255, 255, .55); }
+th .ed { color: #fff; text-align: center; }
+th .ed:hover { border-bottom-color: rgba(255, 255, 255, .5); }
+th .ed:focus { background: rgba(255, 255, 255, .12); border-bottom-color: #fff; }
+
+/* tabla */
+.tablewrap { flex: 0 0 auto; display: flex; flex-direction: column; }
+table { width: 100%; border-collapse: collapse; table-layout: fixed; font-variant-numeric: tabular-nums; }
+tbody tr { height: calc(var(--rowh, 2.85) * 1cqw); }
+thead tr { height: 3.5cqw; }
+th {
+  background: var(--navy); color: #fff; font-family: var(--font-black); font-weight: 900; font-size: 1.55cqw;
+  padding: .9cqw .6cqw; text-align: center; border-right: 1px solid rgba(255, 255, 255, .25); white-space: nowrap;
+}
+th:last-child { border-right: 0; }
+td {
+  text-align: center; padding: 0 .6cqw; font-size: calc(var(--rowh, 2.85) * .53cqw); line-height: 1.15; font-weight: 700;
+  border-right: 1px solid #fff; white-space: nowrap;
+}
+td:last-child { border-right: 0; }
+tbody tr:nth-child(odd) td { background: var(--row1); }
+tbody tr:nth-child(even) td { background: var(--row2); }
+td.yr { font-family: var(--font-black); font-weight: 900; }
+td.ic { color: var(--navy); }
+td .f { font-weight: 400; }
+td .w { color: var(--pink); }
+tr.final td { box-shadow: inset 0 -3px 0 var(--teal); }
+td.ic.goal { color: var(--teal); }
+col.c-yr { width: 22%; } col.c-cc { width: 22%; } col.c-ic { width: 56%; }
+.ret col.c-yr { width: 22%; } .ret col.c-cc { width: 22%; } .ret col.c-ic { width: 28%; } .ret col.c-wr { width: 28%; }
+
+.note {
+  position: absolute; left: 7.3cqw; right: 7.3cqw; bottom: 3cqw; transform: none !important;
+  display: flex; align-items: center; justify-content: space-between; gap: 2cqw; font-size: 1.15cqw; color: var(--navy);
+  min-height: 2.4cqw;
+}
+.pill { display: inline-flex; align-items: center; gap: .5em; padding: .35cqw 1cqw; border-radius: 999px; font-weight: 700; }
+.pill.ok { background: rgba(0, 153, 153, .12); color: #007A7A; }
+.pill.ko { background: rgba(255, 51, 153, .12); color: #C2186E; }
+#reset { color: #C2186E; border-color: rgba(255, 51, 153, .45); background: #FFF5FA; margin-left: 6px; }
+#reset:hover { border-color: #C2186E; background: #FFE9F3; }
+.wrap:fullscreen #reset { display: none; }   /* en pantalla completa no está, para no reiniciar sin querer */
+.pill.mid { background: rgba(224, 138, 0, .14); color: #9A5B00; }
+.note .src { color: var(--muted); font-weight: 400; white-space: nowrap; }
+/* etiquetas: pensión a la izquierda, objetivo a la derecha */
+.note > span { white-space: nowrap; transition: opacity .35s ease, transform .35s ease; }
+
+/* revelado por pasos: el hueco se mantiene para que nada salte */
+.box, .note, #thead, tbody tr { transition: opacity .35s ease, transform .35s ease; }
+.hide { opacity: 0 !important; pointer-events: none; transform: translateY(4px); transition: none !important; } /* ocultar es instantáneo (sin spoilers); aparecer, con fundido */
+@media (prefers-reduced-motion: reduce) { .box, .note, #thead, tbody tr { transition: none; } .hide { transform: none; } }
+
+/* ---------- barra de control ---------- */
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.bar .grow { flex: 1; }
+button {
+  font: 600 14px/1 var(--font); color: var(--navy); background: #fff; border: 1px solid var(--line);
+  border-radius: 6px; padding: 10px 14px; cursor: pointer;
+}
+button:hover { border-color: var(--navy); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+button.primary { background: var(--navy); color: #fff; border-color: var(--navy); }
+button.primary:hover { background: #00264D; }
+.nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+button { display: inline-flex; align-items: center; gap: 7px; }
+.ic { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+#toggleData[aria-expanded="false"] .slash { display: none; }
+.ic .fl { fill: currentColor; stroke: none; }
+.fs-out { display: none; }
+.bar { flex-wrap: nowrap; }
+@media (max-width: 1100px) { .bar { flex-wrap: wrap; } }
+
+/* ---------- pantalla completa: diapositiva centrada; barra que aparece al mover el ratón; datos en un panel lateral ---------- */
+.wrap:fullscreen { max-width: none; width: 100vw; height: 100vh; margin: 0; padding: 0; display: block; overflow: hidden; background: var(--slide); }
+.wrap:fullscreen .stage { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(100vw, 177.78vh);
+  height: min(56.25vw, 100vh); aspect-ratio: auto; border-radius: 0; box-shadow: none; }
+.wrap:fullscreen .fs-in { display: none; } .wrap:fullscreen .fs-out { display: inline; }
+.wrap:fullscreen .hint { display: none; }
+.wrap:fullscreen .bar { position: fixed; left: 14px; bottom: 14px; z-index: 10; flex-wrap: nowrap; gap: 8px; max-width: calc(100vw - 28px);
+  background: rgba(255, 255, 255, .97); padding: 8px; border-radius: 10px; box-shadow: 0 6px 24px rgba(0, 51, 102, .2);
+  opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+.wrap:fullscreen .bar .grow { flex: 0 0 6px; }
+.wrap:fullscreen .bar .lbl { display: none; }                       /* a la derecha, solo iconos (el nombre sale al pasar el ratón) */
+.wrap.ui:fullscreen .bar, .wrap.data:fullscreen .bar, .wrap:fullscreen .bar:hover, .wrap:fullscreen .bar:has(:focus-visible) { opacity: 1; pointer-events: auto; }
+.wrap:fullscreen .panel:not([hidden]) { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 94vw); overflow-y: auto; z-index: 9;
+  border: 0; border-radius: 0; box-shadow: -8px 0 30px rgba(0, 51, 102, .18); grid-template-columns: 1fr; padding-bottom: 90px; }
+.wrap:fullscreen .cards { grid-template-columns: 1fr; }
+/* pantalla completa: una sola fila abajo, sin fondo; navegación a la izquierda y el resto a la derecha */
+.wrap:fullscreen .bar { left: 16px; right: 16px; bottom: 12px; max-width: none; transform: none; justify-content: space-between;
+  background: transparent; box-shadow: none; padding: 0; gap: 6px; }
+.wrap:fullscreen .bar .grow { flex: 1 1 auto; }
+.wrap:fullscreen .bar button { padding: 7px 9px; font-size: 13px; box-shadow: 0 2px 8px rgba(0, 51, 102, .15); }
+.wrap:fullscreen .bar .nav { flex-wrap: nowrap; gap: 6px; }
+.wrap:fullscreen .bar .nlbl { display: none; }
+.wrap:fullscreen .stepinfo { min-width: 0; padding: 4px 8px; border-radius: 999px; background: rgba(255, 255, 255, .9); }
+/* los datos, a la derecha y por encima de la barra, para no tapar los botones */
+.wrap:fullscreen .panel:not([hidden]) { bottom: 60px; padding-bottom: 20px; border-bottom-left-radius: 10px; }
+.stepinfo { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 92px; text-align: center; }
+.hint { font-size: 12.5px; color: var(--muted); }
+
+/* ---------- panel de datos ---------- */
+.panel {
+  background: #fff; border-radius: 6px; border: 1px solid var(--line); padding: 18px 20px 20px;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 36px;
+}
+.panel h2 { grid-column: 1 / -1; margin: 0; font: 800 15px/1.2 var(--font-black); letter-spacing: .04em; text-transform: uppercase; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; align-content: start; }
+legend { white-space: nowrap; float: left; width: 100%; font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 6px; }
+label.fld { display: grid; grid-template-columns: 1fr 112px; align-items: center; gap: 10px; font-size: 14px; }
+label.fld small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.in {
+  font: 600 14px var(--font); color: var(--navy); background: var(--lav); border: 1px solid transparent;
+  border-radius: 4px; padding: 6px 10px; width: 100%; text-align: right; font-variant-numeric: tabular-nums;
+}
+.in:focus { outline: none; border-color: var(--teal); background: #fff; }
+select.in { text-align: left; }
+/* retiradas en columnas: cada retirada es una columna (año, importe y quitar) */
+.wgrid { display: grid; grid-auto-flow: column; grid-template-rows: auto auto auto; grid-template-columns: auto;
+  grid-auto-columns: minmax(56px, 92px); gap: 8px; align-items: center; font-size: 13px; overflow-x: auto; padding-bottom: 2px; }
+.wgrid .h { color: var(--navy); font-size: 14px; padding-right: 4px; white-space: nowrap; }
+.wgrid .in { padding: 6px; font-size: 14px; text-align: center; }
+.x { width: 100%; height: 26px; padding: 0; justify-content: center; font-size: 17px; line-height: 1; font-weight: 700;
+  color: #C2186E; background: #FFF5FA; border-color: rgba(255, 51, 153, .35); }
+.x:hover { border-color: #C2186E; background: #FFE9F3; }
+.addx { width: 100%; height: 26px; padding: 0; justify-content: center; font-size: 18px; line-height: 1; font-weight: 700;
+  color: #007A7A; background: #F0FAFA; border-color: rgba(0, 153, 153, .4); }
+.addx:hover { border-color: #007A7A; background: #E0F4F4; }
+.addx:disabled { opacity: .35; cursor: default; }
+/* plazos en dos columnas */
+.pgrid { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: center; }
+.pgrid .h { color: var(--navy); font-size: 14px; white-space: nowrap; }
+.pgrid .h.c { text-align: center; color: var(--muted); font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; line-height: 1.2; padding-bottom: 6px; align-self: start; }
+.pgrid .chk2 input { width: 13px; height: 13px; }
+.pgrid .h.c.pl { text-align: left; }
+.chk2 { display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; }
+.chk2 input { width: 16px; height: 16px; accent-color: var(--navy); margin: 0; }
+.pgrid .in:disabled { opacity: .45; }
+.small { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+.panel p.small { margin: 2px 0 0; }
+@media (max-width: 760px) { .bar .grow { display: none; } .bar { justify-content: flex-start; } }   /* mismas distancias en todas las notas de Datos */
+.row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.panel[hidden] { display: none; }
+.ttime { margin: 2px 0 0; font-size: 14px; line-height: 1.55; }
+.ttime b.ko { color: #C2186E; } .ttime b.ok { color: #007A7A; }
+.calc { grid-column: 1 / -1; }
+.ratecard { background: var(--lav); border-radius: 6px; padding: 10px 14px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+.rhead { display: grid; gap: 2px; }
+.ratecard label { font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.rhead .small { font-size: 11.5px; }
+.rbig { display: flex; align-items: baseline; justify-content: flex-end; gap: 4px; font: 900 22px/1.1 var(--font-black); color: var(--navy); }
+.rbig .rin { font: 900 22px/1.1 var(--font-black); width: 3.4ch; padding: 2px 4px; text-align: center; background: rgba(255,255,255,.6); }
+.pgrid .in.ici { color: #007A7A; }
+/* último paso: comparación sin / con interés compuesto, encima de la diapositiva */
+.comp { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, .97); transition: opacity .35s ease; }
+.ccard { width: 78%; display: grid; gap: 3cqw; text-align: center; }
+.comp h2 { margin: 0; font-family: var(--font-black); font-weight: 900; font-size: 3.2cqw; color: var(--navy); }
+.clead { margin: 0; font-size: 2cqw; }
+.cin { font-weight: 800; white-space: nowrap; }
+.cboxes { display: grid; grid-template-columns: 1fr 1fr; gap: 4cqw; }
+.cbox { background: var(--lav); padding: 2.4cqw 1cqw; display: grid; gap: .6cqw; }
+.cnum { font-family: var(--font-black); font-weight: 900; font-size: 3.3cqw; line-height: 1.1; white-space: nowrap; }
+.cbox.ko .cnum { color: #C2186E; } .cbox.ok .cnum { color: #007A7A; }
+.cbox .cap { font-size: 1.35cqw; margin: 0; }
+@media (max-width: 760px) {
+  .comp h2 { font-size: 22px; } .clead { font-size: 15px; } .cnum { font-size: 26px; } .cbox .cap { font-size: 12px; }
+  .cboxes { grid-template-columns: 1fr; gap: 10px; } .ccard { width: 90%; gap: 14px; } .cbox { padding: 14px 8px; }
+}
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+.qc { display: grid; gap: 10px; align-content: start; background: #F7F4FB; border: 1px solid var(--lav); border-radius: 6px; padding: 14px; }
+.qc h3 { margin: 0 0 2px; font: 700 15px/1.3 var(--font); color: var(--navy); }
+.qc .row-actions { margin-top: auto; }
+.qc button { width: 100%; }
+.panel .col { display: grid; gap: 26px; align-content: start; min-width: 0; }
+
+/* ---------- pantallas estrechas: la diapositiva deja de ser 16:9 ---------- */
+@media (max-width: 900px) { .panel { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  .stage { aspect-ratio: auto; }
+  .slide { position: static; padding: 18px 14px; gap: 14px; font-size: 14px; }
+  h1 { font-size: 24px; }
+  .boxes { grid-template-columns: 1fr; gap: 10px; }
+  .box { min-height: 56px; }
+  .big { font-size: 22px; }
+  .cap { font-size: 12px; }
+  .tablewrap { overflow-x: auto; }
+  tbody tr, thead tr, table.dense tbody tr, table.xdense tbody tr { height: auto; }
+  table { min-width: 520px; }
+  th { font-size: 13px; padding: 10px 6px; }
+  td { font-size: 13px; padding: 8px 6px; }
+  .note { font-size: 13px; position: static; display: flex !important; flex-wrap: wrap; }
+  .pill { padding: 6px 10px; }
+}
+</style>
+<style>
+/* tablas largas (hasta 50 años + años de retirada): filas algo más compactas para que todo quepa */
+table.dense tbody tr { height: calc(var(--rowh, 2.85) * .86cqw); }
+table.dense td { font-size: calc(var(--rowh, 2.85) * .86 * .53cqw); }
+table.dense th { padding-block: .7cqw; }
+table.xdense tbody tr { height: calc(var(--rowh, 2.85) * .74cqw); }
+table.xdense td { font-size: calc(var(--rowh, 2.85) * .74 * .53cqw); }
+table.xdense th { padding-block: .55cqw; font-size: 1.4cqw; }
+td.wy { color: var(--pink); }
+.chk { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.chk input { width: 18px; height: 18px; accent-color: var(--navy); }
+.sub { display: grid; gap: 10px; padding-left: 12px; border-left: 3px solid var(--lav); }
+.sub[aria-disabled="true"] { opacity: .45; }
+@media (max-width: 760px) { table.dense td, table.xdense td { font-size: 13px; padding-block: 7px; } }
+</style>
+
+<div class="wrap" id="app">
+  <section class="stage" id="stage" aria-label="Diapositiva de interés compuesto">
+    <div class="slide" id="slide" tabindex="-1">
+      <h1>Interés compuesto</h1>
+
+      <div class="boxes">
+        <div class="box" id="bxYears">
+          <div class="big"><input class="ed" id="years" inputmode="numeric" aria-label="Años de ahorro"><span style="margin-left:.12em">AÑOS</span></div>
+          <div class="cap" id="capYears">plazo de ahorro</div>
+        </div>
+        <div class="box" id="bxGoal">
+          <div class="big"><input class="ed" id="goal" inputmode="numeric" aria-label="Capital al que llegar"><span>€</span></div>
+          <div class="cap">capital al que llegar</div>
+        </div>
+        <div class="box" id="bxFlat">
+          <div class="big"><input class="ed" id="flat" inputmode="numeric" aria-label="Ahorro al mes sin rentabilidad"><span>€&nbsp;/&nbsp;MES</span></div>
+          <div class="cap">ahorrando en la cuenta, al 0%</div>
+        </div>
+      </div>
+
+      <div class="tablewrap" id="twrap">
+        <table id="tbl">
+          <colgroup id="cols"></colgroup>
+          <thead><tr id="thead"></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="note" id="note"><span id="pen"></span><span id="res"></span></div>
+
+      <div class="comp hide" id="comp" aria-live="polite">
+        <div class="ccard">
+          <h2>¿Y sin interés compuesto?</h2>
+          <p class="clead">Para llegar a <b class="cin" id="c_goal"></b> ahorrando <b class="cin" id="c_m"></b></p>
+          <div class="cboxes">
+            <div class="cbox ko"><div class="cnum" id="c_y0"></div><div class="cap">en la cuenta, al 0%</div></div>
+            <div class="cbox ok"><div class="cnum" id="c_yR"></div><div class="cap" id="c_capR"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="bar">
+    <div class="nav" role="group" aria-label="Pasos de la presentación">
+      <button id="restart" title="Ir al principio (sin nada revelado)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14"/><path class="fl" d="M18 6l-9 6 9 6z"/></svg><span class="nlbl">Inicio</span></button>
+      <button id="prev" aria-label="Paso anterior"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path class="fl" d="M16 6l-9 6 9 6z"/></svg><span class="nlbl">Anterior</span></button>
+      <span class="stepinfo" id="stepinfo"></span>
+      <button class="primary" id="next" aria-label="Paso siguiente"><span class="nlbl">Siguiente</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path class="fl" d="M8 6l9 6-9 6z"/></svg></button>
+      <button id="all" title="Ir al final (todo revelado)"><span class="nlbl">Final</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path class="fl" d="M6 6l9 6-9 6z"/><path d="M18 5v14"/></svg></button>
+    </div>
+    <span class="grow"></span>
+    <button id="toggleData" title="Mostrar datos" aria-expanded="false" aria-controls="panel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path class="eye" d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle class="eye" cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg><span class="lbl" id="toggleTxt">Mostrar datos</span></button>
+    <button id="full" title="Pantalla completa"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path class="fs-in" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><path class="fs-out" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg><span class="lbl" id="fullTxt">Pantalla completa</span></button>
+    <button type="button" id="reset" title="Vuelve al ejemplo, al primer paso y con los datos ocultos, como al abrir la página"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.5 4v4.5H8"/></svg><span class="lbl">Reiniciar</span></button>
+  </div>
+  <p class="hint">Haz clic en una cifra de la diapositiva para cambiarla; el resto está en «Datos». Avanza con → o espacio (← para volver). En pantalla completa, mueve el ratón para ver los botones.</p>
+
+  <form class="panel" id="panel" autocomplete="off" hidden>
+    <h2>Datos</h2>
+    <div class="col">
+      <div class="ratecard">
+        <div class="rhead"><label for="f_rate">Rentabilidad anual</label><span class="small">Para la diapositiva y las calculadoras</span></div>
+        <div class="rbig"><input class="in rin" id="f_rate" inputmode="decimal"><span>%</span></div>
+      </div>
+      <fieldset>
+        <legend>Pensión privada</legend>
+        <label class="fld">Años cobrando<input class="in" id="f_pY" inputmode="numeric"></label>
+        <label class="fld">Inflación anual (%)<input class="in" id="f_inf" inputmode="decimal"></label>
+        <p class="small" id="penTxt"></p>
+      </fieldset>
+    </div>
+    <fieldset aria-label="Plazos">
+      <div class="pgrid">
+        <span class="h c pl">Plazos</span><span class="h c" aria-label="Plazo 1">1</span><label class="h c chk2" title="Activar el plazo 2"><input type="checkbox" id="f_two" aria-label="Plazo 2"> 2</label>
+        <span class="h">Años</span><input class="in" id="f_yA" inputmode="numeric" aria-label="Plazo 1: años"><input class="in" id="f_yB" inputmode="numeric" aria-label="Plazo 2: años">
+        <span class="h">Capital (€)</span><input class="in" id="f_gA" inputmode="numeric" aria-label="Plazo 1: capital"><input class="in" id="f_gB" inputmode="numeric" aria-label="Plazo 2: capital">
+        <span class="h">€/mes al 0%</span><input class="in" id="f_fA" inputmode="numeric" aria-label="Plazo 1: euros al mes al 0%"><input class="in" id="f_fB" inputmode="numeric" aria-label="Plazo 2: euros al mes al 0%">
+        <span class="h">€/mes con interés</span><input class="in ici" id="f_mA" inputmode="numeric" aria-label="Plazo 1: euros al mes con interés compuesto"><input class="in ici" id="f_mB" inputmode="numeric" aria-label="Plazo 2: euros al mes con interés compuesto">
+      </div>
+      <p class="small">Todo cuadra solo: al cambiar los años o el capital se ajustan las dos aportaciones; al cambiar una aportación, el capital y la otra.</p>
+    </fieldset>
+    <fieldset>
+      <legend>Retiradas</legend>
+      <div class="wgrid" id="wgrid">
+        <span class="h">Año</span><span class="h">Importe €</span><button type="button" class="addx" id="addW" title="Añadir retirada" aria-label="Añadir retirada">+</button>
+      </div>
+      <p class="small">Se restan al final del año que pongas (máximo 5).</p>
+      <label class="chk" style="margin-top:6px"><input type="checkbox" id="f_comp"> Último paso: «¿Y sin interés compuesto?»</label>
+    </fieldset>
+    <fieldset class="calc">
+      <legend>Calculadora rápida</legend>
+      <p class="small">Elige una de las tres preguntas y rellena sus dos casillas: verás el resultado sin y con interés compuesto (al <span class="rt"></span> de «Rentabilidad anual»), y con «Llevar a la diapositiva» lo pasas al plazo 1.</p>
+      <div class="cards">
+        <div class="qc">
+          <h3>¿Cuánto tengo que ahorrar al mes?</h3>
+          <label class="fld">Capital a conseguir (€)<input class="in" id="f_nGoal" inputmode="numeric"></label>
+          <label class="fld">En cuántos años<input class="in" id="f_nYears" inputmode="numeric"></label>
+          <p class="ttime" id="nTxt"></p>
+          <div class="row-actions"><button type="button" id="nApply">Llevar a la diapositiva</button></div>
+        </div>
+        <div class="qc">
+          <h3>¿Cuánto consigo?</h3>
+          <label class="fld">Ahorro al mes (€)<input class="in" id="f_gMonthly" inputmode="numeric"></label>
+          <label class="fld">Durante cuántos años<input class="in" id="f_gYears" inputmode="numeric"></label>
+          <p class="ttime" id="gTxt"></p>
+          <div class="row-actions"><button type="button" id="gApply">Llevar a la diapositiva</button></div>
+        </div>
+        <div class="qc">
+          <h3>¿Cuánto tardo?</h3>
+          <label class="fld">Capital a conseguir (€)<input class="in" id="f_tGoal" inputmode="numeric"></label>
+          <label class="fld">Ahorro al mes (€)<input class="in" id="f_tMonthly" inputmode="numeric"></label>
+          <p class="ttime" id="tTxt"></p>
+          <div class="row-actions"><button type="button" id="tApply">Llevar a la diapositiva</button></div>
+        </div>
+      </div>
+      <p class="small" id="tNote"></p>
+    </fieldset>
+  </form>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  // ---------- ejemplo inicial: el de la presentación (30 años y un segundo plazo de 40) ----------
+  const EXAMPLE = { rate: 8, method: 'anual', two: true, pYears: 20, infl: 2.5, comp: true, tGoal: 336000, tMonthly: 100, nGoal: 336000, nYears: 40, gMonthly: 100, gYears: 40,
+    A: { years: 30, goal: 144000, monthly: 100 }, B: { years: 40, goal: 336000, monthly: 100 },   // cifras redondas del ejemplo; al cambiar algo se recalcula exacto
+    withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 50000 }] };
+  const KEY = 'interes-compuesto-v8';
+  const MAXY = 50;
+  let S = load();
+  norm(S.A); norm(S.B);
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function load() {
+    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.A && s.B) return Object.assign(clone(EXAMPLE), s, { method: 'anual' }); } catch (e) {}
+    return clone(EXAMPLE);
+  }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+  // ---------- formato español ----------
+  function grp(n) { const s = String(Math.round(Math.abs(n))); return (n < 0 ? '-' : '') + s.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+  const eur = n => grp(n) + '€';
+  const pct = p => (Math.round(p * 100) / 100).toString().replace('.', ',') + '%';
+  function num(v) {
+    const s = String(v).trim().replace(/\s|€|%/g, '');
+    if (!s) return NaN;
+    const t = /,/.test(s) ? s.replace(/\./g, '').replace(',', '.') : (/^\d{1,3}(\.\d{3})+$/.test(s) ? s.replace(/\./g, '') : s);
+    return parseFloat(t);
+  }
+
+  // ---------- cálculos ----------
+  function simulate(years, A, R, method, withdrawals) {
+    const rows = []; let b = 0, bw = 0; const r = Math.pow(1 + R, 1 / 12) - 1;
+    for (let t = 1; t <= years; t++) {
+      if (method === 'mensual') { for (let m = 0; m < 12; m++) { b = (b + A) * (1 + r); bw = (bw + A) * (1 + r); } }
+      else { b = (b + 12 * A) * (1 + R); bw = (bw + 12 * A) * (1 + R); }
+      const before = bw; let w = 0;
+      for (const x of withdrawals) if (x.year === t) w += x.amount;
+      w = Math.min(w, bw); bw -= w;
+      rows.push({ t, cc: 12 * A * t, ic: b, before, w, after: bw });
+    }
+    return rows;
+  }
+  const flat = sc => sc.goal / (sc.years * 12);                 // al 0 %, en la cuenta
+  // años para llegar a un capital con un ahorro mensual (cálculo anual, como la tabla)
+  function yearsTo(goal, A, R) {
+    if (A <= 0 || goal <= 0) return Infinity;
+    if (R <= 0) return goal / (12 * A);
+    let b = 0;
+    for (let t = 1; t <= 300; t++) { const prev = b; b = (b + 12 * A) * (1 + R); if (b >= goal) return t - 1 + (goal - prev) / (b - prev); }
+    return Infinity;
+  }
+  function yTxt(y) {
+    if (!isFinite(y)) return 'más de 300 años';
+    const tot = Math.round(y * 12), a = Math.floor(tot / 12), m = tot % 12;
+    return (a ? a + (a === 1 ? ' año' : ' años') : '') + (a && m ? ' y ' : '') + (m ? m + (m === 1 ? ' mes' : ' meses') : '') || '0 meses';
+  }
+  function fvPerEuro(years) { const r = simulate(years, 1, S.rate / 100, S.method, []); return r[r.length - 1].ic; }
+  // cada plazo: años, capital y aportación mensual siempre cuadran (capital = lo que da esa aportación en esos años)
+  function norm(sc) { if (!(sc.goal > 0)) sc.goal = sc.monthly * fvPerEuro(sc.years); if (!(sc.monthly > 0)) sc.monthly = sc.goal / fvPerEuro(sc.years); }
+  // el capital es siempre el que se escribe; la aportación con interés se redondea al euro más cercano
+  const needM = sc => Math.max(1, Math.round(sc.goal / fvPerEuro(sc.years)));   // al euro más cercano
+  function setYears(sc, y) { sc.years = y; sc.monthly = needM(sc); }
+  function setGoal(sc, g) { sc.goal = g; sc.monthly = needM(sc); }
+  function setMonthly(sc, m) { sc.monthly = m; sc.goal = m * fvPerEuro(sc.years); }
+  function setFlat(sc, f) { setGoal(sc, f * 12 * sc.years); }
+  // al cambiar la rentabilidad se mantiene el capital escrito y se recalcula la aportación con interés
+  function setRate(x) { S.rate = x; [S.A, S.B].forEach(sc => { sc.monthly = needM(sc); }); }
+  const pension = sc => sc.goal / (S.pYears * 12);             // sin rentabilidad: capital ÷ (años cobrando × 12 meses)
+  const validW = () => S.withdrawals.filter(w => w.year >= 1 && w.year <= MAXY && w.amount > 0);
+
+  // ---------- pasos ----------
+  // 1 años · 2 capital · 3 €/mes · 4 pensión privada · 5 cabecera y 3 primeras filas · 6 resto de la tabla y etiquetas
+  // (segundo plazo) 7 años · 8 capital · 9 €/mes · 10 su pensión · 11 la tabla llega al plazo 2 · (retiradas) última: columna «Con retiradas»
+  let step = 0;
+  const lastYears = () => (S.two ? S.B.years : S.A.years);
+  const hasRet = () => validW().some(w => w.year <= lastYears());
+  const retStep = () => (S.two ? 12 : 7);
+  const maxStep = () => (S.two ? 11 : 6) + (hasRet() ? 1 : 0) + (S.comp ? 1 : 0);
+  const $ = id => document.getElementById(id);
+  const show = (el, on) => el.classList.toggle('hide', !on);
+
+  function view() {
+    const m = maxStep(); if (step > m) step = m; if (step < 0) step = 0;
+    const onB = S.two && step >= 7;
+    const sc = onB ? S.B : S.A;
+    const tableB = S.two && step >= 11;
+    return { step, m, onB, sc, tableSc: tableB ? S.B : S.A, showPen: step >= (onB ? 10 : 4), showRet: hasRet() && step >= retStep(), showComp: !!S.comp && step >= maxStep() };
+  }
+
+  // ---------- pintar ----------
+  // ancho a la medida del texto (con margen para que no se corte ningún cero)
+  function sizeInput(el) { el.style.width = 'calc(' + Math.max(1, (el.value || '').length) + 'ch + .45em)'; }
+  function setEd(el, txt) { if (document.activeElement !== el) { el.value = txt; sizeInput(el); } }
+  function setIn(id, v) { const e = $(id); if (document.activeElement !== e) e.value = v; }
+
+  // Siempre ROWS filas (mismo grosor). Fijos: 1, 2, 3, las decenas, el último año y los años de retirada.
+  // Para completar: primero los acabados en 5 (los más cercanos antes; los lejanos son los primeros en caer)
+  // y, si faltan, el resto de años (pares primero), también de cerca a lejos.
+  const ROWS = 10;
+  function yearsList(N, wyears) {
+    const s = new Set([1, 2, 3].filter(t => t <= N));
+    for (let t = 10; t <= N; t += 10) s.add(t);
+    s.add(N);
+    wyears.forEach(y => { if (y >= 1 && y <= N) s.add(y); });
+    const fill = [];
+    for (let t = 5; t <= N; t += 10) fill.push(t);
+    for (let t = 4; t <= N; t++) if (t % 5 && t % 2 === 0) fill.push(t);
+    for (let t = 4; t <= N; t++) if (t % 5 && t % 2) fill.push(t);
+    for (const t of fill) { if (s.size >= ROWS) break; s.add(t); }
+    return Array.from(s).sort((a, b) => a - b);
+  }
+
+  function render() {
+    const v = view();
+    $('stepinfo').textContent = 'Paso ' + v.step + ' de ' + v.m;
+    $('prev').disabled = v.step === 0;
+    $('next').disabled = v.step >= v.m;
+    $('restart').disabled = v.step === 0;
+    $('all').disabled = v.step >= v.m;
+
+    // cajas (las del plazo que toca)
+    const sc = v.sc, base = v.onB ? 6 : 0;
+    setEd($('years'), String(sc.years));
+    setEd($('goal'), grp(sc.goal));
+    setEd($('flat'), grp(flat(sc)));
+    show($('bxYears'), v.step >= base + 1);
+    show($('bxGoal'), v.step >= base + 2);
+    show($('bxFlat'), v.step >= base + 3);
+
+    // tabla
+    const t = v.tableSc, N = t.years;
+    const W = validW();
+    const rows = simulate(N, t.monthly, S.rate / 100, S.method, W);
+    // con dos plazos, el plazo 1 enseña las mismas filas que el 2 (hasta su año), y al pasar al 2 solo se añaden filas
+    const listN = S.two ? Math.max(S.A.years, S.B.years) : N;
+    const ys = yearsList(listN, W.map(w => w.year)).filter(y => y <= N);
+    const tbl = $('tbl');
+    tbl.classList.toggle('ret', v.showRet);
+    $('cols').innerHTML = '<col class="c-yr"><col class="c-cc"><col class="c-ic">' + (v.showRet ? '<col class="c-wr">' : '');
+    if (!$('h_monthly')) {
+      $('thead').innerHTML =
+        '<th><input class="ed" id="h_monthly" inputmode="numeric" aria-label="Aportación mensual">€ / MES</th>' +
+        '<th id="h_cc">CUENTA CORRIENTE</th>' +
+        '<th>INTERÉS COMPUESTO <input class="ed" id="h_rate" inputmode="decimal" aria-label="Rentabilidad anual">%</th>' +
+        '<th id="h_wr">CON RETIRADAS</th>';
+      bindEd($('h_monthly'), x => { if (x > 0) setMonthly(view().tableSc, x); }, () => grp(view().tableSc.monthly));
+      bindEd($('h_rate'), x => { if (x > -50 && x < 100) setRate(x); }, () => String(S.rate).replace('.', ','));
+    }
+    $('h_wr').hidden = !v.showRet;
+    $('h_cc').textContent = 'CUENTA CORRIENTE';
+    setEd($('h_monthly'), grp(t.monthly));
+    setEd($('h_rate'), String(S.rate).replace('.', ','));
+
+    const A12 = 12 * t.monthly;
+    let html = '';
+    ys.forEach((y, k) => {
+      const r = rows[y - 1];
+      let ic = '<b>' + eur(r.ic) + '</b>';
+      if (!v.showRet && S.method === 'anual' && y <= 3 && ys[y - 1] === y) {
+        ic = y === 1
+          ? '<span class="f">' + eur(A12) + ' + ' + pct(S.rate) + ' = </span><b>' + eur(r.ic) + '</b>'
+          : '<span class="f">(' + eur(rows[y - 2].ic) + ' + ' + eur(A12) + ') + ' + pct(S.rate) + ' = </span><b>' + eur(r.ic) + '</b>';
+      }
+      const fin = y === N;
+      const reach = fin && r.ic >= t.goal * 0.995;
+      const vis = k < 3 ? v.step >= 5 : (v.step >= 6);
+      let wr = '';
+      if (v.showRet) wr = '<td>' + (r.w > 0 ? eur(r.before) + ' <span class="w">− ' + eur(r.w) + '</span>' : eur(r.after)) + '</td>';
+      html += '<tr class="' + (fin ? 'final ' : '') + (vis ? '' : 'hide') + '"><td class="yr">AÑO ' + y + '</td><td>' + eur(r.cc) +
+        '</td><td class="ic' + (reach ? ' goal' : '') + '">' + ic + '</td>' + wr + '</tr>';
+    });
+    $('tbody').innerHTML = html;
+    show($('thead'), v.step >= 5);
+
+    // nota
+    const last = rows[rows.length - 1];
+    const ok = last.ic >= t.goal * 0.995;
+    const need = t.goal / fvPerEuro(N);
+    // al pasar al plazo 2 (paso 7) se ocultan las dos y vuelven a salir ya actualizadas: la pensión en el 10, el objetivo en el 11
+    const showRes = v.step >= 6 && !(S.two && v.step >= 7 && v.step < 11);
+    const pv = pension(sc);   // la del plazo de las cajas: sale justo después de los €/mes
+    // color con la cifra de la diapositiva: menos de 1.000 €/mes rosa, de 1.000 a 1.500 €/mes naranja, desde 1.500 €/mes verde.
+    // Al lado, lo que valdría hoy (descontando la inflación de los años del plazo, hasta que empieza a cobrarla)
+    const pr = pv / Math.pow(1 + S.infl / 100, sc.years);
+    $('pen').className = 'pill ' + (pv >= 1500 ? 'ok' : pv >= 1000 ? 'mid' : 'ko') + (v.showPen ? '' : ' hide');
+    $('pen').textContent = 'Pensión privada: ' + eur(pv) + '/mes · ' + S.pYears + ' años' + (S.infl > 0 ? ' · hoy serían ' + eur(pr) + '/mes' : '');
+    $('res').className = 'pill ' + (ok ? 'ok' : 'ko') + (showRes ? '' : ' hide');
+    $('res').textContent = ok ? '✓ En ' + N + ' años llegas a ' + eur(last.ic) + ': objetivo cubierto'
+      : 'En ' + N + ' años llegas a ' + eur(last.ic) + ': faltan ' + eur(t.goal - last.ic);
+    show($('note'), true);
+
+    // panel
+    setIn('f_rate', String(S.rate).replace('.', ','));
+    setIn('f_pY', String(S.pYears)); setIn('f_inf', String(S.infl).replace('.', ','));
+    const R = S.rate / 100, rp = pct(S.rate);
+    document.querySelectorAll('.calc .rt').forEach(e => { e.textContent = rp; });
+    // calculadora 1 · ¿cuánto tengo que ahorrar al mes?
+    setIn('f_nGoal', grp(S.nGoal)); setIn('f_nYears', String(S.nYears));
+    const nNeed = Math.round(S.nGoal / fvPerEuro(S.nYears)), nFlat = Math.round(S.nGoal / (S.nYears * 12));
+    $('nTxt').innerHTML = 'Para ' + eur(S.nGoal) + ' en ' + S.nYears + (S.nYears === 1 ? ' año' : ' años') + ':<br>' +
+      'En la cuenta (0 %): <b class="ko">' + eur(nFlat) + '/mes</b><br>' +
+      'Con interés compuesto al ' + rp + ': <b class="ok">' + eur(nNeed) + '/mes</b>';
+    // calculadora 2 · ¿cuánto consigo?
+    setIn('f_gMonthly', grp(S.gMonthly)); setIn('f_gYears', String(S.gYears));
+    const gRows = simulate(S.gYears, S.gMonthly, R, S.method, []), gIc = gRows[gRows.length - 1].ic;
+    $('gTxt').innerHTML = 'Ahorrando ' + eur(S.gMonthly) + '/mes durante ' + S.gYears + (S.gYears === 1 ? ' año' : ' años') + ':<br>' +
+      'En la cuenta (0 %): <b class="ko">' + eur(12 * S.gMonthly * S.gYears) + '</b><br>' +
+      'Con interés compuesto al ' + rp + ': <b class="ok">' + eur(gIc) + '</b>';
+    $('gApply').disabled = !(S.gMonthly > 0);
+    // calculadora 3 · ¿cuánto tardo?
+    setIn('f_tGoal', grp(S.tGoal)); setIn('f_tMonthly', grp(S.tMonthly));
+    const y0 = yearsTo(S.tGoal, S.tMonthly, 0), yR = yearsTo(S.tGoal, S.tMonthly, R);
+    $('tTxt').innerHTML = 'Para ' + eur(S.tGoal) + ' ahorrando ' + eur(S.tMonthly) + '/mes:<br>' +
+      'En la cuenta (0 %): <b class="ko">' + yTxt(y0) + '</b><br>' +
+      'Con interés compuesto al ' + rp + ': <b class="ok">' + yTxt(yR) + '</b>';
+    $('tApply').disabled = !(isFinite(yR) && Math.round(yR) <= MAXY && Math.round(yR) >= 1);
+    $('tNote').textContent = $('tApply').disabled
+      ? '«¿Cuánto tardo?»: pasa de ' + MAXY + ' años; sube el ahorro al mes para llevarlo a la diapositiva.'
+      : '«¿Cuánto tardo?»: en la diapositiva los años se redondean al más cercano.';
+    // último paso: con el capital del último plazo y el ahorro mensual de la tabla
+    $('f_comp').checked = !!S.comp;
+    const cG = (S.two ? S.B : S.A).goal, cM = (S.two ? S.B : S.A).monthly;
+    const c0 = yearsTo(cG, cM, 0), cR = yearsTo(cG, cM, R);
+    $('c_goal').textContent = eur(cG); $('c_m').textContent = eur(cM) + '/mes';
+    $('c_y0').textContent = yTxt(c0); $('c_yR').textContent = yTxt(cR);
+    $('c_capR').textContent = 'con interés compuesto al ' + rp;
+    show($('comp'), v.showComp);
+    $('penTxt').textContent = 'Pensión = capital ÷ (años cobrando × 12); con inflación, la diapositiva muestra también lo que valdría hoy.';
+    setIn('f_yA', String(S.A.years)); setIn('f_gA', grp(S.A.goal)); setIn('f_fA', grp(flat(S.A))); setIn('f_mA', grp(S.A.monthly));
+    setIn('f_yB', String(S.B.years)); setIn('f_gB', grp(S.B.goal)); setIn('f_fB', grp(flat(S.B))); setIn('f_mB', grp(S.B.monthly));
+    ['f_mB'].forEach(id => { $(id).disabled = !S.two; });
+    $('f_two').checked = S.two;
+    ['f_yB', 'f_gB', 'f_fB'].forEach(id => { $(id).disabled = !S.two; });
+    renderW();
+    fit();
+  }
+
+  // si en algún tamaño de pantalla la tabla no cabe, se estrechan un poco las filas (todas por igual)
+  // Alto de fila fijo para toda la presentación: se calcula con la tabla final (la más larga), así no cambia
+  // entre pasos ni entre plazos. Máximo 2,85 % del ancho de la diapositiva; si no cabe, todas por igual más bajas.
+  function fit() {
+    const tbl = $('tbl'), note = $('note'), slide = $('slide');
+    if (window.matchMedia('(max-width: 760px)').matches) { tbl.style.setProperty('--rowh', 2.85); return; }
+    const W = validW().map(w => w.year);
+    const finalN = S.two ? Math.max(S.A.years, S.B.years) : S.A.years;
+    const maxRows = Math.max(ROWS, yearsList(finalN, W).length);
+    const cq = slide.getBoundingClientRect().width / 100;
+    const top = tbl.getBoundingClientRect().top, head = $('thead').getBoundingClientRect().height;
+    // filas de 2,85 (solo más bajas si en esa pantalla no cabría todo); las etiquetas, justo debajo de la tabla
+    // completa con el mismo hueco que hay entre las cajas lavanda y la tabla
+    const gap = parseFloat(getComputedStyle(slide).rowGap) || 2.2 * cq;
+    const sTop = slide.getBoundingClientRect().top, sBot = slide.getBoundingClientRect().bottom;
+    const padB = parseFloat(getComputedStyle(slide).paddingBottom) || 0;
+    const noteH = note.getBoundingClientRect().height;
+    const room = sBot - padB - noteH - gap - top - head;
+    const rh = Math.max(1.6, Math.min(2.85, room / maxRows / cq));
+    note.style.top = (top - sTop + head + maxRows * rh * cq + gap) + 'px';
+    note.style.bottom = 'auto';
+    tbl.style.setProperty('--rowh', rh.toFixed(3));
+  }
+  window.addEventListener('resize', () => fit());
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fit());
+
+  // retiradas
+  function renderW() {
+    const g = $('wgrid');
+    if (g.contains(document.activeElement)) return;
+    g.querySelectorAll('.wr').forEach(e => e.remove());
+    S.withdrawals.forEach((w, i) => {
+      const a = document.createElement('input'); a.className = 'in wr'; a.id = 'w_y' + i; a.inputMode = 'numeric'; a.placeholder = 'año'; a.value = w.year || ''; a.setAttribute('aria-label', 'Año de la retirada ' + (i + 1));
+      const b = document.createElement('input'); b.className = 'in wr'; b.id = 'w_a' + i; b.inputMode = 'numeric'; b.placeholder = '€'; b.value = w.amount ? grp(w.amount) : ''; b.setAttribute('aria-label', 'Importe de la retirada ' + (i + 1));
+      const x = document.createElement('button'); x.type = 'button'; x.className = 'x wr'; x.textContent = '×'; x.setAttribute('aria-label', 'Quitar retirada ' + (i + 1));
+      a.addEventListener('input', () => { const n = num(a.value); w.year = isFinite(n) ? Math.min(MAXY, Math.max(0, Math.round(n))) : 0; changed(); });
+      a.addEventListener('blur', () => { a.value = w.year || ''; });
+      b.addEventListener('input', () => { const n = num(b.value); w.amount = isFinite(n) ? Math.max(0, n) : 0; changed(); });
+      b.addEventListener('blur', () => { b.value = w.amount ? grp(w.amount) : ''; });
+      x.addEventListener('click', () => { x.blur(); S.withdrawals.splice(i, 1); changed(); renderW(); });
+      g.append(a, b, x);
+    });
+    $('addW').disabled = S.withdrawals.length >= 5;
+  }
+
+  function changed() { save(); render(); }
+
+  // cifras de la diapositiva: cambian el plazo que se está viendo
+  const cur = () => view().sc;
+  function bindEd(el, setter, fmt) {
+    el.addEventListener('input', () => { sizeInput(el); const x = num(el.value); if (isFinite(x)) { setter(x); save(); render(); } });
+    el.addEventListener('focus', () => el.select());
+    el.addEventListener('blur', () => { el.value = fmt(); sizeInput(el); render(); });
+    el.addEventListener('keydown', e => { if (e.key === 'Enter') el.blur(); e.stopPropagation(); });
+  }
+  bindEd($('years'), x => { if (x >= 1 && x <= MAXY) setYears(cur(), Math.round(x)); }, () => String(cur().years));
+  bindEd($('goal'), x => { if (x > 0) setGoal(cur(), x); }, () => grp(cur().goal));
+  bindEd($('flat'), x => { if (x > 0) setFlat(cur(), x); }, () => grp(flat(cur())));
+
+  // panel
+  function bindIn(id, setter) {
+    const e = $(id);
+    e.addEventListener('input', () => { const x = num(e.value); if (isFinite(x)) { setter(x); changed(); } });
+    e.addEventListener('blur', () => render());
+  }
+  bindIn('f_rate', x => { if (x > -50 && x < 100) setRate(x); });
+  bindIn('f_yA', x => { if (x >= 1 && x <= MAXY) setYears(S.A, Math.round(x)); });
+  bindIn('f_gA', x => { if (x > 0) setGoal(S.A, x); });
+  bindIn('f_fA', x => { if (x > 0) setFlat(S.A, x); });
+  bindIn('f_mA', x => { if (x > 0) setMonthly(S.A, x); });
+  bindIn('f_yB', x => { if (x >= 1 && x <= MAXY) setYears(S.B, Math.round(x)); });
+  bindIn('f_gB', x => { if (x > 0) setGoal(S.B, x); });
+  bindIn('f_fB', x => { if (x > 0) setFlat(S.B, x); });
+  bindIn('f_mB', x => { if (x > 0) setMonthly(S.B, x); });
+  $('f_two').addEventListener('change', e => { S.two = e.target.checked; changed(); });
+  bindIn('f_pY', x => { if (x >= 1 && x <= 60) S.pYears = Math.round(x); });
+  bindIn('f_inf', x => { if (x >= 0 && x < 20) S.infl = x; });
+  $('f_comp').addEventListener('change', e => { S.comp = e.target.checked; changed(); });
+  bindIn('f_nGoal', x => { if (x > 0) S.nGoal = x; });
+  bindIn('f_nYears', x => { if (x >= 1 && x <= MAXY) S.nYears = Math.round(x); });
+  bindIn('f_gMonthly', x => { if (x >= 0) S.gMonthly = x; });
+  bindIn('f_gYears', x => { if (x >= 1 && x <= MAXY) S.gYears = Math.round(x); });
+  bindIn('f_tGoal', x => { if (x > 0) S.tGoal = x; });
+  bindIn('f_tMonthly', x => { if (x >= 0) S.tMonthly = x; });
+  // pasa el cálculo al plazo 1 y enseña la diapositiva entera (sin el último paso de comparación)
+  function toSlide(years, set) {
+    S.A.years = years; set(S.A); S.two = false; step = maxStep() - (S.comp ? 1 : 0); changed(); renderW();
+    $('slide').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  $('nApply').addEventListener('click', () => toSlide(S.nYears, sc => setGoal(sc, S.nGoal)));
+  $('gApply').addEventListener('click', () => toSlide(S.gYears, sc => setMonthly(sc, S.gMonthly)));
+  $('tApply').addEventListener('click', () => toSlide(Math.max(1, Math.min(MAXY, Math.round(yearsTo(S.tGoal, S.tMonthly, S.rate / 100)))), sc => setMonthly(sc, S.tMonthly)));
+  $('panel').addEventListener('submit', e => e.preventDefault());
+  $('panel').addEventListener('keydown', e => e.stopPropagation());
+  $('addW').addEventListener('click', () => { if (S.withdrawals.length >= 5) return; $('addW').blur(); S.withdrawals.push({ year: 0, amount: 0 }); save(); renderW(); const ins = $('wgrid').querySelectorAll('input'); if (ins.length) ins[ins.length - 2].focus(); });
+  // como recargar la página: datos del ejemplo, primer paso, panel de datos oculto y arriba del todo
+  $('reset').addEventListener('click', () => {
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    S = clone(EXAMPLE); norm(S.A); norm(S.B); save(); step = 0;
+    const p = $('panel'); p.hidden = true; $('app').classList.remove('data');
+    $('toggleTxt').textContent = 'Mostrar datos'; $('toggleData').setAttribute('aria-expanded', 'false');
+    try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
+    render(); renderW();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // control de pasos
+  const go = d => { step = Math.max(0, Math.min(step + d, maxStep())); render(); };
+  $('next').addEventListener('click', () => go(1));
+  $('prev').addEventListener('click', () => { if (step > maxStep()) step = maxStep(); go(-1); });
+  $('restart').addEventListener('click', () => { step = 0; render(); $('slide').focus(); });
+  $('all').addEventListener('click', () => { step = 99; render(); });
+  // sin avanzar con clic en la diapositiva (para no avanzar sin querer al cambiar una cifra): flechas, espacio o los botones
+  document.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input, select, textarea')) return;
+    if (e.target.closest && e.target.closest('button') && (e.key === 'Enter' || e.key === ' ')) return;
+    if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); if (step > maxStep()) step = maxStep(); go(1); }
+    else if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); if (step > maxStep()) step = maxStep(); go(-1); }
+  });
+  // pantalla completa: entra la diapositiva con la barra y los datos, para poder cambiar cosas sin salir
+  const app = $('app');
+  $('full').addEventListener('click', () => {
+    try {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (app.requestFullscreen) app.requestFullscreen().catch(() => {});
+      else if (app.webkitRequestFullscreen) app.webkitRequestFullscreen();
+    } catch (e) {}
+  });
+  let hideT;
+  function poke() { app.classList.add('ui'); clearTimeout(hideT); hideT = setTimeout(() => app.classList.remove('ui'), 2500); }
+  app.addEventListener('mousemove', () => { if (document.fullscreenElement) poke(); });
+  document.addEventListener('fullscreenchange', () => {
+    const on = !!document.fullscreenElement;
+    $('fullTxt').textContent = on ? 'Salir de pantalla completa' : 'Pantalla completa';
+    $('full').title = on ? 'Salir de pantalla completa (Esc)' : 'Pantalla completa';
+    if (on) poke();
+    setTimeout(fit, 60);
+  });
+  $('toggleData').addEventListener('click', () => {
+    const p = $('panel'); p.hidden = !p.hidden;
+    app.classList.toggle('data', !p.hidden);
+    $('toggleTxt').textContent = p.hidden ? 'Mostrar datos' : 'Ocultar datos';
+    $('toggleData').title = p.hidden ? 'Mostrar datos' : 'Ocultar datos';
+    $('toggleData').setAttribute('aria-expanded', String(!p.hidden));
+  });
+
+  render();
+})();
+</script>
+
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script>
+</body></html>

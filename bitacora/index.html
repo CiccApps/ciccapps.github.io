@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Bitácora</title>
+<meta name="description" content="Plan de lectura, libros por comprar y qué leer según el mood. Una CiccApp.">
+<meta name="theme-color" content="#F3EFE4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1A17" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bitácora">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../iconos/bitacora-180.png">
+<link rel="icon" type="image/png" href="../iconos/bitacora-192.png">
+<link rel="stylesheet" href="../compartido/ciccapps.css">
+<style>
+/* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
+:root{
+  --paper:#F3EFE4; --card:#FBF8F0; --ink:#1D3A32; --muted:#5F665E; --line:#E0D9C8;
+  --gold:#9C7630; --gold-soft:#F2E6C9; --shelf:#C9BFA8; --empty:#E9E3D3;
+  --s1:#2F5D50; --s2:#2B3A5E; --s3:#7A2633; --s4:#8A6A2A; --s5:#34413C; --sx:#6B6A5E;
+  --ok:#2F6B45; --warn:#9A5B12;
+  --f-display:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;
+  --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0F1A17; --card:#16241F; --ink:#EDE6D3; --muted:#9DA89F; --line:#263A33;
+  --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A4234; --empty:#1E2E28;
+  --s1:#5E9B88; --s2:#8497C4; --s3:#C2707E; --s4:#C99A45; --s5:#A3AFA8; --sx:#A39F8E;
+  --ok:#6FBF8A; --warn:#E0A25A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0F1A17; --card:#16241F; --ink:#EDE6D3; --muted:#9DA89F; --line:#263A33;
+  --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A4234; --empty:#1E2E28;
+  --s1:#5E9B88; --s2:#8497C4; --s3:#C2707E; --s4:#C99A45; --s5:#A3AFA8; --sx:#A39F8E;
+  --ok:#6FBF8A; --warn:#E0A25A; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+[hidden]{display:none!important}
+.addrow{display:grid;grid-template-columns:1fr;gap:8px}
+.empezar{display:flex;flex-direction:column;gap:16px;padding:24px 20px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.empezar h2{font-size:26px}
+.empezar .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.foot-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:420px}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.mgrid button{font-size:12.5px;padding:8px 4px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mgrid button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+input[type=text],select{font:inherit;font-size:16px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%;min-width:0}
+.btn.danger{color:var(--s3);border-color:transparent;padding-left:0}
+.cargando{padding:48px 0;text-align:center;color:var(--muted)}
+body.nuevo .summary,body.nuevo .now,body.nuevo .tabs,body.nuevo .foot-actions{display:none}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding-block:24px 64px;
+  padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));
+  display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;margin:0}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+a{color:var(--gold)}
+button{font:inherit;color:inherit}
+
+header{display:flex;flex-direction:column;gap:6px}
+header h1{font-size:clamp(34px,8vw,52px);line-height:1}
+header p{margin:0;color:var(--muted);max-width:58ch}
+
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.stat{background:var(--card);padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.stat b{font-family:var(--f-display);font-weight:400;font-size:28px;line-height:1.1}
+.stat span{font-size:12px;color:var(--muted)}
+.bar{height:4px;background:var(--empty);border-radius:2px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--gold);transition:width .5s}
+@media (max-width:560px){
+  .stat{padding:10px 10px 12px}.stat b{font-size:24px}.stat span{font-size:11px;line-height:1.3}
+  header p{font-size:14px}
+  .now-card{padding:12px 14px}.now-card .go{display:none}.now-card h3{font-size:18px}
+  .stage-head h2{font-size:21px}.stage-num{font-size:28px;min-width:22px}
+  .row{padding:10px 12px;gap:8px;grid-template-columns:24px 1fr auto}
+  .seg button{font-size:12.5px;padding:8px 2px}
+  .sheet h3{font-size:24px}
+}
+.stage-toggle{all:unset;cursor:pointer;display:flex;gap:12px;align-items:flex-start;flex:1;min-width:0}
+.stage-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:4px}
+.chev{width:18px;height:18px;flex:none;margin-top:8px;color:var(--muted);transition:transform .2s}
+.stage.closed .chev{transform:rotate(-90deg)}
+.stage.closed .list,.stage.closed .stage-head p{display:none}
+
+.now{display:flex;flex-direction:column;gap:10px}
+.now-card{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--gold);background:var(--gold-soft);border-radius:6px;cursor:pointer;text-align:left;width:100%}
+.now-card.soft{border-color:var(--line);background:var(--card)}
+.spine-mini{width:14px;height:46px;border-radius:2px;flex:none}
+.now-card .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.now-card h3{font-size:20px;line-height:1.2}
+.now-card small{color:var(--muted)}
+.now-card .go{font-size:13px;font-weight:600;color:var(--gold);white-space:nowrap}
+.now-card .bar{max-width:280px}
+.hint{font-size:13px;color:var(--muted);margin:0}
+
+.tabs{display:flex;gap:4px;background:var(--empty);padding:4px;border-radius:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.tab{flex:1;padding:9px 6px;border:none;border-radius:7px;background:transparent;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+.tab .ct{font-family:var(--f-mono);font-size:11px;margin-left:4px;color:var(--gold)}
+.view{display:flex;flex-direction:column;gap:24px}
+
+.shelves{display:flex;flex-direction:column;gap:20px}
+.shelf-row{display:flex;flex-direction:column;gap:6px}
+.shelf-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12px;color:var(--muted)}
+.shelf-head strong{color:var(--ink);font-weight:600}
+.shelf{display:flex;flex-wrap:wrap;align-items:flex-end;gap:3px;padding:0 4px;border-bottom:5px solid var(--shelf);min-height:70px}
+.spine{border:1.5px solid var(--sc);border-bottom:none;border-radius:2px 2px 0 0;background:transparent;cursor:pointer;padding:0;position:relative;transition:transform .2s,background .3s}
+.spine.nope{border-style:dotted;opacity:.55}
+.spine:hover,.spine:focus-visible{transform:translateY(-4px);outline:none}
+.spine:focus-visible{box-shadow:0 0 0 2px var(--gold)}
+.spine.leido{background:var(--sc);opacity:1;border-style:solid}
+.spine.leido::after{content:"";position:absolute;left:2px;right:2px;top:18%;height:2px;background:var(--gold);opacity:.8}
+.spine.leyendo{background:var(--gold);border-color:var(--gold);border-style:solid;opacity:1;transform:translateY(-6px)}
+.spine.abandonado{opacity:.3;border-style:dashed}
+.legend{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding-top:2px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:8px;height:16px;border:1.5px solid var(--muted);border-bottom:none;border-radius:2px 2px 0 0}
+.legend i.d{border-style:dotted}.legend i.f{background:var(--muted)}.legend i.g{background:var(--gold);border-color:var(--gold)}
+@media (prefers-reduced-motion:reduce){.spine,.bar i,.chev{transition:none}}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.filters{display:flex;gap:4px;background:var(--empty);padding:4px;border-radius:10px}
+.filters .chip{flex:1 1 0;min-width:0;border:none;background:transparent;border-radius:7px;padding:7px 2px;font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.filters .chip[aria-pressed="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+@media (max-width:380px){.filters .chip{font-size:11.5px}.tab{font-size:13px}}
+.chip{font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip:focus-visible,.status-btn:focus-visible,.row:focus-visible,.tab:focus-visible,.btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+.stage{display:flex;flex-direction:column;gap:10px}
+.stage-head{display:flex;gap:12px;align-items:flex-start;border-top:2px solid var(--sc);padding-top:12px}
+.stage-num{font-family:var(--f-display);font-size:34px;line-height:1;color:var(--sc);min-width:28px}
+.stage-head .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.stage-head h2{font-size:24px;line-height:1.15}
+.stage-head p{margin:0;color:var(--muted);font-size:14px;max-width:62ch}
+.stage-count{font-size:12px;color:var(--muted);white-space:nowrap;padding-top:6px}
+.list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--card)}
+.group-label{padding:10px 14px 4px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;border-top:1px solid var(--line)}
+.group-label:first-child{border-top:none}
+.row{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);cursor:pointer}
+.row:first-child,.group-label+.row{border-top:none}
+.row:hover{background:color-mix(in srgb,var(--paper) 60%,transparent)}
+.row .n{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.row .info{min-width:0}
+.row .t{font-weight:500;display:flex;flex-wrap:wrap;gap:6px;align-items:baseline}
+.row .meta{font-size:13px;color:var(--muted)}
+.row.leido .t{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--line)}
+.row.abandonado .t{color:var(--muted);font-style:italic}
+.tag{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:1px 6px;border-radius:3px;border:1px solid currentColor;color:var(--sc);white-space:nowrap}
+.own{font-size:12px;white-space:nowrap}
+.own.no{color:var(--warn)} .own.si{color:var(--ok)}
+.stars-inline{color:var(--gold);font-size:12px;letter-spacing:1px}
+.status-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);cursor:pointer;display:grid;place-items:center;color:var(--muted);padding:0}
+.status-btn svg{width:16px;height:16px}
+.row.leyendo .status-btn{border-color:var(--gold);color:var(--gold);background:var(--gold-soft)}
+.row.leido .status-btn{border-color:var(--ok);background:var(--ok);color:var(--card)}
+.empty-msg{padding:14px;color:var(--muted);font-size:14px}
+
+/* Mood */
+.mood-intro h2{font-size:28px}
+.mood-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:720px){.mood-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.mood-actions{display:flex;flex-direction:column;gap:12px}
+.mood-actions .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mood-actions .btn{padding:10px 8px;font-size:14px}
+.mood{display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px 14px;min-width:0;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer}
+.mood b{font-weight:600}.mood span{font-size:12px;color:var(--muted)}
+.mood[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-soft)}
+.toggle{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.toggle input{width:18px;height:18px;accent-color:var(--gold)}
+.picks{display:flex;flex-direction:column;gap:10px}
+.pick{display:grid;grid-template-columns:auto 1fr;gap:14px;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;text-align:left;width:100%}
+.pick.top{border-color:var(--gold)}
+.pick h3{font-size:21px;line-height:1.15}
+.pick .why2{font-size:13px;color:var(--muted)}
+.reasons{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.reasons span{font-size:11.5px;padding:2px 8px;border-radius:999px;background:var(--paper);color:var(--ink)}
+
+/* Compras */
+.buy{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.buy.soon{border-color:var(--warn)}
+.buy-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.buy h3{font-size:20px;line-height:1.15}
+.buy .by{font-size:13px;color:var(--muted)}
+.ed{font-size:14px;background:var(--paper);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.ed b{font-weight:600}.ed small{color:var(--muted)}
+.buy-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.pill.soon{background:var(--warn);color:var(--card)}
+.pill.later{border:1px solid var(--line);color:var(--muted)}
+.sm{font-size:13px;padding:7px 12px}
+.linkbtn{font-size:13px;font-weight:600;text-decoration:none;padding:7px 4px}
+
+/* Hoja */
+.sheet-bg{position:fixed;inset:0;background:rgba(10,12,18,.45);display:flex;align-items:flex-end;justify-content:center;z-index:20;padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
+.sheet{background:var(--card);color:var(--ink);width:100%;max-width:560px;border-radius:12px 12px 0 0;max-height:92%;overflow:auto;
+  padding:20px max(18px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));
+  display:flex;flex-direction:column;gap:16px;border-top:4px solid var(--sc)}
+.sheet h3{font-size:28px;line-height:1.1}
+.sheet .by{color:var(--muted);margin-top:4px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--paper);padding:4px;border-radius:8px}
+.seg.two{grid-template-columns:1fr 1fr}
+.seg button{font-size:13px;padding:8px 4px;border:none;border-radius:6px;background:transparent;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.15);font-weight:600}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label,.field .lbl{font-size:12px;color:var(--muted);font-weight:500}
+.dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=date],input[type=number],textarea{font:inherit;font-size:16px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%;min-width:0}
+textarea{min-height:90px;resize:vertical}
+.rate{display:flex;gap:4px}
+.rate button{font-size:26px;line-height:1;background:none;border:none;cursor:pointer;color:var(--line);padding:2px}
+.rate button.on{color:var(--gold)}
+.sheet-actions{display:flex;gap:10px;justify-content:flex-end}
+.btn{font-weight:600;font-size:14px;padding:10px 18px;border-radius:6px;border:1px solid var(--line);background:transparent;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.why{font-size:13px;color:var(--muted);background:var(--paper);border-radius:6px;padding:10px 12px;margin:0}
+.links{display:flex;gap:16px;flex-wrap:wrap}
+.links a{font-size:14px;font-weight:600;text-decoration:none}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 16px;border-radius:999px;font-size:13px;z-index:30;white-space:nowrap}
+footer{font-size:12px;color:var(--muted);text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+</style>
+
+</head>
+<body class="nuevo">
+<div class="wrap">
+  <header>
+    <span class="eyebrow" id="planCount">Plan de lectura en 5 etapas</span>
+    <h1>Bitácora de Lectura</h1>
+    <p>Toca un libro para abrir su ficha. El círculo de cada fila avanza su estado de un toque.</p>
+  </header>
+
+  <section class="summary" aria-label="Resumen">
+    <div class="stat"><b id="sRead" class="mono">0</b><span id="sReadOf">leídos del plan</span><div class="bar"><i id="sBar" style="width:0%"></i></div></div>
+    <div class="stat"><b id="sPages" class="mono">0</b><span>páginas leídas</span></div>
+    <div class="stat"><b id="sStage">1</b><span id="sStageName">etapa actual</span></div>
+    <div class="stat"><b id="sOwned" class="mono">0</b><span>en casa sin leer</span></div>
+  </section>
+
+  <section class="now" aria-label="Ahora">
+    <span class="eyebrow" id="nowLabel">Ahora mismo</span>
+    <div id="nowList" style="display:flex;flex-direction:column;gap:8px"></div>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-plan" data-tab="plan" aria-selected="true">Plan</button>
+    <button class="tab" role="tab" id="tab-mood" data-tab="mood" aria-selected="false">¿Qué leo?</button>
+    <button class="tab" role="tab" id="tab-compras" data-tab="compras" aria-selected="false">Compras<span class="ct" id="buyCount"></span></button>
+  </div>
+
+  <div id="view" class="view"><p class="cargando">Abriendo tu bitácora…</p></div>
+
+  <footer id="pie">
+    <div class="foot-actions"><button class="chip" id="exportGR">Exportar a Goodreads</button><button class="chip" id="salir">Cerrar sesión</button></div>
+    <span id="syncNote">Sincronizado en todos tus dispositivos · páginas aproximadas según ediciones habituales en español.</span>
+  </footer>
+</div>
+
+<div id="sheetRoot"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="../compartido/supabase.js"></script>
+<script src="../compartido/cuenta.js"></script>
+<script>
+const MOODS={
+ engancha:["Que me enganche","No poder soltarlo"],
+ corto:["Algo corto","Terminarlo en pocos días"],
+ ligero:["Algo ligero","Sin esfuerzo, para relajarme"],
+ misterio:["Misterio","Pistas y giros"],
+ evadir:["Evadirme","Otros mundos y aventuras"],
+ emocion:["Emocionarme","Historias que tocan"],
+ pensar:["Pensar","Preguntas grandes"],
+ epico:["Épico","Héroes, guerras y viajes"],
+ aprender:["Aprender algo","Útil para la vida o el trabajo"],
+ clasico:["Un gran clásico","De los que hay que leer"]};
+const CLASICOS=new Set(["ratones","cronica","noches","rebelion","ivan","moscas","extranjero","tregua","kokoro","stoner","jugador","1984","gatsby","persuasion","restos","inocencia","crimen","iliada","odisea","eneida","montecristo","karamazov","quijote","meditaciones"]);
+
+const PLANTILLA=[
+ {id:"e1",n:"1",c:"--s1",name:"Recuperar el hábito",why:"Libros cortos que se terminan en pocos días. Mezclo un misterio y un libro sobre hábitos entre los clásicos para que no sean seis dramas seguidos.",books:[
+  ["ratones","De ratones y hombres","John Steinbeck",130,"",["emocion"]],
+  ["cronica","Crónica de una muerte anunciada","Gabriel García Márquez",130,"",["engancha","misterio"]],
+  ["habitos","Hábitos atómicos","James Clear",330,"Práctico",["aprender"]],
+  ["ninguno","Y no quedó ninguno","Agatha Christie",260,"Misterio",["misterio","engancha"]],
+  ["noches","Noches blancas","Fiódor Dostoyevski",100,"",["emocion"]],
+  ["rebelion","Rebelión en la granja","George Orwell",150,"",["pensar"]],
+  ["ivan","La muerte de Iván Ilich","León Tolstói",110,"",["pensar"]],
+  ["moscas","El señor de las moscas","William Golding",260,"",["pensar","engancha"]]]},
+ {id:"e2",n:"2",c:"--s2",name:"Abrir el abanico",why:"Géneros y países distintos. Harry Quebert va pronto porque engancha y te demuestra que puedes con un libro largo.",books:[
+  ["extranjero","El extranjero","Albert Camus",140,"",["pensar"]],
+  ["quebert","La verdad sobre el caso Harry Quebert","Joël Dicker",670,"Misterio",["misterio","engancha"]],
+  ["tregua","La tregua","Mario Benedetti",200,"",["emocion"]],
+  ["kokoro","Kokoro","Natsume Sōseki",280,"",["emocion","pensar"]],
+  ["psicodinero","La psicología del dinero","Morgan Housel",260,"Práctico",["aprender"]],
+  ["stoner","Stoner","John Williams",330,"",["emocion"]],
+  ["sombra","La sombra del viento","Carlos Ruiz Zafón",570,"",["engancha","misterio"]],
+  ["abel","Abel","Alessandro Baricco",170,"",["evadir"]],
+  ["carretera","La carretera","Cormac McCarthy",210,"",["emocion","engancha"]],
+  ["tokio","Tokio Blues","Haruki Murakami",380,"",["emocion"]]]},
+ {id:"e3",n:"3",c:"--s3",name:"Misterio y clásicos modernos",why:"El Orient Express sirve de descanso entre clásicos. Kafka en la orilla sube aquí: es una novela normal, no un gran proyecto.",books:[
+  ["orient","Asesinato en el Orient Express","Agatha Christie",250,"Misterio",["misterio","ligero"]],
+  ["jugador","El jugador","Fiódor Dostoyevski",200,"",["engancha"]],
+  ["1984","1984","George Orwell",350,"",["pensar","engancha"]],
+  ["influencia","Influencia","Robert Cialdini",400,"Práctico",["aprender"]],
+  ["fundacion","Fundación","Isaac Asimov",260,"Ciencia ficción",["evadir","pensar","engancha"]],
+  ["gatsby","El gran Gatsby","F. Scott Fitzgerald",200,"",["emocion"]],
+  ["persuasion","Persuasión","Jane Austen",280,"",["emocion","ligero"]],
+  ["kafka","Kafka en la orilla","Haruki Murakami",600,"",["evadir","pensar"]],
+  ["restos","Los restos del día","Kazuo Ishiguro",260,"",["emocion"]],
+  ["inocencia","La edad de la inocencia","Edith Wharton",330,"",["emocion"]]]},
+ {id:"e4",n:"4",c:"--s4",name:"Hábito consolidado",why:"Bloque griego en orden: la Ilíada, su reinterpretación en La canción de Aquiles, la Odisea y Circe, que sale de ella. Dune cierra la etapa como premio.",books:[
+  ["crimen","Crimen y castigo","Fiódor Dostoyevski",650,"",["pensar","misterio"]],
+  ["voss","Rompe la barrera del no","Chris Voss",300,"Práctico",["aprender"]],
+  ["iliada","La Ilíada","Homero",500,"",["epico"]],
+  ["aquiles","La canción de Aquiles","Madeline Miller",380,"",["epico","emocion","engancha"]],
+  ["odisea","La Odisea","Homero",450,"",["epico","evadir"]],
+  ["circe","Circe","Madeline Miller",400,"",["epico","emocion","engancha"]],
+  ["junco","El infinito en un junco","Irene Vallejo",450,"Ensayo",["aprender"]],
+  ["dune","Dune","Frank Herbert",700,"Ciencia ficción",["evadir","epico","engancha"]]]},
+ {id:"e5",n:"5",c:"--s5",name:"Grandes proyectos",why:"Libros largos o exigentes. Montecristo es el más adictivo de todos: úsalo de descanso entre Karamázov y el Quijote si hace falta.",books:[
+  ["king","22/11/63","Stephen King",870,"",["engancha","evadir"]],
+  ["viento","El nombre del viento","Patrick Rothfuss",880,"",["evadir","engancha"]],
+  ["montecristo","El conde de Montecristo","Alexandre Dumas",1300,"",["engancha","evadir","epico"]],
+  ["sisifo","El mito de Sísifo","Albert Camus",180,"Ensayo",["pensar"]],
+  ["kahneman","Pensar rápido, pensar despacio","Daniel Kahneman",650,"Práctico",["aprender","pensar"]],
+  ["karamazov","Los hermanos Karamázov","Fiódor Dostoyevski",1000,"",["pensar"]],
+  ["quijote","Don Quijote de la Mancha","Miguel de Cervantes",1250,"",["epico"]]]},
+ {id:"ex",n:"+",c:"--sx",name:"Intercalables",extra:true,why:"Sin orden ni número. Úsalos cuando te dé pereza el siguiente de la lista: mejor leer otra cosa que no leer.",groups:[
+  ["Red de seguridad · fantasía",[
+   ["reyes","El camino de los reyes","Brandon Sanderson",1200,"Fantasía",["evadir","epico"]],
+   ["aleacion","Aleación de ley","Brandon Sanderson",380,"Fantasía",["evadir","engancha"]],
+   ["locke","Las mentiras de Locke Lamora","Scott Lynch",700,"Fantasía",["evadir","engancha"]]]],
+  ["Ligeros",[
+   ["cuento","Un cuento perfecto","Elísabet Benavent",500,"",["ligero"]],
+   ["grecia","Cómo meter toda la Antigua Grecia en un ascensor","Teodoro Papakostas",250,"Ensayo",["aprender","ligero"]]]],
+  ["A sorbos",[
+   ["meditaciones","Meditaciones","Marco Aurelio",200,"Ensayo",["pensar","corto"]]]],
+  ["Opcional, si Homero te engancha",[
+   ["eneida","La Eneida","Virgilio",400,"",["epico"]]]],
+  ["Psicología y crecimiento",[
+   ["attached","Attached","Amir Levine y Rachel Heller",300,"",["aprender"]],
+   ["burns","Sentirse bien","David D. Burns",700,"",["aprender"]],
+   ["dones","Los dones de la imperfección","Brené Brown",200,"",["aprender"]]]],
+  ["Finanzas",[
+   ["malkiel","Un paseo aleatorio por Wall Street","Burton G. Malkiel",450,"Práctico",["aprender"]]]]
+ ]}
+];
+
+/* Ediciones recomendadas para comprar: {id:{ed, why, alt}} */
+const PLANTILLA_EDS={"ratones": {"ed": "Edhasa · Edhasa Literaria · trad. Román A. Jiménez", "why": "Traducción española clásica y fluida; es la edición de referencia en España", "alt": ""}, "cronica": {"ed": "Debolsillo · Contemporánea", "why": "Texto original del autor; edición barata y fácil de encontrar", "alt": ""}, "habitos": {"ed": "Diana · Autoconocimiento · trad. Gabriela Moya", "why": "Única traducción española; buena legibilidad", "alt": ""}, "ninguno": {"ed": "Booket · Biblioteca Agatha Christie", "why": "Bolsillo económico con el título actual revisado", "alt": ""}, "noches": {"ed": "Nórdica Libros · Ilustrados · trad. Marta Sánchez-Nieves", "why": "Traducción directa del ruso y edición ilustrada muy cuidada", "alt": "Alianza bolsillo (Noches blancas / El pequeño héroe)"}, "rebelion": {"ed": "Debolsillo · Contemporánea · trad. Miguel Temprano García", "why": "Traducción moderna y precisa de un traductor de prestigio", "alt": ""}, "ivan": {"ed": "Alianza · El libro de bolsillo (con Hadyi Murad) · trad. Juan López-Morillas", "why": "Traducción directa del ruso, muy cuidada, en bolsillo barato", "alt": "Penguin Clásicos · trad. Augusto Vidal"}, "moscas": {"ed": "Alianza · El libro de bolsillo · trad. Carmen Vergara", "why": "Traducción española de referencia en bolsillo asequible", "alt": ""}, "extranjero": {"ed": "Alianza · trad. José Ángel Valente", "why": "Traducción del poeta Valente; sobria, como el original", "alt": ""}, "quebert": {"ed": "Debolsillo · Best Seller · trad. Juan Carlos Durán Romero", "why": "Traducción española habitual de Dicker; bolsillo económico", "alt": ""}, "tregua": {"ed": "Debolsillo · Contemporánea", "why": "Texto original del autor en edición barata y fácil de encontrar", "alt": ""}, "kokoro": {"ed": "Gredos · Biblioteca Universal · trad. Carlos Rubio", "why": "Traducción directa del japonés, con introducción y notas", "alt": ""}, "psicodinero": {"ed": "Planeta · trad. Arnau Figueras Deulofeu", "why": "Única traducción; lectura muy clara", "alt": "Bolsillo Planeta"}, "stoner": {"ed": "Baile del Sol · trad. Antonio Díez Fernández", "why": "Única edición española; fue la que lanzó el fenómeno", "alt": ""}, "sombra": {"ed": "Booket · Biblioteca Carlos Ruiz Zafón", "why": "Texto original del autor en bolsillo económico", "alt": ""}, "abel": {"ed": "Anagrama · Panorama de narrativas · trad. Xavier González Rovira", "why": "Traductor de confianza de Baricco en castellano", "alt": ""}, "carretera": {"ed": "Debolsillo · Contemporánea · trad. Luis Murillo Fort", "why": "Traductor habitual de McCarthy; respeta su prosa seca", "alt": ""}, "tokio": {"ed": "Tusquets · Maxi · trad. Lourdes Porta", "why": "Traducción directa del japonés en bolsillo", "alt": ""}, "orient": {"ed": "Booket · Biblioteca Agatha Christie · trad. Eduardo Machado Quevedo", "why": "Edición de bolsillo actual y económica", "alt": ""}, "jugador": {"ed": "Alianza · Biblioteca Dostoyevski (bolsillo) · trad. Juan López-Morillas", "why": "Traducción directa del ruso, rigurosa y legible", "alt": "Alma Clásicos Ilustrados · trad. Rafael Torres"}, "1984": {"ed": "Debolsillo · Contemporánea · trad. Miguel Temprano García", "why": "Traducción moderna y la más recomendada hoy", "alt": ""}, "influencia": {"ed": "HarperCollins · trad. Jesús de la Torre Olid", "why": "Edición nueva y ampliada", "alt": ""}, "gatsby": {"ed": "Anagrama · Compactos · trad. Justo Navarro", "why": "Traducción literaria muy elogiada, en bolsillo", "alt": "Debolsillo · trad. José Luis López Muñoz"}, "persuasion": {"ed": "Alba · Clásica · trad. Francisco Torres Oliver", "why": "Traductor de clásicos ingleses de gran prestigio", "alt": "Penguin Clásicos · trad. Manuel Ortega y Gasset"}, "kafka": {"ed": "Tusquets · Maxi · trad. Lourdes Porta", "why": "Traducción directa del japonés en bolsillo", "alt": ""}, "restos": {"ed": "Anagrama · Compactos · trad. Ángel Luis Hernández Francés", "why": "Traducción española de referencia en bolsillo asequible", "alt": ""}, "inocencia": {"ed": "Tusquets · Andanzas · trad. Manuel Sáenz de Heredia", "why": "Edición española cuidada y vigente", "alt": ""}, "crimen": {"ed": "Alianza · Biblioteca Dostoyevski (bolsillo) · trad. Juan López-Morillas", "why": "Traducción directa del ruso, clásica y legible, bolsillo barato", "alt": "Cátedra Letras Universales · trad. Isabel Vicente (anotada)"}, "voss": {"ed": "Conecta · trad. María Serrano Giménez", "why": "Única traducción; lectura ágil", "alt": "Debolsillo (bolsillo)"}, "iliada": {"ed": "Blackie Books · edición portátil · prosa de Samuel Butler · ilustr. Calpurnio", "why": "Gemela de tu Odisea: misma prosa y mismo formato", "alt": "Edición completa de Clásicos liberados, con extras"}, "aquiles": {"ed": "Alianza · AdN (bolsillo) · trad. José Miguel Pallarés Sanmiguel", "why": "Única traducción española, en bolsillo económico", "alt": ""}, "odisea": {"ed": "Blackie Books · edición portátil · prosa de Samuel Butler · ilustr. Calpurnio", "why": "El mismo texto que la grande, más manejable y barata. Es la que te recomendé", "alt": "Edición completa «Odisea liberada»: añade la Penélope de Atwood y prólogo de Irene Vallejo"}, "junco": {"ed": "Debolsillo", "why": "Misma obra que la de Siruela, más barata", "alt": "Siruela (tapa dura original)"}, "eneida": {"ed": "Gredos · Biblioteca Clásica Gredos · trad. Javier de Echave-Sustaeta", "why": "Traducción en prosa de referencia, coherente con leer Homero en prosa", "alt": "Alianza bolsillo · trad. Rafael Fontán Barreiro (en verso)"}, "king": {"ed": "Debolsillo · Best Seller", "why": "Edición estándar de King en España, en bolsillo", "alt": ""}, "viento": {"ed": "Debolsillo · Best Seller · trad. Gemma Rovira Ortega", "why": "Traducción muy elogiada y única en castellano", "alt": ""}, "sisifo": {"ed": "Debolsillo · Contemporánea · trad. Esther Benítez", "why": "Gran traductora del francés; ensayo claro y legible", "alt": ""}, "karamazov": {"ed": "Alianza · Biblioteca Dostoyevski (bolsillo) · trad. Augusto Vidal", "why": "Traducción directa clásica, completa y asequible", "alt": "Alba Clásica Maior · trad. Otero, Sánchez-Nieves y Rebón (cara, difícil de encontrar)"}, "quijote": {"ed": "Destino · versión en castellano actual de Andrés Trapiello", "why": "Texto íntegro en español de hoy; sin notas ni arcaísmos", "alt": "Austral bolsillo (Trapiello). Texto original: RAE/Alfaguara, ed. Francisco Rico"}, "reyes": {"ed": "B de Bolsillo / Ediciones B · trad. Rafael Marín Trechera", "why": "Traductor habitual de Sanderson en España", "alt": ""}, "aleacion": {"ed": "Debolsillo · Best Seller · trad. Rafael Marín Trechera", "why": "Misma traducción que el resto de Mistborn, en bolsillo", "alt": ""}, "locke": {"ed": "trad. Javier Martín Lalanda", "why": "Única traducción española; comprueba la editorial actual", "alt": ""}, "cuento": {"ed": "Debolsillo", "why": "Texto original de la autora en bolsillo económico", "alt": ""}, "grecia": {"ed": "Paidós · Contextos", "why": "Única edición en papel", "alt": "eBook"}, "attached": {"ed": "Books4pocket (Urano) · «Maneras de amar» · trad. Victoria Simó Perales", "why": "En España se publica como «Maneras de amar», en bolsillo", "alt": ""}, "burns": {"ed": "Paidós · Biblioteca David D. Burns · trad. Beatriz López y Graciela Jáuregui", "why": "Única edición española vigente", "alt": ""}, "dones": {"ed": "Zenith (Planeta)", "why": "Edición española vigente", "alt": "eBook"}, "malkiel": {"ed": "Alianza · 12.ª ed. actualizada · trad. María Hernández Díaz", "why": "Edición española más reciente y actualizada", "alt": ""}, "circe": {"ed": "Alianza · AdN", "why": "Misma colección y traducción que tu Canción de Aquiles", "alt": ""}, "montecristo": {"ed": "Cualquier edición íntegra (más de 1.000 páginas)", "why": "Evita las versiones abreviadas o adaptadas, que recortan media novela", "alt": ""}, "dune": {"ed": "Debolsillo · Nueva edición (Las crónicas de Dune 1)", "why": "Edición revisada actual, en bolsillo", "alt": ""}, "fundacion": {"ed": "Debolsillo · Best Seller", "why": "Bolsillo económico; hay estuche con la trilogía si te engancha", "alt": ""}, "meditaciones": {"ed": "Alianza · El libro de bolsillo", "why": "Traducción directa del griego, barata y fácil de llevar", "alt": ""}, "kahneman": {"ed": "Debolsillo · tapa blanda", "why": "Mismo texto que la tapa dura, mucho más barato", "alt": ""}};
+
+/* Modelo: etapas y libros de la base de datos */
+let STAGES=[],BOOKS={},MAIN=[],ALL=[],EDS={},state={};let sb=null;
+const COLOR={verde:"--s1",marino:"--s2",burdeos:"--s3",ocre:"--s4",pizarra:"--s5",taupe:"--sx"};
+const COLOR_DE={"--s1":"verde","--s2":"marino","--s3":"burdeos","--s4":"ocre","--s5":"pizarra","--sx":"taupe"};
+function construir(etapas,libros){
+  BOOKS={};EDS={};state={};let num=0;
+  const ord=[...etapas].sort((x,y)=>x.orden-y.orden);const main=ord.filter(e=>!e.intercalable);
+  STAGES=ord.map((e,si)=>({id:e.clave,dbid:e.id,n:e.intercalable?"+":String(main.indexOf(e)+1),c:COLOR[e.color]||"--sx",name:e.nombre,why:e.descripcion||"",extra:e.intercalable,idx:si}));
+  STAGES.forEach(st_=>{
+    const ls=libros.filter(l=>l.etapa===st_.id).sort((x,y)=>x.orden-y.orden);
+    const groups=[];ls.forEach(l=>{const g=l.grupo||null;let G=groups.find(x=>x[0]===g);if(!G){G=[g,[]];groups.push(G)}G[1].push(l)});
+    if(!groups.length)groups.push([null,[]]);
+    st_._groups=groups.map(([label,arr])=>[label,arr.map(l=>{
+      const m=[...(l.moods||[])];if((l.paginas||0)<=220&&!m.includes("corto"))m.push("corto");
+      const bk={id:l.id,clave:l.clave,t:l.titulo,a:l.autor||"",p:l.paginas||250,tag:l.etiqueta||"",moods:m,stage:st_,n:st_.extra?null:++num,orden:l.orden};
+      BOOKS[l.id]=bk;if(l.edicion)EDS[l.id]=l.edicion;
+      state[l.id]={estado:l.estado,tengo:l.tengo,pagina:l.pagina??"",inicio:l.inicio||"",fin:l.fin||"",nota:l.nota||0,comentario:l.comentario||""};
+      return bk})]);
+    st_._all=st_._groups.flatMap(g=>g[1]);
+  });
+  MAIN=STAGES.filter(x=>!x.extra).flatMap(x=>x._all);ALL=Object.values(BOOKS);
+}
+
+let tab="plan";let filter="todos";let moodSel=new Set();let onlyOwned=true;
+const LS="bitacora-lectura-v1";
+try{const t=localStorage.getItem(LS+"-tab");if(t)tab=t}catch(e){}
+const S=id=>state[id]||{};
+const st=id=>S(id).estado||"pendiente";
+const owned=id=>!!S(id).tengo;
+const open=id=>!["leido","abandonado"].includes(st(id));
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const fmt=d=>{if(!d)return"";const[y,m,dd]=d.split("-");return `${+dd} ${MES[m-1]} ${y}`};
+const days=(a,b)=>Math.max(1,Math.round((new Date(b)-new Date(a))/864e5)+1);
+const gr=b=>`https://www.goodreads.com/search?q=${encodeURIComponent(b.t+" "+b.a)}`;
+const amz=b=>`https://www.amazon.es/s?k=${encodeURIComponent(b.t+" "+b.a+(EDS[b.id]&&EDS[b.id].pub?" "+EDS[b.id].pub:""))}`;
+
+/* Ritmo: páginas por día a partir de libros con fechas; 20 si aún no hay datos */
+function pace(){
+  const done=ALL.filter(b=>st(b.id)==="leido"&&S(b.id).inicio&&S(b.id).fin);
+  if(!done.length)return {ppd:20,real:false};
+  const p=done.reduce((s,b)=>s+b.p,0),d=done.reduce((s,b)=>s+days(S(b.id).inicio,S(b.id).fin),0);
+  return {ppd:Math.max(5,p/d),real:true};
+}
+const curStage=()=>STAGES.filter(s=>!s.extra).find(s=>s._all.some(b=>open(b.id)))||STAGES[4];
+
+const ICON={pendiente:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 4v8M4 8h8"/></svg>',
+ leyendo:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 3.5h4.5A1.5 1.5 0 0 1 8 5v8a1.5 1.5 0 0 0-1.5-1.5H2zM14 3.5H9.5A1.5 1.5 0 0 0 8 5v8a1.5 1.5 0 0 1 1.5-1.5H14z"/></svg>',
+ leido:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3.5 8.5l3 3 6-7"/></svg>',
+ abandonado:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h8"/></svg>'};
+const LABEL={pendiente:"Pendiente",leyendo:"Leyendo",leido:"Leído",abandonado:"Abandonado"};
+
+function render(){renderTop();renderView()}
+
+function renderTop(){
+  const read=MAIN.filter(b=>st(b.id)==="leido");
+  const allRead=ALL.filter(b=>st(b.id)==="leido");
+  const extra=allRead.length-read.length;
+  document.getElementById("sRead").textContent=read.length+(extra?`+${extra}`:"");
+  document.getElementById("sReadOf").textContent=`de ${MAIN.length} leídos`;
+  document.getElementById("planCount").textContent=`Plan de lectura · ${MAIN.length} libros en 5 etapas`;
+  document.getElementById("sBar").style.width=(read.length/MAIN.length*100)+"%";
+  document.getElementById("sPages").textContent=allRead.reduce((s,b)=>s+b.p,0).toLocaleString("es-ES");
+  const cs=curStage();
+  document.getElementById("sStage").textContent=cs.n;
+  document.getElementById("sStageName").textContent="etapa actual";document.getElementById("sStageName").parentElement.title=cs.name;
+  document.getElementById("sOwned").textContent=ALL.filter(b=>owned(b.id)&&st(b.id)==="pendiente").length;
+  const toBuy=MAIN.filter(b=>open(b.id)&&!owned(b.id)).length;
+  document.getElementById("buyCount").textContent=toBuy||"";
+
+  const P=pace();
+  const reading=ALL.filter(b=>st(b.id)==="leyendo");
+  const nl=document.getElementById("nowList");let html="";
+  if(reading.length){
+    document.getElementById("nowLabel").textContent="Leyendo ahora";
+    html=reading.map(b=>{const s=S(b.id);const pg=+s.pagina||0;const pct=Math.min(100,Math.round(pg/b.p*100));
+      const rest=Math.max(0,b.p-pg);const eta=Math.ceil(rest/P.ppd);
+      const d=s.inicio?`día ${days(s.inicio,today())}`:"sin fecha de inicio";
+      return `<button class="now-card" data-open="${b.id}"><span class="spine-mini" style="background:var(${b.stage.c})"></span><span class="txt"><h3>${esc(b.t)}</h3>
+      <small>${esc(b.a)} · ${d}${pg?` · pág. ${pg} de ≈${b.p}`:""}</small>
+      <span class="bar"><i style="width:${pct}%"></i></span>
+      <small>${pg?`A tu ritmo lo terminas en unos ${eta} días`:"Apunta la página por la que vas para ver cuándo lo terminas"}</small></span><span class="go">Página</span></button>`}).join("");
+  }else{
+    const nextPlan=MAIN.find(b=>st(b.id)==="pendiente");
+    const nextOwned=MAIN.find(b=>st(b.id)==="pendiente"&&owned(b.id));
+    document.getElementById("nowLabel").textContent=nextPlan?"Siguiente":"Lista completada";
+    if(!nextPlan)html=`<p class="why">Has terminado el plan entero. Los intercalables siguen ahí.</p>`;
+    else{
+      const pick=owned(nextPlan.id)?nextPlan:(nextOwned||nextPlan);
+      html=card(pick,"Empezar hoy");
+      if(pick!==nextPlan)html+=`<p class="hint">El siguiente del plan es <strong>${esc(nextPlan.t)}</strong>, pero aún no lo tienes. Empieza por este y mira la pestaña Compras.</p>`;
+    }
+  }
+  nl.innerHTML=html;
+}
+function card(b,go){return `<button class="now-card" data-start="${b.id}"><span class="spine-mini" style="background:var(${b.stage.c})"></span><span class="txt"><h3>${esc(b.t)}</h3><small>${esc(b.a)} · ≈${b.p} páginas · ${b.n?"Etapa "+b.stage.n:"Intercalable"}${owned(b.id)?" · lo tienes":""}</small></span><span class="go">${go}</span></button>`}
+
+function renderView(){
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.tab===tab));
+  const v=document.getElementById("view");
+  v.innerHTML=tab==="plan"?viewPlan():tab==="mood"?viewMood():viewBuy();
+}
+
+function viewPlan(){
+  const shelves=STAGES.map(s=>{
+    const done=s._all.filter(b=>st(b.id)==="leido").length;
+    return `<div class="shelf-row"><div class="shelf-head"><span><strong>${s.extra?"Intercalables":"Etapa "+s.n}</strong> · ${esc(s.extra?"sin orden":s.name)}</span><span class="mono">${done}/${s._all.length}</span></div>
+    <div class="shelf">${s._all.map(b=>{const w=Math.round(7+b.p/38);const h=48+((b.id.charCodeAt(0)*7+b.id.length*5)%22);const e=st(b.id);
+      return `<button class="spine ${e} ${owned(b.id)||e!=="pendiente"?"":"nope"}" style="--sc:var(${s.c});width:${w}px;height:${h}px" data-open="${b.id}" title="${esc(b.t)}" aria-label="${esc(b.t)}, ${LABEL[e]}${owned(b.id)?", lo tienes":""}"></button>`}).join("")}</div></div>`}).join("");
+  const legend=`<div class="legend"><span><i></i>Lo tienes</span><span><i class="d"></i>Por comprar</span><span><i class="g"></i>Leyendo</span><span><i class="f"></i>Leído</span></div>`;
+  const chips=`<div class="filters" role="group" aria-label="Filtrar">${[["todos","Todos"],["pendiente","Por leer"],["tengo","Tengo"],["leyendo","Leyendo"],["leido","Leídos"]].map(([k,l])=>`<button class="chip" id="f-${k}" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>`;
+  const pass=b=>filter==="todos"||(filter==="tengo"?owned(b.id)&&open(b.id):st(b.id)===filter);
+  const stages=STAGES.map(s=>{
+    const done=s._all.filter(b=>st(b.id)==="leido").length;
+    let rows="",any=false;
+    s._groups.forEach(([label,arr])=>{const vis=arr.filter(pass);if(!vis.length)return;any=true;
+      if(label)rows+=`<div class="group-label">${esc(label)}</div>`;
+      rows+=vis.map(row).join("")});
+    if(!any)rows=`<div class="empty-msg">Nada con este filtro en esta etapa.</div>`;
+    const closed=filter==="todos"&&!isOpen(s);
+    return `<section class="stage ${closed?"closed":""}" style="--sc:var(${s.c})"><div class="stage-head"><button class="stage-toggle" id="st-${s.id}" data-stage="${s.id}" aria-expanded="${!closed}"><span class="stage-num">${s.n}</span><span class="txt"><span class="eyebrow">${s.extra?"Fuera de orden":"Etapa "+s.n}${s===curStage()?" · ahora":""}</span><h2>${esc(s.name)}</h2><p>${esc(s.why)}</p></span><svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg></button><span class="stage-count mono">${done}/${s._all.length}</span></div><div class="list">${rows}</div></section>`}).join("");
+  return `<div class="shelves">${shelves}${legend}</div><div class="addrow"><button class="btn" id="nuevoLibro">Añadir libro</button></div>${chips}<div style="display:flex;flex-direction:column;gap:22px">${stages}</div>`;
+}
+function row(b){const e=st(b.id);const s=S(b.id);
+  let meta=`${esc(b.a)} · ≈${b.p} pág.`;
+  if(e==="leido"&&s.fin)meta+=` · terminado ${fmt(s.fin)}`;
+  if(e==="leyendo")meta+=s.pagina?` · pág. ${s.pagina}`:" · leyendo";
+  const own=open(b.id)?(owned(b.id)?`<span class="own si">● Lo tienes</span>`:`<span class="own no">○ Por comprar</span>`):"";
+  return `<div class="row ${e}" data-open="${b.id}" tabindex="0" role="button" aria-label="${esc(b.t)}" style="--sc:var(${b.stage.c})">
+    <span class="n">${b.n?String(b.n).padStart(2,"0"):"·"}</span>
+    <span class="info"><span class="t">${esc(b.t)}${b.tag?` <span class="tag">${b.tag}</span>`:""}${s.nota?` <span class="stars-inline">${"★".repeat(s.nota)}</span>`:""}</span><span class="meta">${meta} ${own}</span></span>
+    <button class="status-btn" data-adv="${b.id}" aria-label="Estado: ${LABEL[e]}. Avanzar">${ICON[e]}</button></div>`}
+
+/* Etapas plegables: abierta la actual; el resto según lo que elijas */
+let openSt={};try{openSt=JSON.parse(localStorage.getItem(LS+"-open")||"{}")}catch(e){}
+const isOpen=s=>s.id in openSt?openSt[s.id]:s===curStage();
+/* ¿Qué leo? */
+function ranked(){
+  const cs=curStage().idx;const P=pace();
+  return ALL.filter(b=>st(b.id)==="pendiente"&&(!onlyOwned||owned(b.id))).map(b=>{
+    const hit=[...moodSel].filter(m=>b.moods.includes(m));
+    let sc=hit.length*10;const why=hit.map(m=>MOODS[m][0]);
+    if(owned(b.id)){sc+=5;why.push("Lo tienes")}
+    if(b.stage.extra){sc+=1;why.push("Intercalable")}
+    else if(b.stage.idx<=cs){sc+=6;why.push(b.stage.idx<cs?"Pendiente de una etapa anterior":"Toca en tu etapa")}
+    else sc-=3*(b.stage.idx-cs);
+    if(b.n)sc-=b.n*0.02;
+    why.push(`≈${Math.max(1,Math.ceil(b.p/P.ppd))} días a tu ritmo`);
+    return {b,sc,hit:hit.length,why};
+  }).filter(x=>!moodSel.size||x.hit>0).sort((a,b)=>b.sc-a.sc);
+}
+function viewMood(){
+  const list=ranked().slice(0,4);
+  const moods=Object.entries(MOODS).map(([k,[l,d]])=>`<button class="mood" id="m-${k}" data-mood="${k}" aria-pressed="${moodSel.has(k)}"><b>${l}</b><span>${d}</span></button>`).join("");
+  const picks=list.length?list.map((x,i)=>`<button class="pick ${i===0?"top":""}" data-open="${x.b.id}" style="--sc:var(${x.b.stage.c})"><span class="spine-mini" style="background:var(${x.b.stage.c})"></span>
+    <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="eyebrow">${i===0?"Mi recomendación":"También encaja"}</span><h3>${esc(x.b.t)}</h3><span class="why2">${esc(x.b.a)} · ≈${x.b.p} páginas</span>
+    <span class="reasons">${x.why.map(w=>`<span>${esc(w)}</span>`).join("")}</span></span></button>`).join("")
+    :`<p class="why">${onlyOwned?"Ninguno de los que tienes encaja con eso. Desmarca «Solo los que tengo» para ver opciones de compra.":"No hay pendientes que encajen. Prueba con otro mood."}</p>`;
+  return `<div class="mood-intro" style="display:flex;flex-direction:column;gap:6px"><h2>¿Qué te apetece hoy?</h2><p class="hint">Elige uno o varios. Priorizo lo que encaja con tu mood, lo que ya tienes y lo que toca en tu etapa.</p></div>
+  <div class="mood-grid">${moods}</div>
+  <div class="mood-actions">
+    <label class="toggle"><input type="checkbox" id="onlyOwned" ${onlyOwned?"checked":""}> Solo los que tengo</label>
+    <div class="two"><button class="btn" id="moodClear">Limpiar</button><button class="btn primary" id="moodRandom">Sorpréndeme</button></div></div>
+  <div class="picks">${picks}</div>`;
+}
+
+/* Compras */
+function viewBuy(){
+  const queue=MAIN.filter(b=>open(b.id)&&!owned(b.id));
+  const extras=ALL.filter(b=>b.stage.extra&&open(b.id)&&!owned(b.id));
+  // "Pronto": libros que llegarán en las próximas 6 posiciones del plan
+  const pend=MAIN.filter(b=>open(b.id));
+  const soonIds=new Set(pend.slice(0,6).map(b=>b.id));
+  const block=b=>{const e=EDS[b.id];const soon=soonIds.has(b.id);
+    return `<article class="buy ${soon?"soon":""}" style="--sc:var(${b.stage.c})">
+      <div class="buy-top"><div><span class="eyebrow">${b.n?`Nº ${b.n} · Etapa ${b.stage.n}`:"Intercalable"}</span><h3>${esc(b.t)}</h3><div class="by">${esc(b.a)}</div></div>
+      ${b.n?`<span class="pill ${soon?"soon":"later"}">${soon?"Pronto":"Más adelante"}</span>`:""}</div>
+      ${e?`<div class="ed"><span class="eyebrow">Edición recomendada</span><b>${esc(e.ed)}</b>${e.why?`<span>${esc(e.why)}</span>`:""}${e.alt?`<small>Más barata: ${esc(e.alt)}</small>`:""}</div>`:""}
+      <div class="buy-actions"><button class="btn sm primary" data-own="${b.id}">Ya lo tengo</button><a class="linkbtn" href="${amz(b)}" target="_blank" rel="noopener">Amazon ↗</a><a class="linkbtn" href="${gr(b)}" target="_blank" rel="noopener">Goodreads ↗</a></div></article>`};
+  const soonList=queue.filter(b=>soonIds.has(b.id));
+  return `<div style="display:flex;flex-direction:column;gap:6px"><h2 style="font-size:28px">Próximas compras</h2>
+    <p class="hint">${queue.length?`Te faltan ${queue.length} libros del plan. ${soonList.length?`<strong>${soonList.length}</strong> llegan en los próximos libros: cómpralos antes.`:"Ninguno corre prisa todavía."} Al marcar «Ya lo tengo» pasa a tu estantería.`:"Tienes todos los libros del plan."}</p></div>
+    <div style="display:flex;flex-direction:column;gap:10px">${queue.map(block).join("")}</div>
+    ${extras.length?`<div style="display:flex;flex-direction:column;gap:6px;margin-top:8px"><h2 style="font-size:22px">Intercalables por comprar</h2><p class="hint">Sin prisa. Uno de fantasía en casa es buena red de seguridad.</p></div><div style="display:flex;flex-direction:column;gap:10px">${extras.map(block).join("")}</div>`:""}`;
+}
+
+/* Guardado en la base de datos */
+async function persist(id,patch){
+  const p={};for(const k in patch){let v=patch[k];if((k==="inicio"||k==="fin")&&!v)v=null;if(k==="pagina"&&(v===""||v==null))v=null;if(k==="nota"&&!v)v=0;p[k]=v}
+  const r=await sb.from("libros").update(p).eq("id",id);
+  if(r.error)toast("No se pudo guardar. Revisa la conexión.");
+}
+function setBook(id,patch){
+  state[id]=Object.assign({estado:"pendiente"},state[id]||{},patch);
+  render();persist(id,patch);
+}
+function advance(id){
+  const e=st(id);
+  if(e==="pendiente"){setBook(id,{estado:"leyendo",inicio:S(id).inicio||today(),tengo:true});toast("Empezado: "+BOOKS[id].t)}
+  else if(e==="leyendo"){setBook(id,{estado:"leido",fin:S(id).fin||today(),pagina:BOOKS[id].p});openSheet(id,"Terminado. ¿Qué nota le pones?")}
+  else openSheet(id);
+}
+
+/* Ficha */
+let sheetId=null,draft=null;
+function openSheet(id,msg){
+  sheetId=id;const b=BOOKS[id];draft=Object.assign({estado:"pendiente",inicio:"",fin:"",nota:0,comentario:"",tengo:false,pagina:""},state[id]||{});
+  const e=EDS[id];
+  const root=document.getElementById("sheetRoot");
+  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT" style="--sc:var(${b.stage.c})">
+    <div><span class="eyebrow">${b.n?"Nº "+b.n+" · Etapa "+b.stage.n:"Intercalable"} · ≈${b.p} páginas</span><h3 id="shT">${esc(b.t)}</h3><div class="by">${esc(b.a)}</div></div>
+    ${msg?`<p class="why">${esc(msg)}</p>`:""}
+    <div class="field"><span class="lbl">Estado</span><div class="seg" role="group" aria-label="Estado">${["pendiente","leyendo","leido","abandonado"].map(k=>`<button id="seg-${k}" data-seg="${k}" aria-pressed="${draft.estado===k}">${LABEL[k]}</button>`).join("")}</div></div>
+    <div class="field"><span class="lbl">¿Lo tienes?</span><div class="seg two" role="group" aria-label="Lo tienes">
+      <button id="own-si" data-ownseg="1" aria-pressed="${!!draft.tengo}">Lo tengo</button><button id="own-no" data-ownseg="0" aria-pressed="${!draft.tengo}">Por comprar</button></div></div>
+    <div class="field" id="pgField" ${draft.estado==="leyendo"?"":"hidden"}><label for="dPg">Voy por la página</label><input type="number" id="dPg" min="0" max="${b.p*2}" inputmode="numeric" value="${draft.pagina||""}" placeholder="de ≈${b.p}"></div>
+    <div class="dates"><div class="field"><label for="dIni">Empezado</label><input type="date" id="dIni" value="${draft.inicio||""}"></div>
+    <div class="field"><label for="dFin">Terminado</label><input type="date" id="dFin" value="${draft.fin||""}"></div></div>
+    <div class="field"><span class="lbl">Valoración</span><div class="rate" id="rate">${[1,2,3,4,5].map(i=>`<button data-rate="${i}" class="${i<=draft.nota?"on":""}" aria-label="${i} de 5">★</button>`).join("")}</div></div>
+    <div class="field"><label for="dCom">Notas, frases o lo que te dejó</label><textarea id="dCom">${esc(draft.comentario||"")}</textarea></div>
+    ${e&&!draft.tengo?`<div class="ed" style="font-size:14px;background:var(--paper);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span class="eyebrow">Edición recomendada</span><b>${esc(e.ed)}</b>${e.why?`<span>${esc(e.why)}</span>`:""}${e.alt?`<small style="color:var(--muted)">Más barata: ${esc(e.alt)}</small>`:""}</div>`:""}
+    <div class="links"><a href="${gr(b)}" target="_blank" rel="noopener">Goodreads ↗</a><a href="${amz(b)}" target="_blank" rel="noopener">Amazon ↗</a></div>
+    <div class="sheet-actions"><button class="btn" id="shEdit">Editar libro</button><button class="btn" id="shCancel">Cerrar</button><button class="btn primary" id="shSave">Guardar</button></div>
+  </div></div>`;
+  document.getElementById("shEdit").onclick=()=>{const i=sheetId;closeSheet();formLibro(i)};
+  document.getElementById("sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")closeSheet()});
+  root.querySelectorAll("[data-seg]").forEach(x=>x.onclick=()=>{draft.estado=x.dataset.seg;
+    if(draft.estado==="leyendo"){if(!document.getElementById("dIni").value)document.getElementById("dIni").value=today();setOwn(true)}
+    if(draft.estado==="leido"&&!document.getElementById("dFin").value)document.getElementById("dFin").value=today();
+    document.getElementById("pgField").hidden=draft.estado!=="leyendo";
+    root.querySelectorAll("[data-seg]").forEach(y=>y.setAttribute("aria-pressed",y===x))});
+  const setOwn=v=>{draft.tengo=v;root.querySelectorAll("[data-ownseg]").forEach(y=>y.setAttribute("aria-pressed",(y.dataset.ownseg==="1")===v))};
+  root.querySelectorAll("[data-ownseg]").forEach(x=>x.onclick=()=>setOwn(x.dataset.ownseg==="1"));
+  root.querySelectorAll("[data-rate]").forEach(x=>x.onclick=()=>{const v=+x.dataset.rate;draft.nota=draft.nota===v?0:v;
+    root.querySelectorAll("[data-rate]").forEach(y=>y.classList.toggle("on",+y.dataset.rate<=draft.nota))});
+  document.getElementById("shCancel").onclick=closeSheet;
+  document.getElementById("shSave").onclick=()=>{
+    const pg=parseInt(document.getElementById("dPg").value,10);
+    setBook(sheetId,{estado:draft.estado,tengo:draft.tengo||draft.estado!=="pendiente"&&draft.tengo,inicio:document.getElementById("dIni").value,fin:document.getElementById("dFin").value,
+      nota:draft.nota,comentario:document.getElementById("dCom").value.trim(),pagina:draft.estado==="leido"?b.p:(isNaN(pg)?"":pg)});
+    closeSheet();toast("Guardado");};
+  if(draft.estado==="leyendo")document.getElementById("dPg").focus({preventScroll:true});
+}
+function closeSheet(){document.getElementById("sheetRoot").innerHTML="";sheetId=null;render()}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&sheetId)closeSheet()});
+let tt;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2200)}
+
+/* Eventos */
+document.addEventListener("click",e=>{
+  if(e.target.closest(".sheet"))return;
+  const g=(sel)=>e.target.closest(sel);let x;
+  if(x=g("[data-adv]")){e.stopPropagation();advance(x.dataset.adv);return}
+  if(x=g("[data-own]")){setBook(x.dataset.own,{tengo:true});toast("Añadido a tu estantería");return}
+  if(x=g("[data-start]")){advance(x.dataset.start);return}
+  if(x=g("[data-open]")){openSheet(x.dataset.open);return}
+  if(x=g("[data-tab]")){tab=x.dataset.tab;try{localStorage.setItem(LS+"-tab",tab)}catch(err){}renderView();return}
+  if(x=g("[data-f]")){filter=x.dataset.f;renderView();return}
+  if(x=g("[data-stage]")){const s=STAGES.find(z=>z.id===x.dataset.stage);openSt[s.id]=!isOpen(s);try{localStorage.setItem(LS+"-open",JSON.stringify(openSt))}catch(err){}renderView();return}
+  if(x=g("[data-mood]")){const k=x.dataset.mood;moodSel.has(k)?moodSel.delete(k):moodSel.add(k);renderView();return}
+  if(g("#moodClear")){moodSel.clear();renderView();return}
+  if(g("#nuevoLibro")){formLibro(null);return}
+  if(x=g("[data-plantilla]")){empezar(x.dataset.plantilla==="1");return}
+  if(g("#moodRandom")){const l=ranked().slice(0,8);if(l.length)openSheet(l[Math.floor(Math.random()*l.length)].b.id,"¿Qué tal este?");return}
+});
+document.addEventListener("change",e=>{if(e.target.id==="onlyOwned"){onlyOwned=e.target.checked;renderView()}});
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("row")){e.preventDefault();openSheet(e.target.dataset.open)}});
+
+/* Exportación a Goodreads */
+function goodreadsCSV(){
+  const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;const gd=d=>d?d.replace(/-/g,"/"):"";
+  const shelf={pendiente:"to-read",leyendo:"currently-reading",leido:"read"};
+  const rows=[["Title","Author","ISBN","My Rating","Date Read","Date Added","Bookshelves","Exclusive Shelf","My Review"]];
+  ALL.forEach(b=>{const s=S(b.id);const e=st(b.id);if(e==="abandonado")return;
+    rows.push([b.t,b.a,"",s.nota||0,e==="leido"?gd(s.fin):"",gd(s.inicio||today()),shelf[e]+(s.tengo?" owned":""),shelf[e],s.comentario||""])});
+  return rows.map(r=>r.map(q).join(",")).join("\r\n");
+}
+
+/* Añadir o editar un libro */
+function formLibro(id){
+  const b=id?BOOKS[id]:null;const etapas=STAGES;
+  let moods=new Set(b?b.moods.filter(m=>m!=="corto"):[]);
+  const MS=Object.keys(MOODS).filter(k=>k!=="corto");
+  const root=document.getElementById("sheetRoot");sheetId="__form";
+  const def=b?b.stage.id:((STAGES.find(x=>!x.extra)||STAGES[0]||{}).id);
+  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="fT" style="--sc:var(--s1)">
+    <div><span class="eyebrow">${b?"Editar libro":"Nuevo libro"}</span><h3 id="fT">${b?esc(b.t):"Añadir a la bitácora"}</h3></div>
+    <div class="field"><label for="lT">Título</label><input type="text" id="lT" value="${b?esc(b.t):""}" autocomplete="off"></div>
+    <div class="dates"><div class="field"><label for="lA">Autor</label><input type="text" id="lA" value="${b?esc(b.a):""}" autocomplete="off"></div>
+    <div class="field"><label for="lP">Páginas</label><input type="number" id="lP" inputmode="numeric" min="1" value="${b?b.p:""}" placeholder="≈ 250"></div></div>
+    <div class="field"><label for="lE">Dónde va</label><select id="lE">${etapas.map(x=>`<option value="${x.id}" ${x.id===def?"selected":""}>${x.extra?"Intercalables":"Etapa "+x.n+" · "+esc(x.name)}</option>`).join("")}</select></div>
+    <div class="field"><span class="lbl">Mood</span><div class="mgrid">${MS.map(k=>`<button type="button" data-fm="${k}" aria-pressed="${moods.has(k)}">${MOODS[k][0]}</button>`).join("")}</div></div>
+    ${b?"":`<label class="toggle"><input type="checkbox" id="lO"> Ya lo tengo</label>`}
+    <div class="sheet-actions" style="justify-content:space-between">${b?`<button class="btn danger" id="lDel">Eliminar libro</button>`:"<span></span>"}<span style="display:flex;gap:10px"><button class="btn" id="lCancel">Cerrar</button><button class="btn primary" id="lSave">${b?"Guardar":"Añadir"}</button></span></div>
+  </div></div>`;
+  document.getElementById("sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")closeSheet()});
+  root.querySelectorAll("[data-fm]").forEach(x=>x.onclick=()=>{const k=x.dataset.fm;moods.has(k)?moods.delete(k):moods.add(k);x.setAttribute("aria-pressed",moods.has(k))});
+  document.getElementById("lCancel").onclick=closeSheet;
+  if(b){let armed=false;document.getElementById("lDel").onclick=async ev=>{if(!armed){armed=true;ev.target.textContent="Toca otra vez para eliminar";return}
+    const r=await sb.from("libros").delete().eq("id",id);if(r.error){toast("No se pudo eliminar");return}closeSheet();toast("Eliminado");cargar()}}
+  document.getElementById("lSave").onclick=async()=>{
+    const t=document.getElementById("lT").value.trim();if(!t){document.getElementById("lT").focus();toast("Ponle un título");return}
+    const row={titulo:t,autor:document.getElementById("lA").value.trim()||null,paginas:parseInt(document.getElementById("lP").value,10)||null,etapa:document.getElementById("lE").value,moods:[...moods]};
+    let r;
+    if(b){if(row.etapa!==b.stage.id)row.orden=Date.now()%2147483647;r=await sb.from("libros").update(row).eq("id",id)}
+    else{row.orden=Date.now()%2147483647;row.tengo=document.getElementById("lO").checked;r=await sb.from("libros").insert(row)}
+    if(r.error){toast("No se pudo guardar: "+r.error.message);return}
+    closeSheet();toast(b?"Guardado":"Añadido");cargar();
+  };
+  if(!b)setTimeout(()=>document.getElementById("lT").focus(),50);
+}
+
+/* Exportación a Goodreads */
+function goodreadsCSV(){
+  const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;const gd=d=>d?d.replace(/-/g,"/"):"";
+  const shelf={pendiente:"to-read",leyendo:"currently-reading",leido:"read"};
+  const rows=[["Title","Author","ISBN","My Rating","Date Read","Date Added","Bookshelves","Exclusive Shelf","My Review"]];
+  ALL.forEach(b=>{const s=S(b.id);const e=st(b.id);if(e==="abandonado")return;
+    rows.push([b.t,b.a,"",s.nota||0,e==="leido"?gd(s.fin):"",gd(s.inicio||today()),shelf[e]+(s.tengo?" owned":""),shelf[e],s.comentario||""])});
+  return rows.map(r=>r.map(q).join(",")).join("\r\n");
+}
+document.getElementById("exportGR").onclick=()=>{
+  const blob=new Blob(["\ufeff"+goodreadsCSV()],{type:"text/csv"});const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download="bitacora-goodreads.csv";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+};
+document.getElementById("salir").onclick=()=>CiccCuenta.salir();
+
+/* Primera vez: empezar con el plan o con una lista vacía */
+function vistaEmpezar(){
+  document.body.classList.add("nuevo");
+  document.getElementById("view").innerHTML=`<div class="empezar"><span class="eyebrow">Bienvenido</span><h2>¿Cómo quieres empezar?</h2>
+  <p class="hint">Puedes partir del plan de lectura CiccApps (43 libros en cinco etapas, con ediciones recomendadas) o de una lista vacía para añadir tus propios libros.</p>
+  <div class="two"><button class="btn" data-plantilla="0">Lista vacía</button><button class="btn primary" data-plantilla="1">Plan CiccApps</button></div></div>`;
+}
+async function empezar(conPlan){
+  document.getElementById("view").innerHTML='<p class="cargando">Preparando tu bitácora…</p>';
+  try{
+    if(conPlan){
+      const et=PLANTILLA.map((x,i)=>({clave:x.id,nombre:x.name,descripcion:x.why,orden:i,color:COLOR_DE[x.c],intercalable:!!x.extra}));
+      let r=await sb.from("etapas").insert(et);if(r.error)throw r.error;
+      const li=[];PLANTILLA.forEach(x=>{(x.groups||[[null,x.books]]).forEach(([g,arr])=>arr.forEach(([id,t,a,p,tag,moods])=>{const m=[...moods];if(CLASICOS.has(id))m.push("clasico");
+        li.push({clave:id,etapa:x.id,grupo:g,orden:li.length,titulo:t,autor:a,paginas:p,etiqueta:tag||null,moods:m,edicion:PLANTILLA_EDS[id]||null})}))});
+      r=await sb.from("libros").insert(li);if(r.error)throw r.error;
+    }else{
+      const r=await sb.from("etapas").insert([{clave:"lista",nombre:"Mi lista",descripcion:"Tus próximas lecturas, en orden.",orden:0,color:"verde"},{clave:"ex",nombre:"Intercalables",descripcion:"Sin orden: para cuando te apetezca otra cosa.",orden:1,color:"taupe",intercalable:true}]);if(r.error)throw r.error;
+    }
+    await cargar();
+  }catch(e){toast("No se pudo preparar: "+(e.message||e));vistaEmpezar()}
+}
+
+/* Arranque */
+async function cargar(){
+  const [e,l]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*")]);
+  if(e.error||l.error){document.getElementById("view").innerHTML='<p class="cargando">No se pudo cargar. Comprueba la conexión y vuelve a abrir la app.</p>';return}
+  if(!e.data.length){vistaEmpezar();return}
+  document.body.classList.remove("nuevo");  construir(e.data,l.data);if(!sheetId)render();
+}
+CiccCuenta.iniciar({app:"Bitácora",icono:"../iconos/bitacora-192.png",lema:"¿Qué leo hoy?"}).then(async r=>{
+  sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!sheetId)cargar()});
+});
+</script>
+</body>
+</html>

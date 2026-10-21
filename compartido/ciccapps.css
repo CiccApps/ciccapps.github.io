@@ -1,0 +1,56 @@
+/* CiccApps — piezas compartidas por todas las apps: fuentes de la marca, firma y pantalla de acceso. */
+@font-face { font-family: "Libre Caslon Display"; src: url(fuentes/LibreCaslonDisplay-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Libre Caslon Text"; src: url(fuentes/LibreCaslonText-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Libre Caslon Text"; src: url(fuentes/LibreCaslonText-Italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url(fuentes/InstrumentSans-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url(fuentes/InstrumentSans-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Instrument Sans"; src: url(fuentes/InstrumentSans-600.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; src: url(fuentes/IBMPlexMono-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; src: url(fuentes/IBMPlexMono-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+
+:root {
+  --cc-fondo: #F3EFE4; --cc-fondo-alto: #FBF8F0; --cc-hundido: #E9E3D3; --cc-linea: #E0D9C8; --cc-linea-fuerte: #8F8A78;
+  --cc-tinta: #1B2420; --cc-tinta-suave: #5A615A; --cc-oro: #7E6024; --cc-oro-claro: #D9B878;
+  --cc-primario: #1D3A32; --cc-sobre-primario: #F3EFE4; --cc-aviso: #8E5410;
+  --cc-display: "Libre Caslon Display", "Libre Caslon Text", Georgia, serif;
+  --cc-serif: "Libre Caslon Text", Georgia, serif;
+  --cc-sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --cc-fondo: #0F1A17; --cc-fondo-alto: #16241F; --cc-hundido: #1E2E28; --cc-linea: #263A33; --cc-linea-fuerte: #5E7068;
+  --cc-tinta: #EDE6D3; --cc-tinta-suave: #9DA89F; --cc-oro: #D9B878; --cc-primario: #D9B878; --cc-sobre-primario: #0F1A17; --cc-aviso: #E0A25A;
+} }
+
+/* Firma: «Bitácora · una CiccApp» */
+.cc-firma { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0; padding-block: 8px; font-family: var(--cc-serif); font-style: italic; font-size: 14px; color: var(--cc-tinta-suave); }
+.cc-firma img { width: 20px; height: auto; }
+.cc-firma .sep { color: var(--cc-oro); font-style: normal; }
+.cc-firma .osc { display: none; }
+@media (prefers-color-scheme: dark) { .cc-firma .cla { display: none; } .cc-firma .osc { display: block; } }
+.cc-firma a { color: inherit; text-decoration: none; }
+
+/* Pantalla de acceso */
+.cc-acceso { position: fixed; inset: 0; z-index: 100; background: var(--cc-fondo); color: var(--cc-tinta); font-family: var(--cc-sans);
+  display: flex; align-items: center; justify-content: center; overflow-y: auto;
+  padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); }
+.cc-acceso[hidden] { display: none; }
+.cc-caja { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 20px; }
+.cc-cabeza { display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; }
+.cc-cabeza img { width: 76px; height: 76px; border-radius: 22.5%; box-shadow: 0 0 0 1px rgba(217,184,120,.45), 0 8px 18px rgba(0,0,0,.25); }
+.cc-cabeza h1 { margin: 0; font-family: var(--cc-display); font-weight: 400; font-size: 34px; line-height: 1.05; }
+.cc-cabeza p { margin: 0; font-family: var(--cc-serif); font-style: italic; font-size: 17px; color: var(--cc-oro); }
+.cc-modos { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--cc-hundido); border-radius: 12px; }
+.cc-modos button { min-height: 38px; border: 0; border-radius: 8px; background: transparent; color: var(--cc-tinta-suave); font: 500 14px var(--cc-sans); cursor: pointer; }
+.cc-modos button[aria-pressed="true"] { background: var(--cc-fondo-alto); color: var(--cc-tinta); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.cc-form { display: flex; flex-direction: column; gap: 12px; }
+.cc-campo { display: flex; flex-direction: column; gap: 4px; }
+.cc-campo label { font-size: 12px; font-weight: 600; color: var(--cc-tinta-suave); }
+.cc-campo input { font: 16px var(--cc-sans); padding: 12px; border: 1px solid var(--cc-linea-fuerte); border-radius: 8px; background: var(--cc-fondo-alto); color: var(--cc-tinta); width: 100%; box-sizing: border-box; }
+.cc-campo input:focus { outline: 2px solid var(--cc-oro); outline-offset: 1px; }
+.cc-enviar { min-height: 48px; border: 0; border-radius: 8px; background: var(--cc-primario); color: var(--cc-sobre-primario); font: 600 15px var(--cc-sans); cursor: pointer; margin-top: 4px; }
+.cc-enviar:disabled { opacity: .5; }
+.cc-msg { margin: 0; font-size: 14px; line-height: 1.45; min-height: 1.45em; text-align: center; }
+.cc-msg.error { color: var(--cc-aviso); }
+.cc-pie { display: flex; justify-content: center; }
+.cc-enlace { border: 0; background: none; color: var(--cc-oro); font: 600 13px var(--cc-sans); cursor: pointer; padding: 8px; }
+:focus-visible { outline-color: var(--cc-oro); }

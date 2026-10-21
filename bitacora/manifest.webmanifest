@@ -1,0 +1,30 @@
+{
+  "name": "Bitácora de Lectura",
+  "short_name": "Bitácora",
+  "description": "Plan de lectura, libros por comprar y qué leer según el mood.",
+  "lang": "es",
+  "start_url": "/bitacora/",
+  "scope": "/bitacora/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3EFE4",
+  "theme_color": "#1D3A32",
+  "icons": [
+    {
+      "src": "/iconos/bitacora-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/iconos/bitacora-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/iconos/bitacora-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
