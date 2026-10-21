@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=5">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=5">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=18">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=19">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
@@ -22,7 +22,8 @@
   --gold:#9C7630; --gold-soft:#F2E6C9; --shelf:#C9BFA8; --empty:#E9E3D3;
   --s1:#2F5D50; --s2:#2B3A5E; --s3:#7A2633; --s4:#8A6A2A; --s5:#4E3552; --sx:#6B6A5E;
   --ok:#2F6B45; --warn:#9A5B12;
-  --f-display:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;
+  --f-display:"IM Fell English","Libre Caslon Text",Georgia,serif;
+  --f-cifra:"EB Garamond",Georgia,serif;
   --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
@@ -70,7 +71,7 @@ header p{margin:0;color:var(--muted);max-width:58ch}
 
 .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .stat{background:var(--card);padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.stat b{font-family:var(--f-display);font-weight:400;font-size:28px;line-height:1.1}
+.stat b{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums tabular-nums;font-size:28px;line-height:1.1}
 .stat span{font-size:12px;color:var(--muted)}
 .bar{height:4px;background:var(--empty);border-radius:2px;overflow:hidden;margin-top:6px}
 .bar i{display:block;height:100%;background:var(--gold);transition:width .5s}
@@ -143,7 +144,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 .stage{display:flex;flex-direction:column;gap:14px}
 .stage-head{display:flex;gap:12px;align-items:flex-start;border-top:2px solid var(--sc);padding-top:12px}
-.stage-num{font-family:var(--f-display);font-size:34px;line-height:1;color:var(--sc);min-width:28px}
+.stage-num{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums;font-size:34px;line-height:1;color:var(--sc);min-width:28px}
 .stage-head .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .stage-head h2{font-size:24px;line-height:1.15}
 .stage-head p{margin:0;color:var(--muted);font-size:14px;max-width:62ch}
@@ -185,7 +186,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .picks{display:flex;flex-direction:column;gap:10px}
 .habito{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .hab{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.hab b{font-family:var(--f-display);font-weight:400;font-size:32px;line-height:1.1}
+.hab b{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums tabular-nums;font-size:32px;line-height:1.1}
 .hab>span:not(.eyebrow){font-size:12.5px;color:var(--muted)}
 .hab .bar{margin:6px 0 2px}
 .hab .btn{margin-top:auto;align-self:stretch;padding-top:7px;padding-bottom:7px;font-size:13px}
@@ -195,7 +196,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .mes-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 6px}
 @media (max-width:420px){.mes-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mes-grid div{background:var(--paper);border-radius:6px;padding:12px 10px;display:flex;flex-direction:column}
-.mes-grid b{font-family:var(--f-display);font-weight:400;font-size:30px;line-height:1}.mes-grid span{font-size:11.5px;color:var(--muted)}
+.mes-grid b{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums tabular-nums;font-size:30px;line-height:1}.mes-grid span{font-size:11.5px;color:var(--muted)}
 .mes-cal{display:grid;grid-template-columns:repeat(7,26px);justify-content:center;gap:5px;margin:16px 0 18px}
 .mes-cal i{width:26px;height:26px;border-radius:5px;background:var(--line);font:500 10px var(--f-mono);font-style:normal;display:grid;place-items:center;color:var(--muted)}.mes-cal i.si{color:var(--paper)}.mes-cal i.si{background:var(--ink)}.mes-cal i.vacio{background:none}
 .mes-libro{display:flex;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
@@ -203,7 +204,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .fr-list{display:flex;flex-direction:column;gap:10px;margin-bottom:4px}
 .fr{margin:0;padding:10px 12px 8px 14px;background:var(--paper);border-radius:6px;position:relative}
 .fr::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--gold)}
-.fr blockquote{margin:0;font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:16px;line-height:1.45;color:var(--ink)}
+.fr blockquote{margin:0;font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-style:italic;font-size:17px;line-height:1.45;color:var(--ink)}
 .fr figcaption{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-top:4px;min-height:24px}
 .fr-del{background:none;border:0;color:var(--muted);font:inherit;font-size:12px;cursor:pointer;padding:4px 0 4px 8px;margin-left:auto}
 .fr-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:8px}
@@ -292,22 +293,26 @@ body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif
 @media (min-width:768px){.wrap{padding-top:44px!important;padding-left:max(32px,env(safe-area-inset-left,0px))!important;padding-right:max(32px,env(safe-area-inset-right,0px))!important}}
 .cab{display:flex;flex-direction:column;gap:8px;max-width:680px}
 .cab .eyebrow{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:11px;line-height:16px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.cab h1{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400;font-size:clamp(40px,10vw,64px);line-height:1;letter-spacing:0;margin:0;text-wrap:balance}
+.cab h1{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:400;font-size:clamp(46px,12vw,66px);line-height:1;letter-spacing:0;margin:0;text-wrap:balance}
 .cab h1 .desc{font-family:"Libre Caslon Text",Georgia,serif;font-size:.4em;color:var(--muted);letter-spacing:.01em;white-space:nowrap}
-.cab .lema{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(19px,4.8vw,24px);line-height:1.25;color:var(--gold);margin:0}
+.cab .lema{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(20px,5.2vw,25px);line-height:1.25;color:var(--gold);margin:0}
 .cab .lede{text-wrap:pretty;margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
 /* Cabecera como tapa de libro encuadernada en cuero: el mismo degradado que el icono, filete dorado doble */
 .cab{position:relative;max-width:none;background:radial-gradient(130% 150% at 22% 10%,#7A4E2C,#4E2F19 58%,#26160B);color:#F1E6CF;border-radius:6px 12px 12px 6px;padding:26px 26px 24px 34px;box-shadow:0 1px 2px rgba(38,22,11,.25),0 10px 28px rgba(38,22,11,.22);overflow:hidden}
 .cab::before{content:"";position:absolute;inset:9px 9px 9px 17px;border:1px solid rgba(217,184,120,.55);border-radius:3px 8px 8px 3px;box-shadow:inset 0 0 0 3px transparent,inset 0 0 0 4px rgba(217,184,120,.35);pointer-events:none}
 .cab::after{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,0) 60%,rgba(255,255,255,.06));pointer-events:none}
-.cab .eyebrow{color:#D9B878}
-.cab h1{color:#F1E6CF}
-.cab .lema{color:#D9B878}
-.cab .lede{color:rgba(241,230,207,.78)}
+.cab{align-items:center;text-align:center;gap:6px;padding:30px 26px 28px 34px}
+.cab .eyebrow{color:#D9B878;opacity:.92}
+.cab .rosa{width:50px;height:50px;margin:8px 0 4px;filter:drop-shadow(0 1px 0 rgba(0,0,0,.35))}
+.cab h1{background:linear-gradient(180deg,#F6E7C2,#D9B878 55%,#A9823D);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(0,0,0,.45));padding:0 .05em}
+.cab .orn{color:#D9B878;font-size:15px;line-height:1;opacity:.8;margin:2px 0 0}
+.cab .lema{color:#E8D4A8}
+.lede-fuera{margin:-6px 0 0;color:var(--muted);font-size:14px;text-align:center;text-wrap:balance}
+@media (min-width:900px){.cab{padding:40px 40px 36px 48px}.cab .rosa{width:58px;height:58px}}
 
 
 @media (min-width:900px){.shelf{zoom:1.45}}
-h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400}
+h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:400}
 .cc-firma{padding-top:24px}
 </style>
 
@@ -316,10 +321,12 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="wrap">
   <header class="cab">
     <span class="eyebrow" id="planCount">Plan de lectura</span>
+    <svg class="rosa" viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="rosaOro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1E2BD"/><stop offset=".5" stop-color="#D9B878"/><stop offset="1" stop-color="#A9823D"/></linearGradient></defs><circle cx="50" cy="50" r="46" fill="none" stroke="url(#rosaOro)" stroke-width="1.6"/><circle cx="50" cy="50" r="40" fill="none" stroke="url(#rosaOro)" stroke-width=".8" stroke-dasharray="1 3"/><path d="M50 6 L56 44 L94 50 L56 56 L50 94 L44 56 L6 50 L44 44Z" fill="url(#rosaOro)"/><path d="M50 22 L53 47 L78 50 L53 53 L50 78 L47 53 L22 50 L47 47Z" fill="#4E2F19" opacity=".55" transform="rotate(45 50 50)"/><path d="M50 6 L56 44 L50 50Z M94 50 L56 56 L50 50Z M50 94 L44 56 L50 50Z M6 50 L44 44 L50 50Z" fill="#7A4E2C" opacity=".45"/><circle cx="50" cy="50" r="3.2" fill="#2F1C0E"/></svg>
     <h1>Bitácora</h1>
+    <span class="orn" aria-hidden="true">❦</span>
     <p class="lema">¿Qué leo ahora?</p>
-    <p class="lede">Toca un libro para abrir su ficha. El círculo de cada fila avanza su estado de un toque.</p>
   </header>
+  <p class="lede-fuera">Toca un libro para abrir su ficha. El círculo de cada fila avanza su estado de un toque.</p>
 
   <section class="summary" aria-label="Resumen">
     <div class="stat"><b id="sRead" class="mono">0</b><span id="sReadOf">leídos del plan</span><div class="bar"><i id="sBar" style="width:0%"></i></div></div>
@@ -358,7 +365,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=18"></script>
+<script src="../compartido/cuenta.js?v=19"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -1002,8 +1009,8 @@ async function cargar(){
   if(!e.data.length){vistaEmpezar();return}
   document.body.classList.remove("nuevo");  construir(e.data,l.data);if(!sheetId)render();
 }
-const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FBF8F0",hundido:"#EDE5D6",linea:"#E0D9C8","linea-fuerte":"#9A8B7C",tinta:"#4B2E19","tinta-suave":"#6B5E52",oro:"#9C7630",primario:"#4B2E19","sobre-primario":"#F3EFE4"},
-  oscuro:{fondo:"#17110C","fondo-alto":"#221912",hundido:"#2A2018",linea:"#3A2C20","linea-fuerte":"#6B5A48",tinta:"#EDE6D3","tinta-suave":"#ADA092",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#17110C"}};
+const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FBF8F0",hundido:"#EDE5D6",linea:"#E0D9C8","linea-fuerte":"#9A8B7C",tinta:"#4B2E19","tinta-suave":"#6B5E52",oro:"#9C7630",primario:"#4B2E19","sobre-primario":"#F3EFE4","display-app":'"IM Fell English",Georgia,serif'},
+  oscuro:{fondo:"#17110C","fondo-alto":"#221912",hundido:"#2A2018",linea:"#3A2C20","linea-fuerte":"#6B5A48",tinta:"#EDE6D3","tinta-suave":"#ADA092",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#17110C","display-app":'"IM Fell English",Georgia,serif'}};
 CiccCuenta.iniciar({tema:TEMA_ACCESO,app:"Bitácora",icono:"../iconos/bitacora-192.png?v=5",lema:"¿Qué leo ahora?"}).then(async r=>{
   sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!sheetId)cargar()});

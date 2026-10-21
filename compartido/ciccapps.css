@@ -1,4 +1,7 @@
 /* CiccApps — piezas compartidas por todas las apps: fuentes de la marca, firma y pantalla de acceso. */
+@font-face { font-family: "EB Garamond"; src: url(fuentes/EBGaramond-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "IM Fell English"; src: url(fuentes/IMFellEnglish-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "IM Fell English"; src: url(fuentes/IMFellEnglish-400i.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
 @font-face { font-family: "Libre Caslon Display"; src: url(fuentes/LibreCaslonDisplay-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Libre Caslon Text"; src: url(fuentes/LibreCaslonText-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Libre Caslon Text"; src: url(fuentes/LibreCaslonText-Italic.woff2) format("woff2"); font-weight: 400; font-style: italic; font-display: swap; }
