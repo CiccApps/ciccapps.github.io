@@ -8,9 +8,12 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/banda-sonora-180.png?v=4">
 <link rel="icon" type="image/png" href="../iconos/banda-sonora-192.png?v=4">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=12">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=13">
 </head><body>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Karla:wght@400;500;700&display=swap">
 <style>
 /* Layout: a record-shop shelf at night — an energy ladder of all 12 sleeves, then the sleeves grouped by moment of the day. Deliberately dark-only so the covers glow. */
 :root {
@@ -21,9 +24,9 @@
   --line: #283454;
   --accent: #D9B878;
   --dim-dot: #33405F;
-  --display: "Libre Caslon Display","Libre Caslon Text",Georgia,serif;
-  --body: "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --tag: "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --display: "DM Serif Display", Georgia, serif;
+  --body: "Karla", "Helvetica Neue", Arial, sans-serif;
+  --tag: "Bebas Neue", "Arial Narrow", sans-serif;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -97,26 +100,33 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 }
 @media (prefers-reduced-motion: reduce) { .shelf img, .card { transition: none; } }
 
-/* ===== CiccApps · capa común: misma rejilla, márgenes y tipografía en todas las apps ===== */
-body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.55}
-@media (min-width:900px){body{font-size:16px}}
-.wrap{max-width:1040px!important;margin-inline:auto!important;padding-block:28px 72px!important;padding-left:max(20px,env(safe-area-inset-left,0px))!important;padding-right:max(20px,env(safe-area-inset-right,0px))!important;gap:32px!important}
+.ia { display: grid; gap: 14px; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.ia h2 { margin: 6px 0 4px; }
+.ia textarea { font: inherit; font-size: 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); width: 100%; resize: vertical; min-height: 84px; }
+.ia textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.ia-go { appearance: none; border: 0; border-radius: 999px; background: var(--accent); color: #0F1528; font: 700 15px var(--body); padding: 13px 18px; cursor: pointer; }
+.ia-go[disabled] { opacity: .6; }
+.ia-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: c; }
+.ia-list li { counter-increment: c; display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+.ia-list li::before { content: counter(c, decimal-leading-zero); font-family: var(--tag); color: var(--accent); font-size: 18px; letter-spacing: .04em; }
+.ia-list b { display: block; font-weight: 700; }
+.ia-list span { font-size: 13.5px; color: var(--muted); }
+.ia-list a { color: var(--accent); font-size: 13px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+.salir-wrap { margin: -16px 0 0; text-align: center; }
+.salir { border: 0; background: none; color: var(--muted); font: 600 13px var(--body); cursor: pointer; padding: 6px; }
+.ia-sec { appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 10px 12px; font: 600 14px var(--body); cursor: pointer; }
+@media (min-width: 900px) { .ia-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* ===== CiccApps · rejilla común (márgenes y ancho); la tipografía y el carácter son de cada app ===== */
+.wrap{max-width:1040px!important;margin-inline:auto!important;padding-block:28px 72px!important;padding-left:max(20px,env(safe-area-inset-left,0px))!important;padding-right:max(20px,env(safe-area-inset-right,0px))!important}
 @media (min-width:768px){.wrap{padding-top:44px!important;padding-left:max(32px,env(safe-area-inset-left,0px))!important;padding-right:max(32px,env(safe-area-inset-right,0px))!important}}
-.cab{display:flex;flex-direction:column;gap:8px;max-width:680px}
-.cab .eyebrow{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:11px;line-height:16px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
-.cab h1{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400;font-size:clamp(40px,10vw,64px);line-height:1;letter-spacing:0;margin:0;text-wrap:balance}
-.cab .lema{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(19px,4.8vw,24px);line-height:1.25;color:var(--accent);margin:0}
-.cab .lede{text-wrap:pretty;margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
-h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400}
 .cc-firma{padding-top:24px}
-header.cab h1{font-size:clamp(40px,10vw,64px);line-height:1}
 </style>
 
 <div class="wrap">
-  <header class="cab">
+  <header>
     <div class="eyebrow">12 listas · un día completo</div>
     <h1>Banda Sonora</h1>
-    <p class="lema">¿Qué suena ahora?</p>
+    <p class="kicker">¿Qué escucho hoy?</p>
     <p class="lede">La colección sigue el día de la mañana a la noche, más seis listas para planes concretos. Si no sabes cuál elegir, mira la energía que te apetece o filtra por plan.</p>
   </header>
 
@@ -136,7 +146,21 @@ header.cab h1{font-size:clamp(40px,10vw,64px);line-height:1}
 
   <main id="groups" style="display:grid;gap:40px"></main>
 
+  <section class="ia" id="ia" aria-labelledby="ia-h">
+    <div>
+      <div class="eyebrow">Con inteligencia artificial</div>
+      <h2 id="ia-h">Créame una playlist</h2>
+      <p class="sub">Cuéntame el momento o lo que te apetece y te propongo doce canciones seguidas. Cada una se abre en Spotify.</p>
+    </div>
+    <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: domingo por la mañana, jazz suave y algo de bossa nova"></textarea>
+    <button class="ia-go" id="iaGo" type="button">Créame una playlist</button>
+    <p class="sub" id="iaInfo" aria-live="polite"></p>
+    <ol class="ia-list" id="iaList"></ol>
+    <button class="ia-sec" id="iaCopy" type="button" hidden>Copiar la lista</button>
+  </section>
+
   <footer>Si una lista no te encaja en un momento, prueba la de al lado en la escala de energía: suelen funcionar como plan B.</footer>
+  <p class="salir-wrap"><button class="salir" id="iaSalir" type="button">Cerrar sesión</button></p>
 </div>
 
 <script>
@@ -245,5 +269,32 @@ TAGS.forEach(([key, label]) => {
 </script>
 
 <p class="cc-firma" style="--cc-tinta-suave:#A9AEC0;--cc-oro:#D9B878;padding-bottom:28px"><a href="../" aria-label="Ir a CiccApps"><img src="../iconos/monograma-dorado.svg" alt=""></a><span class="txt">Banda Sonora <span class="sep">·</span> una CiccApp</span></p>
+<script src="../compartido/supabase.js"></script>
+<script src="../compartido/cuenta.js?v=13"></script>
+<script>
+(function(){
+  const TEMA={fondo:"#0F1528","fondo-alto":"#172038",hundido:"#1C2742",linea:"#283454","linea-fuerte":"#46557A",tinta:"#efe6d6","tinta-suave":"#A9AEC0",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#0F1528","display-app":'"DM Serif Display",Georgia,serif',"color-scheme":"dark"};
+  let sb=null,res=[],busy=false;const $=id=>document.getElementById(id);
+  const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  CiccCuenta.iniciar({app:"Banda Sonora",icono:"../iconos/banda-sonora-192.png?v=4",lema:"¿Qué escucho hoy?",tema:TEMA}).then(r=>{sb=r.sb});
+  function pinta(){
+    $("iaGo").disabled=busy;$("iaGo").textContent=busy?"Pensando…":"Créame una playlist";
+    $("iaList").innerHTML=res.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}${c.por_que?` — ${esc(c.por_que)}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("");
+    $("iaCopy").hidden=!res.length;
+  }
+  $("iaGo").onclick=async()=>{
+    const t=$("iaTxt").value.trim();if(t.length<3){$("iaInfo").textContent="Cuéntame qué te apetece.";return}
+    if(!sb){$("iaInfo").textContent="Inicia sesión para usar la IA.";return}
+    busy=true;$("iaInfo").textContent="";pinta();
+    try{const r=await sb.functions.invoke("ia-lista",{body:{tipo:"musica",peticion:t}});
+      if(r.error){let m="La IA no ha podido responder. Prueba en un rato.";try{const j=await r.error.context.json();if(j&&j.mensaje)m=j.mensaje}catch(_){}$("iaInfo").textContent=m}
+      else{res=r.data.items||[];const q=r.data.limite-r.data.usados;$("iaInfo").textContent=q>0?`Te quedan ${q} ${q===1?"lista":"listas"} este mes.`:"Era tu última lista de este mes."}
+    }catch(e){$("iaInfo").textContent="No se pudo conectar con la IA."}
+    busy=false;pinta();
+  };
+  $("iaCopy").onclick=async()=>{try{await navigator.clipboard.writeText(res.map((c,i)=>`${i+1}. ${c.titulo} — ${c.artista}`).join("\n"));$("iaCopy").textContent="Copiada"}catch(e){$("iaCopy").textContent="No se pudo copiar"}};
+  $("iaSalir").onclick=()=>CiccCuenta.salir();
+})();
+</script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script>
 </body></html>
