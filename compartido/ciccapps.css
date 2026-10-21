@@ -39,6 +39,10 @@
 .cc-cabeza img { width: 76px; height: 76px; border-radius: 22.5%; box-shadow: 0 0 0 1px rgba(217,184,120,.45), 0 8px 18px rgba(0,0,0,.25); }
 .cc-cabeza h1 { margin: 0; font-family: var(--cc-display); font-weight: 400; font-size: 34px; line-height: 1.05; }
 .cc-cabeza p { margin: 0; font-family: var(--cc-serif); font-style: italic; font-size: 17px; color: var(--cc-oro); }
+.cc-google { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; border: 1px solid var(--cc-linea-fuerte); border-radius: 8px; background: #FFFFFF; color: #1F1F1F; font: 600 15px var(--cc-sans); cursor: pointer; }
+.cc-google:focus-visible { outline: 2px solid var(--cc-oro); outline-offset: 2px; }
+.cc-o { display: flex; align-items: center; gap: 12px; color: var(--cc-tinta-suave); font-size: 12px; }
+.cc-o::before, .cc-o::after { content: ""; flex: 1; height: 1px; background: var(--cc-linea); }
 .cc-modos { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--cc-hundido); border-radius: 12px; }
 .cc-modos button { min-height: 38px; border: 0; border-radius: 8px; background: transparent; color: var(--cc-tinta-suave); font: 500 14px var(--cc-sans); cursor: pointer; }
 .cc-modos button[aria-pressed="true"] { background: var(--cc-fondo-alto); color: var(--cc-tinta); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.12); }
