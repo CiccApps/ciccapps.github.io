@@ -14,13 +14,13 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=5">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=5">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=16">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=17">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
   --paper:#F3EFE4; --card:#FBF8F0; --ink:#4B2E19; --muted:#6B5E52; --line:#E0D9C8;
   --gold:#9C7630; --gold-soft:#F2E6C9; --shelf:#C9BFA8; --empty:#E9E3D3;
-  --s1:#2F5D50; --s2:#2B3A5E; --s3:#7A2633; --s4:#8A6A2A; --s5:#34413C; --sx:#6B6A5E;
+  --s1:#2F5D50; --s2:#2B3A5E; --s3:#7A2633; --s4:#8A6A2A; --s5:#4E3552; --sx:#6B6A5E;
   --ok:#2F6B45; --warn:#9A5B12;
   --f-display:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;
   --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -29,12 +29,12 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --paper:#17110C; --card:#221912; --ink:#EDE6D3; --muted:#ADA092; --line:#3A2C20;
   --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A3A2A; --empty:#2A2018;
-  --s1:#5E9B88; --s2:#8497C4; --s3:#C2707E; --s4:#C99A45; --s5:#A3AFA8; --sx:#A39F8E;
+  --s1:#5E9B88; --s2:#7F93C4; --s3:#BE6273; --s4:#C99A45; --s5:#A98BB8; --sx:#A39F8E;
   --ok:#6FBF8A; --warn:#E0A25A; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#17110C; --card:#221912; --ink:#EDE6D3; --muted:#ADA092; --line:#3A2C20;
   --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A3A2A; --empty:#2A2018;
-  --s1:#5E9B88; --s2:#8497C4; --s3:#C2707E; --s4:#C99A45; --s5:#A3AFA8; --sx:#A39F8E;
+  --s1:#5E9B88; --s2:#7F93C4; --s3:#BE6273; --s4:#C99A45; --s5:#A98BB8; --sx:#A39F8E;
   --ok:#6FBF8A; --warn:#E0A25A; color-scheme:dark}
 
 *{box-sizing:border-box}
@@ -109,21 +109,25 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 
 .shelves{display:flex;flex-direction:column;gap:20px}
 .shelf-row{display:flex;flex-direction:column;gap:6px}
-.shelf-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12px;color:var(--muted)}
+.shelf-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:inherit;font-size:12px;color:var(--muted);background:none;border:0;padding:4px 0;margin:-4px 0;text-align:left;cursor:pointer;width:100%}
+.shelf-head .ir{display:inline-block;margin-left:2px;color:var(--gold);transition:transform .2s}.shelf-head:hover .ir{transform:translateY(2px)}.shelf-head:hover strong{text-decoration:underline;text-underline-offset:3px}
+.shelf-head:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+.stage{scroll-margin-top:84px}
 .shelf-head strong{color:var(--ink);font-weight:600}
 .shelf{display:flex;flex-wrap:wrap;align-items:flex-end;gap:3px;padding:0 4px;border-bottom:5px solid var(--shelf);min-height:70px}
-.spine{border:1.5px solid var(--sc);border-bottom:none;border-radius:2px 2px 0 0;background:transparent;cursor:pointer;padding:0;position:relative;transition:transform .2s,background .3s}
+.spine{border:1.5px solid var(--sc);border-bottom-width:0 !important;border-radius:2px 2px 0 0;background:transparent;cursor:pointer;padding:0;position:relative;transition:transform .2s,background .3s}
 .spine.nope{border-style:dotted;opacity:.55}
 .spine:hover,.spine:focus-visible{transform:translateY(-4px);outline:none}
 .spine:focus-visible{box-shadow:0 0 0 2px var(--gold)}
 .spine.leido{background:var(--sc);opacity:1;border-style:solid}
 .spine.leido::after{content:"";position:absolute;left:2px;right:2px;top:18%;height:2px;background:var(--gold);opacity:.8}
-.spine.leyendo{background:var(--gold);border-color:var(--gold);border-style:solid;opacity:1;transform:translateY(-6px)}
+.spine.leyendo{background:linear-gradient(to top,var(--sc) var(--pr,35%),transparent var(--pr,35%));border-style:solid;opacity:1;transform:translateY(-6px)}
+.spine.leyendo::before{content:"";position:absolute;right:3px;top:-1px;width:4px;height:42%;background:var(--gold);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%)}
 .spine.abandonado{opacity:.3;border-style:dashed}
 .legend{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding-top:2px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{display:inline-block;width:8px;height:16px;border:1.5px solid var(--muted);border-bottom:none;border-radius:2px 2px 0 0}
-.legend i.d{border-style:dotted}.legend i.f{background:var(--muted)}.legend i.g{background:var(--gold);border-color:var(--gold)}
+.legend i.d{border-style:dotted}.legend i.f{background:var(--muted)}.legend i.g{background:linear-gradient(to top,var(--muted) 45%,transparent 45%);position:relative}.legend i.g::before{content:"";position:absolute;right:1px;top:-1px;width:3px;height:7px;background:var(--gold);clip-path:polygon(0 0,100% 0,100% 100%,50% 80%,0 100%)}
 @media (prefers-reduced-motion:reduce){.spine,.bar i,.chev{transition:none}}
 
 .chips{display:flex;gap:6px;flex-wrap:wrap}
@@ -281,6 +285,7 @@ body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif
 .cab h1 .desc{font-family:"Libre Caslon Text",Georgia,serif;font-size:.4em;color:var(--muted);letter-spacing:.01em;white-space:nowrap}
 .cab .lema{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(19px,4.8vw,24px);line-height:1.25;color:var(--gold);margin:0}
 .cab .lede{text-wrap:pretty;margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
+
 @media (min-width:900px){.shelf{zoom:1.45}}
 h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400}
 .cc-firma{padding-top:24px}
@@ -333,7 +338,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=16"></script>
+<script src="../compartido/cuenta.js?v=17"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -425,8 +430,8 @@ const PLANTILLA_EDS={"sapiens": {"ed": "Debate · trad. Joandomènec Ros", "why"
 
 /* Modelo: etapas y libros de la base de datos */
 let STAGES=[],BOOKS={},MAIN=[],ALL=[],EDS={},state={};let sb=null;
-const COLOR={verde:"--s1",marino:"--s2",burdeos:"--s3",ocre:"--s4",pizarra:"--s5",taupe:"--sx"};
-const COLOR_DE={"--s1":"verde","--s2":"marino","--s3":"burdeos","--s4":"ocre","--s5":"pizarra","--sx":"taupe"};
+const COLOR={verde:"--s1",marino:"--s2",burdeos:"--s3",ocre:"--s4",ciruela:"--s5",pizarra:"--s5",taupe:"--sx"};
+const COLOR_DE={"--s1":"verde","--s2":"marino","--s3":"burdeos","--s4":"ocre","--s5":"ciruela","--sx":"taupe"};
 function construir(etapas,libros){
   BOOKS={};EDS={};state={};let num=0;
   const ord=[...etapas].sort((x,y)=>x.orden-y.orden);const main=ord.filter(e=>!e.intercalable);
@@ -530,9 +535,9 @@ function renderView(){
 function viewPlan(){
   const shelves=STAGES.map(s=>{
     const done=s._all.filter(b=>st(b.id)==="leido").length;
-    return `<div class="shelf-row"><div class="shelf-head"><span><strong>${s.extra?"Intercalables":"Etapa "+s.n}</strong> · ${esc(s.extra?"sin orden":s.name)}</span><span class="mono">${done}/${s._all.length}</span></div>
+    return `<div class="shelf-row"><button type="button" class="shelf-head" data-goto="${s.id}" aria-label="Ir a ${esc(s.extra?"Intercalables":"Etapa "+s.n+", "+s.name)}"><span><strong>${s.extra?"Intercalables":"Etapa "+s.n}</strong> · ${esc(s.extra?"sin orden":s.name)} <span class="ir" aria-hidden="true">↓</span></span><span class="mono">${done}/${s._all.length}</span></button>
     <div class="shelf">${s._all.map(b=>{const w=Math.round(7+b.p/38);const h=48+((b.id.charCodeAt(0)*7+b.id.length*5)%22);const e=st(b.id);
-      return `<button class="spine ${e} ${owned(b.id)||e!=="pendiente"?"":"nope"}" style="--sc:var(${s.c});width:${w}px;height:${h}px" data-open="${b.id}" title="${esc(b.t)}" aria-label="${esc(b.t)}, ${LABEL[e]}${owned(b.id)?", lo tienes":""}"></button>`}).join("")}</div></div>`}).join("");
+      return `<button class="spine ${e} ${owned(b.id)||e!=="pendiente"?"":"nope"}" style="--sc:var(${s.c});width:${w}px;height:${h}px${e==="leyendo"?";--pr:"+Math.max(8,Math.min(92,Math.round((+S(b.id).pagina||0)/b.p*100)))+"%":""}" data-open="${b.id}" title="${esc(b.t)}" aria-label="${esc(b.t)}, ${LABEL[e]}${owned(b.id)?", lo tienes":""}"></button>`}).join("")}</div></div>`}).join("");
   const legend=`<div class="legend"><span><i></i>Lo tienes</span><span><i class="d"></i>Por comprar</span><span><i class="g"></i>Leyendo</span><span><i class="f"></i>Leído</span></div>`;
   const chips=`<div class="filters" role="group" aria-label="Filtrar">${[["todos","Todos"],["pendiente","Por leer"],["tengo","Tengo"],["leyendo","Leyendo"],["leido","Leídos"]].map(([k,l])=>`<button class="chip" id="f-${k}" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>`;
   const pass=b=>filter==="todos"||(filter==="tengo"?owned(b.id)&&open(b.id):st(b.id)===filter);
@@ -720,6 +725,8 @@ document.addEventListener("click",e=>{
   if(x=g("[data-open]")){openSheet(x.dataset.open);return}
   if(x=g("[data-tab]")){tab=x.dataset.tab;try{localStorage.setItem(LS+"-tab",tab)}catch(err){}renderView();return}
   if(x=g("[data-f]")){filter=x.dataset.f;renderView();return}
+  if(x=g("[data-goto]")){const s=STAGES.find(z=>z.id===x.dataset.goto);if(filter==="todos"&&!isOpen(s)){openSt[s.id]=true;try{localStorage.setItem(LS+"-open",JSON.stringify(openSt))}catch(err){}renderView()}
+    const t=document.getElementById("st-"+s.id);if(t){t.closest(".stage").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});t.focus({preventScroll:true})}return}
   if(x=g("[data-stage]")){const s=STAGES.find(z=>z.id===x.dataset.stage);openSt[s.id]=!isOpen(s);try{localStorage.setItem(LS+"-open",JSON.stringify(openSt))}catch(err){}renderView();return}
   if(x=g("[data-mood]")){const k=x.dataset.mood;moodSel.has(k)?moodSel.delete(k):moodSel.add(k);renderView();return}
   if(g("#moodClear")){moodSel.clear();renderView();return}
