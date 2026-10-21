@@ -48,7 +48,7 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 .app small { color: var(--acento); }
 .app:hover { border-color: transparent; box-shadow: 0 10px 24px rgba(0,0,0,.18); }
 .a-bit { background: radial-gradient(130% 120% at 20% 0%, #7A4E2C, #4E2F19 60%, #26160B); --acento: #D9B878; }
-.a-bit h2 { font-family: "IM Fell English", Georgia, serif; font-size: 1.55em; }
+.a-bit h2 { font-family: "IM Fell English", Georgia, serif; }
 .a-pla { background: radial-gradient(130% 130% at 20% 0%, #8A2A3A, #5E1A26 60%, #3A0E17); --acento: #D9B878; }
 .a-pla::before { content: ""; position: absolute; left: 10px; right: 10px; top: 9px; height: 6px; background: radial-gradient(circle, #D9B878 2px, transparent 2.4px) 0 0/13px 6px repeat-x; opacity: .9; }
 .a-pla h2 { font-family: "Limelight", Georgia, serif; letter-spacing: .02em; }
@@ -60,6 +60,9 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 .a-ic h2 { font-family: "Segoe UI Black", "Segoe UI", "Open Sans", system-ui, sans-serif; font-weight: 800; letter-spacing: -.01em; }
 .a-ic p { font-family: "Segoe UI", "Open Sans", system-ui, sans-serif; color: #4A5A70; opacity: 1; }
 .app img { box-shadow: none; }
+/* Cada app con su letra, pero todas del mismo tamaño a la vista: se iguala la altura de las minúsculas */
+.app h2 { font-size-adjust: 0.5; }
+.app p { font-size-adjust: 0.53; text-wrap: pretty; }
 @media (max-width: 520px) {
   .wrap { padding-block: 32px 28px; gap: 32px; }
   .app { padding: 24px 14px 14px; gap: 10px; }
