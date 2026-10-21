@@ -79,6 +79,3 @@
 .cc-enlace { border: 0; background: none; color: var(--cc-oro); font: 600 13px var(--cc-sans); cursor: pointer; padding: 4px 8px; line-height: 20px; }
 :focus-visible { outline-color: var(--cc-oro); }
 
-/* Casilla del resumen mensual */
-.cc-resumen { display: flex; align-items: center; justify-content: center; gap: 8px; font: 13px var(--cc-sans); color: inherit; opacity: .8; cursor: pointer; padding: 6px 0; }
-.cc-resumen input { width: 18px; height: 18px; accent-color: currentColor; }

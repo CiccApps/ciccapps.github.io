@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=3">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=3">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=14">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=15">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
@@ -184,6 +184,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hab .bar{margin:6px 0 2px}
 .hab .btn{margin-top:auto;align-self:stretch;padding-top:7px;padding-bottom:7px;font-size:13px}
 .hab .btn.hecho{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mes-btn{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:11px 16px;font:600 14px var(--f-body,inherit);color:var(--ink);cursor:pointer}
+.mes-btn.nuevo{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.mes-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 6px}
+.mes-grid div{background:var(--paper);border-radius:6px;padding:12px 10px;display:flex;flex-direction:column}
+.mes-grid b{font-family:var(--f-display);font-weight:400;font-size:30px;line-height:1}.mes-grid span{font-size:11.5px;color:var(--muted)}
+.mes-cal{display:grid;grid-template-columns:repeat(7,26px);justify-content:center;gap:5px;margin:16px 0 18px}
+.mes-cal i{width:26px;height:26px;border-radius:5px;background:var(--line);font:500 10px var(--f-mono);font-style:normal;display:grid;place-items:center;color:var(--muted)}.mes-cal i.si{color:var(--paper)}.mes-cal i.si{background:var(--ink)}.mes-cal i.vacio{background:none}
+.mes-libro{display:flex;gap:12px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.mes-libro img{width:40px;height:60px;object-fit:cover;border-radius:3px}.mes-libro b{display:block}.mes-libro span{font-size:13px;color:var(--muted)}
 .hab input{font:inherit;font-size:16px;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);margin-top:6px}
 .resumen{justify-content:center;font-size:13px;color:var(--muted)}
 .salir-link{border:0;background:none;color:var(--muted);font:600 13px var(--f-body);cursor:pointer;padding:6px}
@@ -297,6 +306,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
   <section class="habito" aria-label="Hábito">
     <div class="hab"><span class="eyebrow">Racha</span><b id="hRacha" class="mono">0</b><span id="hRachaTxt">días seguidos leyendo</span><button class="btn sm" id="hHoy" type="button">He leído hoy</button></div>
     <div class="hab"><span class="eyebrow" id="hObjAnio">Objetivo</span><b id="hObj" class="mono">0</b><span id="hObjTxt">libros este año</span><div class="bar"><i id="hObjBar" style="width:0%"></i></div><button class="btn sm" id="hObjEdit" type="button">Cambiar</button></div>
+    <button class="mes-btn" id="mesBtn" type="button"><span id="mesTxt">Tu mes de lectura</span><span aria-hidden="true">→</span></button>
   </section>
 
   <section class="now" aria-label="Ahora">
@@ -314,7 +324,6 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 
   <footer id="pie">
     <div class="foot-actions"><button class="chip" id="exportGR">Exportar a Goodreads</button><button class="chip" id="misDatos">Descargar mis datos</button></div>
-    <div id="resumenSlot"></div>
     <button class="salir-link" id="salir" type="button">Cerrar sesión</button>
     <span id="syncNote">Sincronizado en todos tus dispositivos · páginas aproximadas según ediciones habituales en español.</span>
   </footer>
@@ -324,7 +333,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=14"></script>
+<script src="../compartido/cuenta.js?v=15"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -772,6 +781,7 @@ async function marcarHoy(){const h=hoyISO();if(DIAS.has(h))return;DIAS.add(h);re
 async function desmarcarHoy(){const h=hoyISO();DIAS.delete(h);renderHabito();await sb.from("lectura_dias").delete().eq("dia",h)}
 async function guardarAjustes(patch){AJ=Object.assign({},AJ,patch);const r=await sb.from("ajustes").upsert({app:"bitacora",datos:AJ,actualizado:new Date().toISOString()});if(r.error)toast("No se pudo guardar")}
 function renderHabito(){
+  marcarMesNuevo();
   const n=racha();const hoy=DIAS.has(hoyISO());
   document.getElementById("hRacha").textContent=n;
   document.getElementById("hRachaTxt").textContent=n===1?"día leyendo":"días seguidos leyendo";
@@ -783,6 +793,36 @@ function renderHabito(){
   document.getElementById("hObjTxt").textContent=hechos>=meta?"¡objetivo cumplido!":"libros este año";
   document.getElementById("hObjBar").style.width=Math.min(100,hechos/meta*100)+"%";
 }
+/* Tu mes de lectura: del 1 al 7 enseña el mes que acaba de terminar */
+const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+function mesResumen(){const d=new Date();if(d.getDate()<=7)d.setDate(0);return {y:d.getFullYear(),m:d.getMonth(),cerrado:new Date().getDate()<=7}}
+function marcarMesNuevo(){const {y,m,cerrado}=mesResumen();const t=document.getElementById("mesTxt");if(!t)return;
+  t.textContent=cerrado?"Tu "+MESES[m]+" en Bitácora":"Tu mes de lectura";let v=null;try{v=localStorage.getItem("bitacora-mes-visto")}catch(_){}
+  document.getElementById("mesBtn").classList.toggle("nuevo",cerrado&&v!==y+"-"+(m+1))}
+function tuMes(){
+  const {y,m,cerrado}=mesResumen();const pre=y+"-"+String(m+1).padStart(2,"0");const nd=new Date(y,m+1,0).getDate();
+  const hasta=cerrado?nd:new Date().getDate();
+  const dias=[];for(let i=1;i<=nd;i++)dias.push(DIAS.has(pre+"-"+String(i).padStart(2,"0")));
+  const leidos=dias.slice(0,hasta).filter(Boolean).length;let mejor=0,c=0;dias.forEach(s=>{c=s?c+1:0;mejor=Math.max(mejor,c)});
+  const fin=ALL.filter(b=>st(b.id)==="leido"&&String(S(b.id).fin||"").startsWith(pre));
+  const empez=ALL.filter(b=>String(S(b.id).inicio||"").startsWith(pre)).length;
+  const pags=fin.reduce((a,b)=>a+(+b.p||0),0);
+  const ant=new Date(y,m-1,1);const preA=ant.getFullYear()+"-"+String(ant.getMonth()+1).padStart(2,"0");
+  const diasA=[...DIAS].filter(d=>d.startsWith(preA)).length;const dif=leidos-diasA;
+  const cmp=diasA||leidos?(dif>0?`${dif} días más leyendo que en ${MESES[ant.getMonth()]}`:dif<0?`${-dif} días menos que en ${MESES[ant.getMonth()]}`:`Los mismos días que en ${MESES[ant.getMonth()]}`):"";
+  const off=(new Date(y,m,1).getDay()+6)%7;
+  const root=document.getElementById("sheetRoot");
+  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mesT" style="--sc:var(--s1)">
+    <span class="eyebrow">${cerrado?"Tu resumen del mes":"Tu mes hasta hoy"}</span><h3 id="mesT" style="text-transform:capitalize">${MESES[m]}</h3>
+    <div class="mes-grid"><div><b class="mono">${leidos}</b><span>días leyendo</span></div><div><b class="mono">${mejor}</b><span>mejor racha</span></div><div><b class="mono">${fin.length}</b><span>${fin.length===1?"libro terminado":"libros terminados"}</span></div></div>
+    ${cmp?`<p class="hint" style="margin:0">${cmp}${empez?` · ${empez} ${empez===1?"libro empezado":"libros empezados"}`:""}${pags?` · ≈${pags} páginas en libros acabados`:""}.</p>`:""}
+    <div class="mes-cal" aria-label="Días que leíste">${"<i class=\"vacio\"></i>".repeat(off)}${dias.map((s,i)=>`<i class="${s?"si":""}">${i+1}</i>`).join("")}</div>
+    ${fin.length?`<span class="eyebrow">Terminados</span>${fin.map(b=>`<div class="mes-libro">${b.cov?`<img src="${esc(b.cov)}" alt="">`:""}<div><b>${esc(b.t)}</b><span>${esc(b.a)}${S(b.id).nota?" · "+"★".repeat(S(b.id).nota):""}</span></div></div>`).join("")}`:`<p class="hint">${leidos?"Este mes no has terminado ningún libro, pero has seguido leyendo. Eso cuenta.":"Aún no hay días marcados. Pulsa «He leído hoy» cuando leas."}</p>`}
+    <div class="sheet-actions"><button class="btn primary" id="mesCerrar">Cerrar</button></div></div></div>`;
+  const cer=()=>root.innerHTML="";document.getElementById("mesCerrar").onclick=cer;document.getElementById("sheetBg").onclick=e=>{if(e.target.id==="sheetBg")cer()};
+  try{localStorage.setItem("bitacora-mes-visto",y+"-"+(m+1))}catch(_){}document.getElementById("mesBtn").classList.remove("nuevo");
+}
+document.getElementById("mesBtn").onclick=tuMes;
 document.getElementById("hHoy").onclick=()=>DIAS.has(hoyISO())?desmarcarHoy():marcarHoy();
 let editObj=false;
 document.getElementById("hObjEdit").onclick=async ev=>{
@@ -893,7 +933,7 @@ async function cargar(){
   document.body.classList.remove("nuevo");  construir(e.data,l.data);if(!sheetId)render();
 }
 CiccCuenta.iniciar({app:"Bitácora",icono:"../iconos/bitacora-192.png?v=3",lema:"¿Qué leo hoy?"}).then(async r=>{
-  sb=r.sb;CiccCuenta.casillaResumen(document.getElementById("resumenSlot"),toast);CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
+  sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!sheetId)cargar()});
 });
 </script>

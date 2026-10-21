@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/banda-sonora-180.png?v=4">
 <link rel="icon" type="image/png" href="../iconos/banda-sonora-192.png?v=4">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=14">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=15">
 </head><body>
 
 <style>
@@ -307,7 +307,7 @@ TAGS.forEach(([key, label]) => {
 
 <p class="cc-firma" style="--cc-tinta-suave:var(--muted);--cc-oro:var(--accent);padding-bottom:28px"><a href="../" aria-label="Ir a CiccApps"><img src="../iconos/monograma-dorado.svg" alt=""></a><span class="txt">Vinilo <span class="sep">·</span> una CiccApp</span></p>
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=14"></script>
+<script src="../compartido/cuenta.js?v=15"></script>
 <script>
 (function(){
   const DISP='"DM Serif Display",Georgia,serif';
@@ -315,7 +315,7 @@ TAGS.forEach(([key, label]) => {
     claro:{fondo:"#F4EEE2","fondo-alto":"#FBF8F1",hundido:"#ECE4D3",linea:"#E1D8C6","linea-fuerte":"#A9A08C",tinta:"#172038","tinta-suave":"#5B6378",oro:"#8A6A2B",primario:"#172038","sobre-primario":"#F4EEE2","display-app":DISP,"color-scheme":"light"}};
   let sb=null,res=[],busy=false;const $=id=>document.getElementById(id);
   const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/banda-sonora-192.png?v=4",lema:"¿Qué escucho hoy?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs();CiccCuenta.casillaResumen(document.querySelector(".salir-wrap"))});
+  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/banda-sonora-192.png?v=4",lema:"¿Qué escucho hoy?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs()});
   function pinta(){
     $("iaGo").disabled=busy;$("iaGo").textContent=busy?"Pensando…":"Créame una playlist";
     $("iaList").innerHTML=res.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}${c.por_que?` — ${esc(c.por_que)}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("");

@@ -136,20 +136,6 @@
     return p;
   }
 
-  // Resumen mensual por correo: una sola casilla para las tres apps (se guarda en «ajustes», app «correo»)
-  function casillaResumen(destino, avisar) {
-    var l = el('label', { 'class': 'cc-resumen' });
-    l.innerHTML = '<input type="checkbox"> <span>Quiero un resumen de mi mes por correo</span>';
-    var cb = l.querySelector('input');
-    sb.from('ajustes').select('datos').eq('app', 'correo').maybeSingle().then(function (r) { cb.checked = !!(r.data && r.data.datos && r.data.datos.resumen); });
-    cb.onchange = async function () {
-      var r = await sb.from('ajustes').upsert({ app: 'correo', datos: { resumen: cb.checked, desde: new Date().toISOString().slice(0, 10) }, actualizado: new Date().toISOString() });
-      if (avisar) avisar(r.error ? 'No se pudo guardar' : cb.checked ? 'Te lo enviaremos a principios de cada mes' : 'Hecho, no te lo enviaremos');
-    };
-    (destino || document.body).appendChild(l);
-    return l;
-  }
-
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function () {});
-  window.CiccCuenta = { sb: sb, iniciar: iniciar, salir: salir, firma: firma, casillaResumen: casillaResumen };
+  window.CiccCuenta = { sb: sb, iniciar: iniciar, salir: salir, firma: firma };
 })();
