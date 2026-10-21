@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=3">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=3">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=11">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=12">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
@@ -238,7 +238,7 @@ body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif
 .cab h1{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400;font-size:clamp(40px,10vw,64px);line-height:1;letter-spacing:0;margin:0;text-wrap:balance}
 .cab h1 .desc{font-family:"Libre Caslon Text",Georgia,serif;font-size:.4em;color:var(--muted);letter-spacing:.01em;white-space:nowrap}
 .cab .lema{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(19px,4.8vw,24px);line-height:1.25;color:var(--gold);margin:0}
-.cab .lede{margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
+.cab .lede{text-wrap:pretty;margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
 @media (min-width:900px){.shelf{zoom:1.45}}
 h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400}
 .cc-firma{padding-top:24px}
@@ -248,7 +248,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <body class="nuevo">
 <div class="wrap">
   <header class="cab">
-    <span class="eyebrow" id="planCount">Plan de lectura</span>
+    <span class="eyebrow" id="planCount">Plan de 5 etapas</span>
     <h1>Bitácora <span class="desc">de lectura</span></h1>
     <p class="lema">¿Qué leo hoy?</p>
     <p class="lede">Toca un libro para abrir su ficha. El círculo de cada fila avanza su estado de un toque.</p>
@@ -284,7 +284,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=11"></script>
+<script src="../compartido/cuenta.js?v=12"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -435,7 +435,7 @@ function renderTop(){
   const extra=allRead.length-read.length;
   document.getElementById("sRead").textContent=read.length+(extra?`+${extra}`:"");
   document.getElementById("sReadOf").textContent=`de ${MAIN.length} leídos`;
-  document.getElementById("planCount").textContent=`Plan de lectura · ${MAIN.length} libros`;
+  document.getElementById("planCount").textContent=`Plan · ${MAIN.length} libros en 5 etapas`;
   document.getElementById("sBar").style.width=(read.length/MAIN.length*100)+"%";
   document.getElementById("sPages").textContent=allRead.reduce((s,b)=>s+b.p,0).toLocaleString("es-ES");
   const cs=curStage();

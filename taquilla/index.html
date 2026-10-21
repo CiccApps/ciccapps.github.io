@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/la-taquilla-180.png?v=3">
 <link rel="icon" type="image/png" href="../iconos/la-taquilla-192.png?v=3">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=11">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=12">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
 :root{
@@ -127,7 +127,7 @@ body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif
 .cab .eyebrow{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:11px;line-height:16px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
 .cab h1{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400;font-size:clamp(40px,10vw,64px);line-height:1;letter-spacing:0;margin:0;text-wrap:balance}
 .cab .lema{font-family:"Libre Caslon Text",Georgia,serif;font-style:italic;font-size:clamp(19px,4.8vw,24px);line-height:1.25;color:var(--red);margin:0}
-.cab .lede{margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
+.cab .lede{text-wrap:pretty;margin:0;color:var(--muted);max-width:62ch;font-size:inherit}
 h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-weight:400}
 .cc-firma{padding-top:24px}
 .marquee{padding:22px 20px 20px}
@@ -178,7 +178,7 @@ h2{font-family:"Libre Caslon Display","Libre Caslon Text",Georgia,serif;font-wei
 <div class="toast" id="toast" hidden></div>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=11"></script>
+<script src="../compartido/cuenta.js?v=12"></script>
 <script>
 const MOODS={risa:"Reírme",tension:"Tensión",pensar:"Pensar",llorar:"Emocionarme",accion:"Acción",epico:"Épica",ligera:"Ligera",clasico:"Clásico pendiente"};
 const WHERE={cine:"Cine",streaming:"Streaming",casa:"En casa"};
