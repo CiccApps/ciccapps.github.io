@@ -11,17 +11,17 @@
   "theme_color": "#0F1528",
   "icons": [
     {
-      "src": "/iconos/vinilo-192.png?v=5",
+      "src": "/iconos/vinilo-192.png?v=6",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/iconos/vinilo-512.png?v=5",
+      "src": "/iconos/vinilo-512.png?v=6",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/iconos/vinilo-512.png?v=5",
+      "src": "/iconos/vinilo-512.png?v=6",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

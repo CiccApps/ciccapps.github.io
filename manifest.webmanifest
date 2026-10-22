@@ -10,17 +10,17 @@
   "theme_color": "#1D3A32",
   "icons": [
     {
-      "src": "/iconos/ciccapps-192.png?v=3",
+      "src": "/iconos/ciccapps-192.png?v=6",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/iconos/ciccapps-512.png?v=3",
+      "src": "/iconos/ciccapps-512.png?v=6",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/iconos/ciccapps-512.png?v=3",
+      "src": "/iconos/ciccapps-512.png?v=6",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

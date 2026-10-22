@@ -12,8 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="Platea">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="../iconos/platea-180.png?v=5">
-<link rel="icon" type="image/png" href="../iconos/platea-192.png?v=5">
+<link rel="apple-touch-icon" href="../iconos/platea-180.png?v=6">
+<link rel="icon" type="image/png" href="../iconos/platea-192.png?v=6">
 <link rel="stylesheet" href="../compartido/ciccapps.css?v=19">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
@@ -679,7 +679,7 @@ async function cargar(){
 }
 const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FFFFFF",hundido:"#EDE5D6",linea:"#E0D7C6","linea-fuerte":"#9C8F92",tinta:"#24161A","tinta-suave":"#6C6266",oro:"#6E1E2B",primario:"#6E1E2B","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"},
   oscuro:{fondo:"#150D10","fondo-alto":"#1F1518",hundido:"#2A1C20",linea:"#3A2A2F","linea-fuerte":"#6B5A5F",tinta:"#F1E9E4","tinta-suave":"#A7999E",oro:"#D9B878",primario:"#B8475A","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"}};
-CiccCuenta.iniciar({app:"Platea",icono:"../iconos/platea-192.png?v=5",lema:"¿Qué veo ahora?",tema:TEMA_ACCESO}).then(async r=>{
+CiccCuenta.iniciar({app:"Platea",icono:"../iconos/platea-192.png?v=6",lema:"¿Qué veo ahora?",tema:TEMA_ACCESO}).then(async r=>{
   sb=r.sb;USUARIO=r.usuario||null;CiccCuenta.firma("Platea",document.getElementById("pie"));await cargar();marcarMesNuevo();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!editId)cargar()});
 });

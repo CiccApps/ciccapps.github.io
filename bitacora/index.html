@@ -12,8 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="Bitácora">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=5">
-<link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=5">
+<link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=6">
+<link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=6">
 <link rel="stylesheet" href="../compartido/ciccapps.css?v=19">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
@@ -1011,7 +1011,7 @@ async function cargar(){
 }
 const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FBF8F0",hundido:"#EDE5D6",linea:"#E0D9C8","linea-fuerte":"#9A8B7C",tinta:"#4B2E19","tinta-suave":"#6B5E52",oro:"#9C7630",primario:"#4B2E19","sobre-primario":"#F3EFE4","display-app":'"IM Fell English",Georgia,serif'},
   oscuro:{fondo:"#17110C","fondo-alto":"#221912",hundido:"#2A2018",linea:"#3A2C20","linea-fuerte":"#6B5A48",tinta:"#EDE6D3","tinta-suave":"#ADA092",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#17110C","display-app":'"IM Fell English",Georgia,serif'}};
-CiccCuenta.iniciar({tema:TEMA_ACCESO,app:"Bitácora",icono:"../iconos/bitacora-192.png?v=5",lema:"¿Qué leo ahora?"}).then(async r=>{
+CiccCuenta.iniciar({tema:TEMA_ACCESO,app:"Bitácora",icono:"../iconos/bitacora-192.png?v=6",lema:"¿Qué leo ahora?"}).then(async r=>{
   sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!sheetId)cargar()});
 });
