@@ -131,7 +131,7 @@
   // Firma al pie: «Bitácora · una CiccApp»
   function firma(nombre, destino) {
     var p = el('p', { 'class': 'cc-firma' });
-    p.innerHTML = '<a href="../" aria-label="Ir a CiccApps"><img class="cla" src="../iconos/monograma-verde.svg" alt=""><img class="osc" src="../iconos/monograma-dorado.svg" alt=""></a><span class="txt">' + esc(nombre) + ' <span class="sep">·</span> una CiccApp</span>';
+    p.innerHTML = '<a href="../" aria-label="Ir a CiccApps"><img class="cla" src="../iconos/monograma-verde.svg" alt=""><img class="osc" src="../iconos/monograma-dorado.svg" alt=""></a><span class="txt">' + esc(nombre) + ' <span class="sep">·</span> una CiccApp</span><small class="cc-copy"><span>© 2026 Miguel Pascual Ciccardini</span><span class="cc-copy-sep"> · </span><span>Todos los derechos reservados</span></small>';
     (destino || document.body).appendChild(p);
     return p;
   }

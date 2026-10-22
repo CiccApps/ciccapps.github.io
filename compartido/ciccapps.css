@@ -46,6 +46,10 @@
 .cc-firma .osc { display: none; }
 @media (prefers-color-scheme: dark) { .cc-firma .cla { display: none; } .cc-firma .osc { display: block; } }
 .cc-firma a { color: inherit; text-decoration: none; }
+/* Derechos bajo la firma: pequeño y discreto; en pantallas estrechas, en dos líneas sin el punto */
+.cc-copy { order: 3; display: block; margin-top: 4px; font-family: var(--cc-sans); font-style: normal; font-size: 11px; line-height: 1.5; letter-spacing: .01em; color: var(--cc-tinta-suave); opacity: .8; }
+.cc-copy span { white-space: nowrap; }
+@media (max-width: 440px) { .cc-copy span { display: block; } .cc-copy .cc-copy-sep { display: none; } }
 
 /* Pantalla de acceso */
 .cc-acceso { position: fixed; inset: 0; z-index: 100; background: var(--cc-fondo); color: var(--cc-tinta); font-family: var(--cc-sans);
