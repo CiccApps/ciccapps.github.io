@@ -12,3 +12,10 @@ jobs:
         run: |
           curl -fsS "https://chgrpztvvbhawzdqscru.supabase.co/rest/v1/latido?select=ultimo" \
             -H "apikey: sb_publishable_Pa4OqudjThAd6DD9sOlKyA_wO1qnrtG"
+      - name: Revisar los catálogos de Wetaca y Knoweats (Alacena)
+        # si se revisaron hace menos de 3 días la función no hace nada; un fallo aquí no para el latido
+        run: |
+          curl -sS -X POST "https://chgrpztvvbhawzdqscru.supabase.co/functions/v1/catalogos" \
+            -H "apikey: sb_publishable_Pa4OqudjThAd6DD9sOlKyA_wO1qnrtG" \
+            -H "Authorization: Bearer sb_publishable_Pa4OqudjThAd6DD9sOlKyA_wO1qnrtG" \
+            -H "Content-Type: application/json" -d '{}' || true
