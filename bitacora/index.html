@@ -374,7 +374,7 @@ h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:4
 
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
-<script src="../compartido/logros.js?v=1"></script>
+<script src="../compartido/logros.js?v=2"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -989,14 +989,14 @@ document.getElementById("salir").onclick=()=>CiccCuenta.salir();
 /* Logros: medallas de bronce, plata y oro con lo que ya guarda la app */
 const LOGROS=[
  {clave:"primer_libro",nombre:"Primer libro",texto:"Terminar tu primer libro en Bitácora",metrica:"libros",niveles:[1],motivo:"estrella"},
- {clave:"lector",nombre:"Lector de fondo",texto:"Terminados en tu bitácora",metrica:"libros",niveles:[5,15,40],unidad:"libros",motivo:"libro"},
- {clave:"racha",nombre:"Racha",texto:"Seguidos leyendo, tu mejor racha",metrica:"mejor_racha",niveles:[7,30,100],unidad:"días",motivo:"llama"},
- {clave:"constancia",nombre:"Constancia",texto:"Con lectura apuntada",metrica:"dias",niveles:[30,100,365],unidad:"días",motivo:"calendario"},
- {clave:"paginas",nombre:"Páginas",texto:"Leídas en libros terminados",metrica:"paginas",niveles:[1000,5000,15000],unidad:"páginas",motivo:"pagina"},
- {clave:"etapas",nombre:"Rumbo firme",texto:"Del plan, terminadas de principio a fin",metrica:"etapas",niveles:[2,3,5],unidad:"etapas",motivo:"rosa"},
- {clave:"frases",nombre:"Subrayados",texto:"Guardadas de tus libros",metrica:"frases",niveles:[10,50,150],unidad:"frases",motivo:"pluma"},
- {clave:"gran_tomo",nombre:"Gran tomo",texto:"En un solo libro terminado",metrica:"libro_mayor",niveles:[500,800,1000],unidad:"páginas",motivo:"tomo"},
- {clave:"maraton",nombre:"Maratón",texto:"Leídas en un solo día",metrica:"pags_dia",niveles:[50,100,200],unidad:"páginas",motivo:"reloj"},
+ {clave:"lector",nombre:"Lector de fondo",texto:"Terminados en tu bitácora",metrica:"libros",niveles:[5,15,40],unidad:"libros",unidad1:"libro",motivo:"libro"},
+ {clave:"racha",nombre:"Racha",texto:"Seguidos leyendo, tu mejor racha",metrica:"mejor_racha",niveles:[7,30,100],unidad:"días",unidad1:"día",motivo:"llama"},
+ {clave:"constancia",nombre:"Constancia",texto:"Con lectura apuntada",metrica:"dias",niveles:[30,100,365],unidad:"días",unidad1:"día",motivo:"calendario"},
+ {clave:"paginas",nombre:"Páginas",texto:"Leídas en libros terminados",metrica:"paginas",niveles:[1000,5000,15000],unidad:"páginas",unidad1:"página",motivo:"pagina"},
+ {clave:"etapas",nombre:"Rumbo firme",texto:"Del plan, terminadas de principio a fin",metrica:"etapas",niveles:[1,3,5],unidad:"etapas",unidad1:"etapa",motivo:"rosa"},
+ {clave:"frases",nombre:"Subrayados",texto:"Guardadas de tus libros",metrica:"frases",niveles:[1,25,100],unidad:"frases",unidad1:"frase",motivo:"pluma"},
+ {clave:"gran_tomo",nombre:"Gran tomo",texto:"En un solo libro terminado",metrica:"libro_mayor",niveles:[500,800,1000],unidad:"páginas",unidad1:"página",motivo:"tomo"},
+ {clave:"maraton",nombre:"Maratón",texto:"Leídas en un solo día",metrica:"pags_dia",niveles:[50,100,200],unidad:"páginas",unidad1:"página",motivo:"reloj"},
  {clave:"objetivo",nombre:"Meta del año",texto:"Cumplir tu objetivo anual de libros",metrica:"objetivo",niveles:[1],motivo:"laurel"},
  {clave:"mes_impecable",nombre:"Mes impecable",texto:"Leer todos los días de un mes",metrica:"meses_completos",niveles:[1],motivo:"ancla",secreto:true}];
 const MOTIVOS_LOGROS={
