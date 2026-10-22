@@ -334,9 +334,13 @@ td.wy { color: var(--pink); }
     background: rgba(233, 236, 242, .94); -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px);
     border-top: 1px solid rgba(0, 51, 102, .08);
   }
-  .wrap:not(:fullscreen) .bar .nav { flex: 1 1 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 6px; }
-  .wrap:not(:fullscreen) .bar #restart, .wrap:not(:fullscreen) .bar #all { display: none; }
-  .bar .nav .stepinfo { order: 0; grid-column: auto; min-width: 0; padding: 0 8px; white-space: nowrap; }
+  /* fila 1: |◀  ◀ Anterior  Paso x de y  Siguiente ▶  ▶| */
+  .wrap:not(:fullscreen) .bar .nav { flex: 1 1 100%; display: grid; grid-template-columns: 42px minmax(0, 1fr) auto minmax(0, 1fr) 42px; gap: 5px; }
+  .bar #restart .nlbl, .bar #all .nlbl { display: none !important; }
+  .bar .nav .stepinfo { order: 0; grid-column: auto; min-width: 0; padding: 0 3px; white-space: nowrap; font-size: 12.5px; }
+  .bar .nav button { padding-inline: 4px; gap: 5px; font-size: 13px; }
+  /* fila 2: Reiniciar a la izquierda (lejos de «Siguiente»), Datos en el centro, PDF a la derecha */
+  .bar > #reset { order: 1; } .bar > #toggleData { order: 2; } .bar > #full { order: 3; } .bar > #pdf { order: 4; }
   .bar button { height: 42px; min-height: 42px; padding-block: 0; }
   .bar > button, .bar:has(> #full:not([hidden])) > button { flex: 1 1 0; min-width: 0; margin-left: 0; }
   /* tarjeta de alto fijo */
@@ -345,22 +349,27 @@ td.wy { color: var(--pink); }
   h1 { flex: none; text-align: center; font-size: clamp(20px, min(6.6cqw, 3.4dvh), 30px); }
   .boxes { flex: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .box { min-height: 0; padding: 7px 3px; }
-  .big { font-size: clamp(13px, min(4.5cqw, 2.8dvh), 26px); }
-  .cap { font-size: clamp(9.5px, 2.75cqw, 13px); line-height: 1.2; }
+  .big { font-size: var(--bigfs, 14px); white-space: nowrap; }
+  .box .cap { font-size: var(--capfs, 10.5px); line-height: 1.2; white-space: nowrap; }
+  /* rótulos cortos en el móvil, para que cada caja quepa en una línea */
+  #bxGoal .cap, #bxFlat .cap { font-size: 0; }
+  #bxGoal .cap::after { content: "capital objetivo"; font-size: var(--capfs, 10.5px); }
+  #bxFlat .cap::after { content: "ahorrando al 0%"; font-size: var(--capfs, 10.5px); }
   .tablewrap { flex: 1 1 0; min-height: 0; overflow: hidden; }
   table { min-width: 0; }
-  col.c-yr { width: 22%; } col.c-cc { width: 24%; } col.c-ic { width: 54%; }
-  .ret col.c-yr, .ret col.c-cc { width: 23%; } .ret col.c-ic, .ret col.c-wr { width: 27%; }
+  col.c-yr { width: 20%; } col.c-cc { width: 22%; } col.c-ic { width: 58%; }
+  .ret col.c-yr { width: 18%; } .ret col.c-cc { width: 19%; } .ret col.c-ic { width: 31%; } .ret col.c-wr { width: 32%; }
   #tbl thead tr { height: var(--theadpx, 50px); }
   #tbl tbody tr { height: var(--rowpx, 32px); }
-  th { white-space: normal; font-size: clamp(9.5px, 2.9cqw, 13px); line-height: 1.15; padding: 2px 3px; }
+  #tbl th { white-space: normal; font-size: var(--thfs, 11px); line-height: 1.15; padding: 2px 3px; }
+  #tbl.cc #h_cc { font-size: 0; } #tbl.cc #h_cc::after { content: "CC"; font-size: var(--thfs, 11px); }   /* «cuenta corriente» si no cabe */
   th .nw { white-space: nowrap; }
   #tbl td { white-space: normal; font-size: var(--tdfs, 12px); line-height: 1.22; padding: 0 3px; }
   td.yr, td b, td .w { white-space: nowrap; }
+  #tbl td.yr { font-family: var(--font); font-weight: 800; }   /* los años, del mismo tamaño y peso parecido al resto de la tabla */
   td .f { display: block; font-size: .86em; }      /* la cuenta en una línea y el resultado debajo */
   #tbl.tight td .f { display: inline; }             /* pantallas bajas: todo en una línea */
   #tbl.tight.ret td:last-child { font-size: .82em; line-height: 1.05; }   /* «con retiradas»: hasta dos líneas en la misma fila */
-  @container (max-width: 329px) { .big { white-space: normal; flex-wrap: wrap; justify-content: center; row-gap: 0; } }
   /* etiquetas abajo, con su hueco reservado (hasta dos líneas cada una) */
   .note { position: static; flex: none; height: var(--noteh, 84px); display: flex !important; flex-direction: column; flex-wrap: nowrap;
     justify-content: flex-end; align-items: center; gap: 5px; font-size: 11.5px; line-height: 1.25; }
@@ -392,13 +401,12 @@ td.wy { color: var(--pink); }
   .slide { padding: 10px 12px 8px; gap: 6px; }
   h1 { font-size: 19px; }
   .box { padding: 4px 3px; }
-  #tbl { --theadpx: 44px; }
-  th { font-size: clamp(9px, 2.5cqw, 12px); line-height: 1.1; }
   .note { --noteh: 68px; font-size: 11px; line-height: 1.2; gap: 4px; }
   .pill { padding: 3px 9px; }
 }
 /* «Anterior» y «Siguiente» con nombre; en media pantalla muy estrecha, solo flechas */
-@media screen and (min-width: 341px) and (max-width: 760px) { .bar .nav .nlbl { display: inline; } }
+@media screen and (min-width: 385px) and (max-width: 760px) { .bar .nav #prev .nlbl, .bar .nav #next .nlbl { display: inline; } }
+@media screen and (min-width: 385px) and (max-width: 409px) { .bar .nav #prev .ic, .bar .nav #next .ic { display: none; } }   /* justo de ancho: solo el nombre */
 /* cuatro herramientas en poco ancho: solo iconos (cada botón lleva su nombre para el lector de pantalla) */
 @media screen and (max-width: 439px) {
   .bar:has(> #full:not([hidden])) > button::after { content: none !important; }
@@ -829,16 +837,62 @@ td.wy { color: var(--pink); }
   function fitPhone() {
     const tbl = $('tbl'), tw = $('twrap');
     const n = Math.max(ROWS, yearsList(S.two ? Math.max(S.A.years, S.B.years) : S.A.years, validW().map(w => w.year)).length);
-    const head = parseFloat(getComputedStyle(tbl).getPropertyValue("--theadpx")) || 50;
+    // tamaños de letra a la medida de las cifras más largas de los dos plazos (no cambian entre pasos)
+    const cv = fitPhone.cv || (fitPhone.cv = document.createElement('canvas').getContext('2d'));
+    const fam = el => getComputedStyle(el).fontFamily;
+    const tw1 = (t, w, f) => { cv.font = w + ' 100px ' + f; return cv.measureText(t).width / 100; };   // ancho a 1 px
+    const scs = S.two ? [S.A, S.B] : [S.A];
+    // cajas: «30 AÑOS», «144.000 €», «400 € / MES» en una línea y con el mismo tamaño
+    const big = document.querySelector('.box .big'), bf = fam(big), box = $('bxYears');
+    const boxIn = box.clientWidth - 8, ch = tw1('0', 900, bf);
+    const bw = (txt, unit, extra) => txt.length * ch + .45 + .1 + extra + tw1(unit, 900, bf);
+    let bigW = 0;
+    scs.forEach(sc => { bigW = Math.max(bigW, bw(String(sc.years), 'AÑOS', .12), bw(grp(sc.goal), '€', 0), bw(grp(flat(sc)), '€ / MES', 0)); });
+    const bigfs = Math.max(11, Math.min(22, boxIn / bigW));
+    const cf = fam(document.querySelector('.box .cap'));
+    const capW = Math.max(...['plazo de ahorro', 'capital objetivo', 'ahorrando al 0%'].map(t => tw1(t, 400, cf)));
+    const capfs = Math.max(9, Math.min(12, boxIn / capW));
+    document.querySelector('.boxes').style.setProperty('--bigfs', bigfs.toFixed(2) + 'px');
+    document.querySelector('.boxes').style.setProperty('--capfs', capfs.toFixed(2) + 'px');
+    // columnas (las mismas proporciones que en el CSS de móvil) y anchos útiles
+    const W = tbl.clientWidth, inner = p => W * p - 7;
+    const hasR = hasRet(), NR = [.20, .22, .58], RT = [.18, .19, .31, .32];
+    const hf = fam(tbl.querySelector('th') || tbl), df = fam(tbl.querySelector('td') || tbl), yf = df;
+    // cabecera: como mucho dos líneas y el mismo tamaño en todas las celdas
+    const lay = hasR ? [NR, RT] : [NR];
+    let thfs = 12.5;
+    lay.forEach(L => {
+      thfs = Math.min(thfs, inner(L[0]) / tw1('/ MES', 900, hf), inner(L[0]) / (tw1('€', 900, hf) + 3 * tw1('0', 900, hf) + .55));
+      thfs = Math.min(thfs, inner(L[2]) / (L === RT ? tw1('COMPUESTO %', 900, hf) + String(S.rate).length * tw1('0', 900, hf) + .6 : tw1('INTERÉS COMPUESTO', 900, hf)));
+      if (L === RT) thfs = Math.min(thfs, inner(L[3]) / tw1('RETIRADAS', 900, hf));
+    });
+    thfs = Math.max(9, thfs);
+    const ccShort = lay.some(L => inner(L[1]) / tw1('CORRIENTE', 900, hf) < thfs);
+    tbl.classList.toggle('cc', ccShort);
+    const head = Math.ceil(2 * 1.15 * thfs + 6);
+    tbl.style.setProperty('--thfs', thfs.toFixed(2) + 'px');
+    tbl.style.setProperty('--theadpx', head + 'px');
     // si ni así cabe (pantallas muy bajas), la tarjeta crece lo justo: la página se desplaza un poco, pero nunca salta entre pasos
     const st = $('stage'); st.style.minHeight = '';
     const free = Math.floor((tw.clientHeight - head) / n);
     if (free < 24) st.style.minHeight = (st.getBoundingClientRect().height + (24 - free) * n) + 'px';
     const rowpx = Math.max(24, Math.floor((tw.clientHeight - head) / n));
-    const cq = $('stage').getBoundingClientRect().width / 100;
     const tight = rowpx < 30;   // poco alto: la cuenta de los primeros años en una sola línea
     tbl.classList.toggle('tight', tight);
-    const fs = Math.max(10, Math.min(16, (tight ? 3.2 : 3.75) * cq, tight ? (rowpx - 2) / 1.25 : (rowpx - 3) / 2.5));
+    // cuerpo: un solo tamaño para toda la tabla (también la columna de los años)
+    let fs = Math.min(15, tight ? (rowpx - 2) / 1.25 : (rowpx - 3) / 2.5);
+    const R = S.rate / 100, ws = validW();
+    scs.forEach(sc => {
+      const rows = simulate(sc.years, sc.monthly, R, S.method, ws), last = rows[rows.length - 1], A12 = eur(12 * sc.monthly);
+      const fx = rows.length >= 3 ? '(' + eur(rows[1].ic) + ' + ' + A12 + ') + ' + pct(S.rate) + ' = ' : '';
+      fs = Math.min(fs, inner(NR[0]) / tw1('AÑO ' + sc.years, 800, yf), inner(NR[1]) / tw1(eur(last.cc), 700, df));
+      fs = Math.min(fs, inner(NR[2]) / (tight || $('stage').clientWidth >= 480 ? tw1(fx, 400, df) * .86 + tw1(eur(rows[Math.min(2, rows.length - 1)].ic), 700, df) : Math.max(tw1(fx, 400, df) * .86, tw1(eur(last.ic), 700, df))));
+      if (hasR) {
+        const wmax = rows.reduce((m, r) => Math.max(m, tw1(eur(r.before), 700, df), r.w > 0 ? tw1('− ' + eur(r.w), 700, df) : 0), 0);
+        fs = Math.min(fs, inner(RT[0]) / tw1('AÑO ' + sc.years, 800, yf), inner(RT[1]) / tw1(eur(last.cc), 700, df), inner(RT[2]) / tw1(eur(last.ic), 700, df), inner(RT[3]) / wmax / (tight ? .82 : 1));
+      }
+    });
+    fs = Math.max(9.5, fs);
     tbl.style.setProperty('--rowpx', rowpx + 'px');
     tbl.style.setProperty('--tdfs', fs.toFixed(2) + 'px');
   }
