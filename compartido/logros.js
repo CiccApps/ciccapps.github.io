@@ -3,7 +3,7 @@
      CiccLogros.iniciar({ sb, app: 'bitacora', color: '#4B2E19', catalogo: LOGROS, motivos: { ... } });
      CiccLogros.evaluar({ racha: 12, paginas_total: 3400 });   // cada vez que cambian los datos
      CiccLogros.vitrina();                                     // desde el botón «Vitrina»
-   Cada entrada del catálogo: { clave, nombre, texto, metrica, niveles: [7, 30, 100] o [1], unidad, motivo, secreto }.
+   Cada entrada del catálogo: { clave, nombre, texto, metrica, niveles: [7, 30, 100] o [1], unidad: 'días', unidad1: 'día', motivo, secreto }.
    Los colores y letras salen de las variables --cl-* (con las de la marca, --cc-*, por defecto). */
 (function () {
   'use strict';
@@ -24,7 +24,7 @@
   };
   // Logros entre apps: se cuentan con metricas_comunes() en Supabase y se guardan con app = 'ciccapps'
   var COMUNES = [
-    { clave: 'mente_cuerpo', nombre: 'Mente y cuerpo', texto: 'Días con lectura y entreno o salida', metrica: 'dias_mente_cuerpo', niveles: [10, 50, 150], unidad: 'días', motivo: 'laurel' }
+    { clave: 'mente_cuerpo', nombre: 'Mente y cuerpo', texto: 'Días con lectura y entreno o salida', metrica: 'dias_mente_cuerpo', niveles: [10, 50, 150], unidad: 'días', unidad1: 'día', motivo: 'laurel' }
   ];
   var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
@@ -82,7 +82,7 @@
     var falta = niv[k] - (f.progreso || 0), base = k ? niv[k - 1] : 0;
     return { meta: niv[k], falta: Math.max(0, falta), nivel: niv.length === 1 ? 3 : k + 1, parte: Math.max(0, Math.min(1, ((f.progreso || 0) - base) / (niv[k] - base))) };
   }
-  function unidad(l, v) { return l.unidad ? ' ' + l.unidad : ''; }
+  function unidad(l, v) { var u = Number(v) === 1 && l.unidad1 ? l.unidad1 : l.unidad; return u ? ' ' + u : ''; } // «1 día», «2 días»
 
   // Arranque: lee lo conseguido de esta app y de los logros entre apps
   function iniciar(op) {
@@ -151,13 +151,13 @@
     var niv = l.niveles || [];
     if (niv.length === 1) return l.texto;
     var u = niv[Math.min(f.nivel, niv.length) - 1];
-    return num(u) + unidad(l) + ' · ' + l.texto.charAt(0).toLowerCase() + l.texto.slice(1);
+    return num(u) + unidad(l, u) + ' · ' + l.texto.charAt(0).toLowerCase() + l.texto.slice(1);
   }
 
   // Columnas de la vitrina: las que caben, sin dejar una medalla sola en la última fila
   function columnas(total, ancho) {
     var base = ancho < 560 ? 3 : ancho < 900 ? 4 : 6;
-    var prueba = [base, base - 1, base + 1, base - 2];
+    var prueba = [base, base + 1, base - 1, base - 2];
     for (var i = 0; i < prueba.length; i++) { var c = prueba[i]; if (c >= 2 && (total <= c || total % c !== 1)) return c; }
     return base;
   }
@@ -186,7 +186,8 @@
           var f = fila(x.app, x.l.clave), s = siguiente(x.l, f), nota;
           if (modo === 'con') nota = NIVEL[f.nivel] + '<br>' + fecha(f.fechas && f.fechas[f.nivel]);
           else if (x.l.secreto && !f.nivel) nota = 'Sigue y<br>lo verás';
-          else nota = 'Faltan ' + num(s.falta) + (x.l.unidad ? ' ' + esc(x.l.unidad) : '') + '<br>para ' + NIVEL[s.nivel].toLowerCase();
+          else if ((x.l.niveles || []).length === 1) nota = 'Por<br>conseguir';
+          else nota = (s.falta === 1 ? 'Falta ' : 'Faltan ') + num(s.falta) + unidad(x.l, s.falta) + '<br>para ' + NIVEL[s.nivel].toLowerCase();
           var secreto = x.l.secreto && !f.nivel;
           return '<button type="button" class="cl-med" data-app="' + x.app + '" data-clave="' + esc(x.l.clave) + '">' +
             (modo === 'con' ? medalla({ nivel: f.nivel, motivo: x.l.motivo }) : medalla({ nivel: 0, motivo: x.l.motivo, progreso: s ? s.parte : 0, secreto: secreto })) +
@@ -206,12 +207,12 @@
       var l = x.l, f = fila(app, c), s = siguiente(l, f), secreto = l.secreto && !f.nivel, niv = l.niveles || [];
       var filas = niv.map(function (u, i) {
         var k = niv.length === 1 ? 3 : i + 1, ok = f.nivel >= k;
-        return '<li class="' + (ok ? 'cl-ok' : '') + '"><span>' + NIVEL[k] + '</span><span>' + (secreto ? '?' : num(u) + unidad(l)) + '</span><span>' + (ok ? fecha(f.fechas && f.fechas[k]) : '—') + '</span></li>';
+        return '<li class="' + (ok ? 'cl-ok' : '') + '"><span>' + NIVEL[k] + '</span><span>' + (secreto ? '?' : niv.length === 1 ? '' : num(u) + unidad(l, u)) + '</span><span>' + (ok ? fecha(f.fechas && f.fechas[k]) : '—') + '</span></li>';
       }).join('');
       hoja.innerHTML = '<div class="cl-cab"><button type="button" class="cl-volver">‹ Vitrina</button><button type="button" class="cl-cerrar" aria-label="Cerrar">×</button></div>' +
         '<div class="cl-detalle">' + medalla(f.nivel ? { nivel: f.nivel, motivo: l.motivo } : { nivel: 0, motivo: l.motivo, progreso: s ? s.parte : 0, secreto: secreto }) +
         '<h2 id="clTit">' + (secreto ? 'Logro secreto' : esc(l.nombre)) + '</h2><p>' + (secreto ? 'Se revela al conseguirlo.' : esc(l.texto)) + '</p>' +
-        (s && !secreto ? '<p class="cl-falta">Faltan ' + num(s.falta) + unidad(l) + ' para ' + NIVEL[s.nivel].toLowerCase() + '</p>' : '') +
+        (s && !secreto && niv.length > 1 ? '<p class="cl-falta">' + (s.falta === 1 ? 'Falta ' : 'Faltan ') + num(s.falta) + unidad(l, s.falta) + ' para ' + NIVEL[s.nivel].toLowerCase() + '</p>' : '') +
         '<ul class="cl-niveles">' + filas + '</ul></div>';
       hoja.querySelector('.cl-cerrar').onclick = cerrar;
       hoja.querySelector('.cl-volver').onclick = function () { lista(); hoja.focus(); };
