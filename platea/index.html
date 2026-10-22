@@ -374,7 +374,7 @@ function openSheet(id,kind){
     <div class="field"><span class="lbl" id="fPlL">Dónde verla</span><div class="chips" id="fPl" role="group" aria-labelledby="fPlL"></div></div>
     <div id="secPorver" style="display:flex;flex-direction:column;gap:10px">
       <div class="field"><span class="lbl">Mood</span><div class="chips">${Object.entries(MOODS).map(([k,l])=>`<button class="chip" id="mo-${k}" data-mo="${k}" aria-pressed="${(draft.moods||[]).includes(k)}">${l}</button>`).join("")}</div></div>
-      <label class="toggle" id="fPrW"><input type="checkbox" id="fPr" ${draft.prio?"checked":""}> En cartelera ahora (para verla con el Unlimited)</label>
+      <label class="toggle" id="fPrW"><input type="checkbox" id="fPr" ${draft.prio?"checked":""}> En cartelera ahora</label>
     </div>
     ${id?`<div class="links"><a href="${lb(draft)}" target="_blank" rel="noopener">Letterboxd ↗</a><a href="${jw(draft)}" target="_blank" rel="noopener">Dónde verla (JustWatch) ↗</a></div>`:""}
     <div class="actions">${id?`<button class="btn danger" id="del">Eliminar</button>`:"<span></span>"}<span style="display:flex;gap:10px"><button class="btn" id="cancel">Cerrar</button><button class="btn primary" id="save">Guardar</button></span></div>
@@ -453,6 +453,7 @@ function conectarFicha(){
     draft.titulo=x.titulo;draft.anio=x.anio?String(x.anio):"";draft.tipo=x.tipo;draft.poster=x.poster;draft.tmdb_id=x.tmdb_id;
     const enCart=x.tipo!=="serie"&&(x.en_cartelera===true||enCartelera(x));const np=leePlats(x.plataforma);if(enCart)np.push("Cine");
     np.forEach(p=>{if(!draft.plats.includes(p))draft.plats.push(p)});pintaPl();if(enCart)document.getElementById("fPr").checked=true;
+    if(!(draft.moods||[]).length&&Array.isArray(x.moods)&&x.moods.length){draft.moods=x.moods.filter(k=>MOODS[k]);document.querySelectorAll("[data-mo]").forEach(b=>b.setAttribute("aria-pressed",draft.moods.includes(b.dataset.mo)))}
     document.getElementById("fT").value=x.titulo;document.getElementById("fY").value=draft.anio;
     document.querySelectorAll("[data-ty]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ty===draft.tipo));
     if(typeof syncSheet==="function")syncSheet();
