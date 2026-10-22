@@ -38,6 +38,9 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 .instalar { border-top: 1px solid var(--cc-linea); padding-top: 24px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .instalar h3 { margin: 0 0 6px; font-family: var(--cc-display); font-weight: 400; font-size: 19px; }
 .instalar p { margin: 0; font-size: 14px; color: var(--cc-tinta-suave); }
+.instalar.una { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+.instalar.una p { max-width: 52ch; text-wrap: pretty; }
+.instalar[hidden] { display: none; }
 .pie { text-align: center; font-size: 13px; color: var(--cc-tinta-suave); }
 .pie a { color: var(--cc-tinta-suave); text-decoration: none; }
 .pie a:hover { color: var(--cc-oro); }
@@ -96,10 +99,34 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
     <a class="app a-ic" href="interes-compuesto/"><span class="ico"><img src="iconos/interes-compuesto-192.png?v=5" alt=""></span><h2>Interés compuesto</h2><p>La simulación de ahorro para enseñar en tus reuniones.</p><small>¿Y si empiezas hoy?</small></a>
   </main>
 
-  <section class="instalar" aria-label="Cómo instalar">
+  <section class="instalar" id="instalar" aria-label="Cómo instalar">
     <div><h3>En el móvil</h3><p>En iPhone, abre la app en Safari, pulsa Compartir y elige «Añadir a pantalla de inicio». En Android, en Chrome: menú ⋮ › «Instalar aplicación». Se abrirá a pantalla completa, con su icono.</p></div>
     <div><h3>En el ordenador</h3><p>En Chrome o Edge, pulsa el icono de instalar de la barra de direcciones. En Safari para Mac: Archivo › Añadir al Dock.</p></div>
   </section>
+<script>
+/* Solo la explicación que toca según el dispositivo y el navegador; si ya se abre como app instalada, no hace falta */
+(function(){
+  var sec=document.getElementById('instalar');if(!sec)return;
+  var instalada=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+  if(instalada){sec.hidden=true;return}
+  var ua=navigator.userAgent||'',pl=(navigator.userAgentData&&navigator.userAgentData.platform)||navigator.platform||'';
+  var ios=/iPhone|iPad|iPod/.test(ua)||(/Mac/.test(pl)&&navigator.maxTouchPoints>1);
+  var android=/Android/i.test(ua),mac=!ios&&/Mac/i.test(pl+ua),win=/Win/i.test(pl+ua);
+  var edge=/Edg\//.test(ua),firefox=/Firefox|FxiOS/.test(ua),chrome=/Chrome|CriOS/.test(ua)&&!edge,safari=/Safari/.test(ua)&&!chrome&&!edge&&!firefox&&!/CriOS|FxiOS|EdgiOS/.test(ua);
+  var ipad=ios&&(/iPad/.test(ua)||navigator.maxTouchPoints>1&&!/iPhone/.test(ua));
+  var t,p;
+  if(ios){t=ipad?'Instálalas en tu iPad':'Instálalas en tu iPhone';
+    p=(safari?'Abre la app que quieras, pulsa el botón Compartir (el cuadrado con la flecha hacia arriba)':'Abre la app que quieras y pulsa el botón Compartir de tu navegador')+' y elige «Añadir a pantalla de inicio». Se abrirá a pantalla completa, con su icono, como cualquier otra app.'}
+  else if(android){t='Instálalas en tu Android';
+    p=firefox?'Abre la app que quieras, pulsa el menú ⋮ y elige «Instalar». Se abrirá a pantalla completa, con su icono.':'Abre la app que quieras en Chrome, pulsa el menú ⋮ y elige «Instalar aplicación» o «Añadir a pantalla de inicio». Se abrirá a pantalla completa, con su icono.'}
+  else{t=mac?'Instálalas en tu Mac':win?'Instálalas en tu PC':'Instálalas en tu ordenador';
+    if(safari)p='Abre la app que quieras y, en la barra de menús, elige Archivo › «Añadir al Dock». Se abrirá en su propia ventana, con su icono.';
+    else if(edge)p='Abre la app que quieras, pulsa el menú ⋯ y elige Aplicaciones › «Instalar este sitio como aplicación». Se abrirá en su propia ventana, con su icono.';
+    else if(chrome)p='Abre la app que quieras y pulsa el icono de instalar que aparece a la derecha de la barra de direcciones (o menú ⋮ › Transmitir, guardar y compartir › «Instalar página como aplicación»). Se abrirá en su propia ventana, con su icono.';
+    else p='Este navegador no instala apps. Ábrelas en Chrome'+(mac?', Safari':'')+' o Edge para tenerlas en su propia ventana, con su icono.'}
+  sec.innerHTML='<div><h3>'+t+'</h3><p>'+p+'</p></div>';sec.classList.add('una');
+})();
+</script>
   <footer class="pie"><a href="privacidad/">Privacidad</a> · <a href="mailto:info.ciccapps@gmail.com">info.ciccapps@gmail.com</a></footer>
 </div>
 <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});</script>
