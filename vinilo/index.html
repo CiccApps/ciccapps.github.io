@@ -220,6 +220,9 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .suena a.pri .sp-logo{color:#0F1528}
 .go{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 6px;font-size:12.5px}
 .go .sp-logo{color:var(--accent);--sp-c:var(--surface)}
+[data-play].cargando{opacity:.6;pointer-events:none}
+.go.sonando{border-color:#1DB954;color:#1DB954}.go.sonando .sp-logo{color:#1DB954}
+.suena a.pri.sonando{background:#1DB954;border-color:#1DB954;color:#0F1528}
 .meta{flex-wrap:nowrap;gap:6px}
 .tit{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .tit h3{min-width:0}
@@ -228,14 +231,17 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .energy{white-space:nowrap;min-width:0}
 .portada{position:relative;flex:none;align-self:start;line-height:0}
 /* Tarjetas: la portada ocupa todo el alto del bloque; título arriba y Energía/Spotify alineados con su borde inferior */
-.card{--cv:172px;grid-template-columns:var(--cv) minmax(0,1fr);grid-template-rows:auto auto auto auto 1fr;column-gap:16px;row-gap:6px;align-items:start;
+.card{--cv:192px;grid-template-columns:var(--cv) minmax(0,1fr);grid-template-rows:auto auto auto auto 1fr;column-gap:16px;row-gap:5px;align-items:start;
   grid-template-areas:"cv tit" "cv when" "cv mood" "cv note" "cv meta"}
-.cards{align-items:start}
+
 .card .txt{display:contents}
 .card .portada{grid-area:cv;align-self:stretch;line-height:0}
 .card .portada img{width:var(--cv);height:var(--cv)}
 .card .tit{grid-area:tit}.card .when{grid-area:when}.card .mood{grid-area:mood}.card .note{grid-area:note}
 .card .meta{grid-area:meta;align-self:end;margin-top:4px}
+.card .when,.card .mood{line-height:1.4}
+.card .tit{flex-direction:column-reverse;align-items:flex-start;gap:4px}
+.card .tit .vol{font-size:12px;line-height:1}
 @media (max-width:520px){
   /* móvil: portada con título y «para qué» centrados a su lado; debajo, descripción y la fila Energía · Spotify a todo el ancho */
   .card{--cv:116px;column-gap:14px;row-gap:0;grid-template-rows:1fr auto auto 1fr auto auto auto;
@@ -401,7 +407,7 @@ function pintaPlato(){
   html+=`<svg class="brazo" viewBox="0 0 100 220" aria-hidden="true"><defs><linearGradient id="og" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1E2BD"/><stop offset=".5" stop-color="#D9B878"/><stop offset="1" stop-color="#A9823D"/></linearGradient></defs><circle cx="70" cy="22" r="13" fill="none" stroke="url(#og)" stroke-width="9"/><circle cx="70" cy="22" r="8" fill="#2F5A4D"/><path d="M70 35 L70 150 L34 196" fill="none" stroke="url(#og)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><rect x="18" y="186" width="30" height="18" rx="4" fill="url(#og)" transform="rotate(-38 33 195)"/></svg>`;
   dial.innerHTML=html;
   const dia=d.toLocaleDateString("es-ES",{weekday:"long"});const hora=d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
-  document.getElementById("ahora").innerHTML=`<div class="eb">Ahora suena · ${dia} ${hora}</div><h2>${esc(l.name)}</h2><p>${esc(l.when)}</p><div class="acc"><a href="#${l.id}">Ver ficha</a><a class="pri" href="${SP(l.sp)}" target="_blank" rel="noopener">${LOGO_SP}Spotify</a></div>`;
+  document.getElementById("ahora").innerHTML=`<div class="eb">Ahora suena · ${dia} ${hora}</div><h2>${esc(l.name)}</h2><p>${esc(l.when)}</p><div class="acc"><a href="#${l.id}">Ver ficha</a><a class="pri" href="${SP(l.sp)}" data-play="${l.sp}" target="_blank" rel="noopener">${LOGO_SP}Spotify</a></div>`;
 }
 pintaPlato();
 setInterval(()=>{const d=new Date();const ag=document.querySelector(".aguja");const ya=document.querySelector(".pista.ya");
@@ -432,11 +438,10 @@ GROUPS.forEach(g => {
       <div class="txt">
         <div class="tit"><h3>${esc(l.name)}</h3><span class="vol">${esc(l.vol)}</span></div>
         <p class="when">${esc(l.when)}</p>
-        <p class="mood">${esc(l.mood)}</p>
-        ${l.note ? `<p class="note">${esc(l.note)}</p>` : ""}
+        <p class="mood">${esc(l.mood)}${l.note ? ` <span class="note">${esc(l.note)}</span>` : ""}</p>
         <div class="meta">
           <span class="energy" aria-label="Energía ${dots} de 5">ENERGÍA ${dotHtml}</span>
-          <a class="go" href="${SP(l.sp)}" target="_blank" rel="noopener">${LOGO_SP}Spotify</a>
+          <a class="go" href="${SP(l.sp)}" data-play="${l.sp}" target="_blank" rel="noopener">${LOGO_SP}Spotify</a>
         </div>
       </div>
     </article>`;
@@ -444,6 +449,7 @@ GROUPS.forEach(g => {
   sec.innerHTML = `<div><h2>${g.title}</h2><p class="sub">${g.sub}</p></div><div class="cards">${cards}</div>`;
   groupsEl.appendChild(sec);
 });
+
 
 // mood filter
 const chips = document.getElementById("chips");
@@ -574,13 +580,21 @@ TAGS.forEach(([key, label]) => {
     b.disabled=false};
   // Reproducir una lista en el dispositivo de Spotify activo (necesita Premium y Spotify abierto en algún sitio)
   window.reproducirSpotify=async function(spId,btn){
-    const abrir=()=>{location.href="spotify:playlist:"+spId};
+    // sin conexión o sin dispositivo: abre la lista en la app de Spotify (y, si no hay app, en la web)
+    const abrir=()=>{const t0=Date.now();location.href="spotify:playlist:"+spId;setTimeout(()=>{if(document.visibilityState==="visible"&&Date.now()-t0<2500)location.href=SP(spId)},1500)};
     if(!SPOT.ok()||!(SPOT.t.scope||"").includes("user-modify-playback-state")){abrir();return}
+    if(btn)btn.classList.add("cargando");
     try{
-      let dev=null;try{const d=await SPOT.api("/me/player/devices");const L=(d&&d.devices)||[];dev=L.find(x=>x.is_active)||L[0]||null}catch(_){}
-      await SPOT.api("/me/player/play"+(dev&&!dev.is_active?"?device_id="+dev.id:""),{method:"PUT",body:JSON.stringify({context_uri:"spotify:playlist:"+spId})});
-      document.querySelectorAll(".vidrio.sonando").forEach(x=>x.classList.remove("sonando"));if(btn)btn.classList.add("sonando");
-    }catch(e){abrir()}   // sin dispositivo activo: se abre la app de Spotify con la lista
+      let L=[];try{const d=await SPOT.api("/me/player/devices");L=(d&&d.devices)||[]}catch(_){}
+      L=L.filter(x=>!x.is_restricted);
+      // el que esté sonando; si no, el móvil; si no, el primero disponible
+      const dev=L.find(x=>x.is_active)||L.find(x=>/smartphone/i.test(x.type))||L[0]||null;
+      if(!dev){abrir();return}
+      await SPOT.api("/me/player/play"+(dev.is_active?"":"?device_id="+dev.id),{method:"PUT",body:JSON.stringify({context_uri:"spotify:playlist:"+spId})});
+      document.querySelectorAll("[data-play].sonando").forEach(x=>x.classList.remove("sonando"));
+      if(btn){btn.classList.add("sonando");btn.title="Sonando en "+dev.name}
+    }catch(e){abrir()}
+    finally{if(btn)btn.classList.remove("cargando")}
   };
   vuelta().then(cargarSpotify);
 })();
