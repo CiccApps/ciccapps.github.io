@@ -40,6 +40,13 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 .instalar p { margin: 0; font-size: 14px; color: var(--cc-tinta-suave); }
 .instalar.una { grid-template-columns: 1fr; text-align: center; justify-items: center; }
 .instalar.una p { max-width: 52ch; text-wrap: pretty; }
+.pasos { list-style: none; counter-reset: paso; margin: 10px auto 12px; padding: 0; display: inline-grid; gap: 10px; text-align: left; font-size: 15px; color: var(--cc-tinta); }
+.pasos li { counter-increment: paso; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; line-height: 1.4; }
+.pasos li::before { content: counter(paso); flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font: 600 12px var(--cc-sans); color: var(--cc-sobre-primario, #0F1A17); background: var(--cc-oro); }
+.pasos b { font-weight: 600; }
+.ico-i { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--cc-fondo-alto); border: 1px solid var(--cc-linea); color: var(--cc-oro); flex: none; }
+.ico-i svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ico-i svg circle { fill: currentColor; stroke: none; }
 .instalar[hidden] { display: none; }
 .pie { text-align: center; font-size: 13px; color: var(--cc-tinta-suave); }
 .pie a { color: var(--cc-tinta-suave); text-decoration: none; }
@@ -114,17 +121,33 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
   var android=/Android/i.test(ua),mac=!ios&&/Mac/i.test(pl+ua),win=/Win/i.test(pl+ua);
   var edge=/Edg\//.test(ua),firefox=/Firefox|FxiOS/.test(ua),chrome=/Chrome|CriOS/.test(ua)&&!edge,safari=/Safari/.test(ua)&&!chrome&&!edge&&!firefox&&!/CriOS|FxiOS|EdgiOS/.test(ua);
   var ipad=ios&&(/iPad/.test(ua)||navigator.maxTouchPoints>1&&!/iPhone/.test(ua));
-  var t,p;
+  // iconos como los del sistema, para que se reconozcan a la primera
+  var I={
+    compartir:'<svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M7 10H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-1"/></svg>',
+    anadir:'<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>',
+    menu:'<svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg>',
+    menuh:'<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>',
+    instalar:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M12 7.5v6M9.5 11l2.5 2.5 2.5-2.5M8 21h8"/></svg>',
+    dock:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 15h18M7 18h2M11 18h2M15 18h2"/></svg>',
+    abrir:'<svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="3"/><path d="M11 18h2"/></svg>',
+    ventana:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18"/><circle cx="6" cy="7" r=".9"/><circle cx="8.8" cy="7" r=".9"/></svg>'
+  };
+  var ico=function(n){return '<span class="ico-i" aria-hidden="true">'+I[n]+'</span>'};
+  var t,pasos;
+  var abre=ico(ios||android?'abrir':'ventana')+'Abre la app que quieras';
   if(ios){t=ipad?'Instálalas en tu iPad':'Instálalas en tu iPhone';
-    p=(safari?'Abre la app que quieras, pulsa el botón Compartir (el cuadrado con la flecha hacia arriba)':'Abre la app que quieras y pulsa el botón Compartir de tu navegador')+' y elige «Añadir a pantalla de inicio». Se abrirá a pantalla completa, con su icono, como cualquier otra app.'}
+    pasos=[abre,'Pulsa '+ico('compartir')+' <b>Compartir</b>','Elige '+ico('anadir')+' <b>Añadir a pantalla de inicio</b>']}
   else if(android){t='Instálalas en tu Android';
-    p=firefox?'Abre la app que quieras, pulsa el menú ⋮ y elige «Instalar». Se abrirá a pantalla completa, con su icono.':'Abre la app que quieras en Chrome, pulsa el menú ⋮ y elige «Instalar aplicación» o «Añadir a pantalla de inicio». Se abrirá a pantalla completa, con su icono.'}
+    pasos=[abre,'Pulsa '+ico('menu')+' el menú','Elige '+ico('anadir')+' <b>'+(firefox?'Instalar':'Instalar aplicación')+'</b>']}
   else{t=mac?'Instálalas en tu Mac':win?'Instálalas en tu PC':'Instálalas en tu ordenador';
-    if(safari)p='Abre la app que quieras y, en la barra de menús, elige Archivo › «Añadir al Dock». Se abrirá en su propia ventana, con su icono.';
-    else if(edge)p='Abre la app que quieras, pulsa el menú ⋯ y elige Aplicaciones › «Instalar este sitio como aplicación». Se abrirá en su propia ventana, con su icono.';
-    else if(chrome)p='Abre la app que quieras y pulsa el icono de instalar que aparece a la derecha de la barra de direcciones (o menú ⋮ › Transmitir, guardar y compartir › «Instalar página como aplicación»). Se abrirá en su propia ventana, con su icono.';
-    else p='Este navegador no instala apps. Ábrelas en Chrome'+(mac?', Safari':'')+' o Edge para tenerlas en su propia ventana, con su icono.'}
-  sec.innerHTML='<div><h3>'+t+'</h3><p>'+p+'</p></div>';sec.classList.add('una');
+    if(safari)pasos=[abre,'En la barra de menús, pulsa <b>Archivo</b>','Elige '+ico('dock')+' <b>Añadir al Dock</b>'];
+    else if(edge)pasos=[abre,'Pulsa '+ico('menuh')+' el menú','Elige <b>Aplicaciones</b> › '+ico('instalar')+' <b>Instalar este sitio</b>'];
+    else if(chrome)pasos=[abre,'Pulsa '+ico('instalar')+' en la barra de direcciones, a la derecha','Confirma con <b>Instalar</b>'];
+    else pasos=null}
+  var html=pasos?'<ol class="pasos">'+pasos.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ol><p>Se abrirá como una app más, con su icono.</p>'
+    :'<p>Este navegador no instala apps. Ábrelas en Chrome'+(mac?', Safari':'')+' o Edge para tenerlas con su icono.</p>';
+  sec.innerHTML='<div><h3>'+t+'</h3>'+html+'</div>';sec.classList.add('una');
+
 })();
 </script>
   <footer class="pie"><a href="privacidad/">Privacidad</a> · <a href="mailto:info.ciccapps@gmail.com">info.ciccapps@gmail.com</a></footer>
