@@ -1,0 +1,99 @@
+/* CiccApps — logros comunes: medalla, aviso y vitrina (va con logros.js).
+   Cada app puede cambiar las variables --cl-* en su :root; por defecto salen de la marca (--cc-*). */
+:root {
+  --cl-fondo: var(--cc-fondo-alto, #FBF8F0); --cl-tinta: var(--cc-tinta, #1B2420); --cl-suave: var(--cc-tinta-suave, #5A615A);
+  --cl-linea: var(--cc-linea, #E0D9C8); --cl-oro: var(--cc-oro, #7E6024);
+  --cl-vacio: var(--cc-hundido, #E9E3D3); --cl-relieve: var(--cc-linea-fuerte, #8F8A78);
+  --cl-titulo: var(--cc-display, Georgia, serif); --cl-serif: var(--cc-serif, Georgia, serif); --cl-sans: var(--cc-sans, system-ui, sans-serif);
+  --cl-sombra: 0 10px 30px rgba(20, 16, 8, .22);
+}
+@media (prefers-color-scheme: dark) { :root { --cl-sombra: 0 10px 30px rgba(0, 0, 0, .55); } }
+
+.cl-medalla { display: block; width: 100%; height: auto; aspect-ratio: 1; }
+
+/* Aviso «logro desbloqueado» */
+.cl-aviso {
+  position: fixed; z-index: 1000; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 10px);
+  width: min(400px, calc(100% - 32px)); box-sizing: border-box;
+  display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px;
+  background: var(--cl-fondo); color: var(--cl-tinta); border: 1px solid var(--cl-linea); border-radius: 16px;
+  box-shadow: var(--cl-sombra); cursor: pointer; font-family: var(--cl-sans);
+  transform: translate(-50%, calc(-100% - 24px)); opacity: 0;
+  transition: transform .35s cubic-bezier(.2, .9, .3, 1.2), opacity .25s;
+}
+.cl-aviso.cl-dentro { transform: translate(-50%, 0); opacity: 1; }
+.cl-aviso.cl-fuera { transform: translate(-50%, calc(-100% - 24px)); opacity: 0; transition-timing-function: ease-in; }
+.cl-aviso:focus-visible { outline: 2px solid var(--cl-oro); outline-offset: 2px; }
+.cl-aviso > .cl-medalla { width: 52px; flex: none; }
+.cl-aviso.cl-dentro > .cl-medalla { animation: cl-giro .8s .15s ease-out both; }
+@keyframes cl-giro { from { transform: perspective(200px) rotateY(-180deg); } to { transform: perspective(200px) rotateY(0); } }
+.cl-aviso-txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; line-height: 1.25; }
+.cl-aviso-txt b { font-family: var(--cl-serif); font-size: 16px; font-weight: 400; }
+.cl-aviso-txt > span:last-child { font-size: 13px; color: var(--cl-suave); }
+.cl-eti { font-family: var(--cl-sans); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--cl-oro); }
+.cl-pila { display: flex; flex: none; }
+.cl-pila .cl-medalla { width: 40px; }
+.cl-pila .cl-medalla + .cl-medalla { margin-left: -18px; }
+
+/* Vitrina: hoja desde abajo en el móvil, ventana centrada en el ordenador */
+html.cl-abierta { overflow: hidden; }
+.cl-vitrina {
+  position: fixed; inset: 0; z-index: 1001; display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(10, 14, 12, 0); transition: background .25s;
+}
+.cl-vitrina.cl-dentro { background: rgba(10, 14, 12, .45); }
+.cl-hoja {
+  box-sizing: border-box; width: 100%; max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px); overflow-y: auto; overscroll-behavior: contain;
+  padding: 6px 16px calc(env(safe-area-inset-bottom, 0px) + 20px);
+  background: var(--cl-fondo); color: var(--cl-tinta); font-family: var(--cl-sans);
+  border-radius: 20px 20px 0 0; box-shadow: var(--cl-sombra);
+  transform: translateY(100%); transition: transform .3s cubic-bezier(.2, .8, .3, 1);
+}
+.cl-vitrina.cl-dentro .cl-hoja { transform: none; }
+.cl-hoja:focus { outline: none; }
+@media (min-width: 700px) {
+  .cl-vitrina { align-items: center; padding: 24px; }
+  .cl-hoja { width: min(760px, 100%); max-height: min(86vh, 900px); border-radius: 20px; padding: 8px 28px 28px; transform: translateY(16px) scale(.98); opacity: 0; transition: transform .25s, opacity .25s; }
+  .cl-vitrina.cl-dentro .cl-hoja { opacity: 1; }
+}
+.cl-cab { position: sticky; top: -6px; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 -4px; padding: 10px 4px 6px; background: var(--cl-fondo); }
+.cl-cab h2 { margin: 0; font-family: var(--cl-titulo); font-weight: 400; font-size: 26px; }
+.cl-cerrar, .cl-volver { font: inherit; color: var(--cl-tinta); background: none; border: 0; cursor: pointer; border-radius: 10px; min-height: 44px; }
+.cl-cerrar { width: 44px; font-size: 28px; line-height: 1; color: var(--cl-suave); margin-left: auto; }
+.cl-volver { padding: 0 8px 0 0; font-size: 15px; color: var(--cl-oro); font-weight: 600; }
+.cl-cerrar:focus-visible, .cl-volver:focus-visible, .cl-med:focus-visible { outline: 2px solid var(--cl-oro); outline-offset: 2px; }
+.cl-cuenta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--cl-suave); }
+.cl-cuenta b { font-family: var(--cl-serif); font-size: 20px; font-weight: 400; color: var(--cl-tinta); }
+.cl-cuenta span:last-child { font-family: var(--cl-serif); font-style: italic; }
+.cl-barra { height: 4px; margin: 8px 0 4px; border-radius: 2px; background: var(--cl-vacio); overflow: hidden; }
+.cl-barra i { display: block; height: 100%; background: var(--cl-oro); border-radius: 2px; }
+.cl-grupo { margin-top: 20px; }
+.cl-grupo > .cl-eti { display: block; margin-bottom: 10px; }
+.cl-rejilla { display: grid; grid-template-columns: repeat(var(--cl-cols, 3), minmax(0, 1fr)); gap: 16px 10px; }
+.cl-med {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 6px 2px; min-width: 0;
+  font: inherit; color: inherit; text-align: center; background: none; border: 0; border-radius: 12px; cursor: pointer;
+}
+.cl-med .cl-medalla { width: min(84px, 100%); }
+.cl-med b { font-family: var(--cl-serif); font-size: 14px; font-weight: 400; line-height: 1.2; text-wrap: balance; }
+.cl-med small { font-size: 12px; line-height: 1.3; color: var(--cl-suave); }
+.cl-vacio-txt { margin: 24px 0 8px; font-family: var(--cl-serif); font-style: italic; color: var(--cl-suave); text-align: center; text-wrap: balance; }
+
+/* Detalle de una medalla */
+.cl-detalle { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 0 4px; }
+.cl-detalle > .cl-medalla { width: 140px; margin-bottom: 12px; }
+.cl-detalle h2 { margin: 0 0 6px; font-family: var(--cl-titulo); font-weight: 400; font-size: 26px; text-wrap: balance; }
+.cl-detalle p { margin: 0 0 4px; max-width: 34ch; font-family: var(--cl-serif); color: var(--cl-suave); text-wrap: balance; }
+.cl-detalle .cl-falta { font-family: var(--cl-sans); font-size: 14px; color: var(--cl-oro); font-weight: 600; }
+.cl-niveles { list-style: none; margin: 18px 0 0; padding: 0; width: min(360px, 100%); border-top: 1px solid var(--cl-linea); }
+.cl-niveles li { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 11px 4px; border-bottom: 1px solid var(--cl-linea); font-size: 14px; color: var(--cl-suave); }
+.cl-niveles li span:nth-child(2) { text-align: center; }
+.cl-niveles li span:last-child { text-align: right; }
+.cl-niveles li.cl-ok { color: var(--cl-tinta); }
+.cl-niveles li.cl-ok span:first-child { color: var(--cl-oro); font-weight: 600; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cl-aviso, .cl-aviso.cl-fuera { transform: translate(-50%, 0); transition: opacity .15s; }
+  .cl-aviso.cl-dentro > .cl-medalla { animation: none; }
+  .cl-hoja, .cl-vitrina, .cl-vitrina.cl-dentro .cl-hoja { transition: opacity .15s; transform: none; }
+}
