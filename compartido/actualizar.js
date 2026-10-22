@@ -1,6 +1,18 @@
 /* CiccApps · al abrir la app instalada, tirar hacia abajo desde arriba del todo recarga la página
    y trae siempre la última versión (el service worker pide primero la red). Solo en modo app (pantalla de inicio). */
 (function () {
+  // 1) Versión nueva publicada: al volver a la app se comprueba y, si hay cambios, se recarga sola
+  if ('serviceWorker' in navigator) {
+    var habia = !!navigator.serviceWorker.controller, recargado = false;
+    navigator.serviceWorker.addEventListener('controllerchange', function () {
+      if (!habia || recargado) { habia = true; return; }
+      recargado = true; location.reload();
+    });
+    var comprobar = function () { navigator.serviceWorker.getRegistration().then(function (r) { if (r) r.update().catch(function () {}); }); };
+    document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') comprobar(); });
+    window.addEventListener('pageshow', function (e) { if (e.persisted) location.reload(); else comprobar(); });
+  }
+  // 2) Tirar hacia abajo para recargar (solo en modo app)
   var app = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
   if (!app || !('ontouchstart' in window)) return;
   var UMBRAL = 80, y0 = null, dy = 0, listo = false;
