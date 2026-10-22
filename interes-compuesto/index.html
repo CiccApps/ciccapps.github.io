@@ -988,8 +988,7 @@ td.wy { color: var(--pink); }
     d.open();
     d.write('<!doctype html><html lang="es" class="printing"><head><meta charset="utf-8">' + css +
       '<style>:root{padding:0!important}body{margin:0!important;padding:0!important;background:#fff!important}' +
-      '.stage{width:' + REF_W + 'px!important;height:' + REF_H + 'px;border-radius:0;box-shadow:none}</style></head><body><script src="../compartido/actualizar.js?v=2"></script>
-</body></html>');
+      '.stage{width:' + REF_W + 'px!important;height:' + REF_H + 'px;border-radius:0;box-shadow:none}</style></head><body></body></html>');
     d.close();
     const links = Array.from(d.querySelectorAll('link[rel="stylesheet"]')).filter(l => !l.sheet);
     await Promise.race([Promise.all(links.map(l => new Promise(r => { l.onload = l.onerror = r; }))), sleep(3000)]);
@@ -1114,4 +1113,5 @@ td.wy { color: var(--pink); }
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(()=>{});</script>
 <script>(function(){var f=document.getElementById('full');if(f&&!(document.fullscreenEnabled||document.webkitFullscreenEnabled))f.hidden=true;})();</script>
+<script src="../compartido/actualizar.js?v=2"></script>
 </body></html>
