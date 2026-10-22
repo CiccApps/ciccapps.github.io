@@ -218,12 +218,6 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
 .ses-tog::after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 2px 2px 0;transform:translateY(-2px) rotate(45deg);transition:transform .2s}
 .ses-tog[aria-expanded="true"]::after{transform:translateY(1px) rotate(-135deg)}
 .ses-p{grid-column:1/-1;display:flex;flex-direction:column;gap:12px;padding:2px 0 6px}
-.ses-dias{display:grid;gap:4px;background:var(--bg);padding:4px;border-radius:8px}
-.ses-dias button{border:0;border-radius:6px;background:transparent;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;line-height:1.2;min-width:0;position:relative}
-.ses-dias button span{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.ses-dias button b{font:800 15px var(--f-body)}
-.ses-dias button[aria-pressed="true"]{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.15)}
-.ses-dias button.vo::after{content:"";position:absolute;top:5px;right:5px;width:5px;height:5px;border-radius:50%;background:var(--red)}
 .ses-cine{display:flex;flex-direction:column;gap:6px}
 .ses-cine>b{font-size:13px;font-weight:700}
 /* Horas en rejilla equilibrada: nunca queda una sola en la última fila */
@@ -232,6 +226,9 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
 .ses-h small{font:800 9px var(--f-body);letter-spacing:.08em}
 .ses-h.vo{background:var(--red);border-color:var(--red);color:var(--card)}
 .ses-nota{margin:0;font-size:12px;color:var(--muted)}
+.ses-aviso{padding:10px 0;border-top:1px solid var(--line)}
+.ses-otros{padding-top:12px;border-top:1px solid var(--line)}
+.ses-otros a{color:var(--red);font-weight:700;text-decoration:none}
 .tc-list{display:flex;flex-direction:column;gap:10px}
 
 /* Contador de Cinesa Unlimited */
@@ -357,7 +354,7 @@ function render(){
     const pesa=x=>{const t=x.tipo!=="serie"&&enTusCines(x);return t?(t.v&&priVOSE()?3:2):x.prio?1:0};
     let w=q.filter(x=>!mood||(x.moods||[]).includes(mood)).sort((a,b)=>pesa(b)-pesa(a)||(b.creado||"").localeCompare(a.creado||""));
     if(!q.length){v.innerHTML=cartCard()+empty("La lista está vacía","Apunta aquí lo que quieras ver: estrenos para gastar el Unlimited, recomendaciones o clásicos pendientes. Etiquétalos por mood para elegir rápido.","porver")+viewIA();return}
-    v.innerHTML=`${cartCard()}<p class="hint">¿Qué te apetece? Filtra por mood. ${misCines().length?`Las que echan en tus Cinesa${priVOSE()?" en VOSE":""} van primero.`:"Las marcadas como «En cartelera» van primero."}</p>${chips}<div class="tickets">${w.length?w.map(ticket).join(""):`<p class="hint">Nada con ese mood en tu lista.</p>`}</div>${viewIA()}`;
+    v.innerHTML=`${cartCard()}<p class="hint">¿Qué te apetece? Filtra por mood. ${misCines().length?`Las que echan hoy en tus Cinesa${priVOSE()?", con la VOSE delante,":""} van primero.`:"Las marcadas como «En cartelera» van primero."}</p>${chips}<div class="tickets">${w.length?w.map(ticket).join(""):`<p class="hint">Nada con ese mood en tu lista.</p>`}</div>${viewIA()}`;
   }else{
     const s=L.filter(x=>x.tipo==="serie"&&x.estado!=="vista"&&x.estado!=="porver");
     const done=L.filter(x=>x.tipo==="serie"&&x.estado==="vista");
@@ -372,7 +369,7 @@ function stubHtml(x){
 }
 function ticket(x){
   const stub=stubHtml(x);const tc=x.estado==="porver"&&x.tipo!=="serie"?enTusCines(x):null;
-  const meta=[x.anio?`<span class="mono">${esc(x.anio)}</span>`:"",x.tipo==="serie"?`<span class="badge alt">Serie</span>`:"",x.donde?`<span class="badge ${x.donde==="cine"?"":"alt"}">${WHERE[x.donde]}</span>`:"",x.plataforma?`<span>${esc(platTexto(leePlats(x.plataforma)).replace(/, /g," · "))}</span>`:"",x.rewatch?`<span class="badge alt">Revisionado</span>`:"",x.nota?`<span class="stars">${stars(x.nota)}</span>`:"",x.estado==="porver"&&tc?`<span class="badge">${tc.v?"VOSE en tus Cinesa":"En tus Cinesa"}</span>`:"",x.estado==="porver"&&x.prio&&!tc?`<span class="badge">En cartelera</span>`:""].filter(Boolean).join("");
+  const meta=[x.anio?`<span class="mono">${esc(x.anio)}</span>`:"",x.tipo==="serie"?`<span class="badge alt">Serie</span>`:"",x.donde?`<span class="badge ${x.donde==="cine"?"":"alt"}">${WHERE[x.donde]}</span>`:"",x.plataforma?`<span>${esc(platTexto(leePlats(x.plataforma)).replace(/, /g," · "))}</span>`:"",x.rewatch?`<span class="badge alt">Revisionado</span>`:"",x.nota?`<span class="stars">${stars(x.nota)}</span>`:"",x.estado==="porver"&&tc?`<span class="badge">${tc.v?"VOSE hoy en tus Cinesa":"Hoy en tus Cinesa"}</span>`:"",x.estado==="porver"&&x.prio&&!tc?`<span class="badge">En cartelera</span>`:""].filter(Boolean).join("");
   const prog=x.tipo==="serie"&&x.temps&&x.temp&&x.estado==="viendo"?`<div class="prog"><i style="width:${Math.min(100,Math.round((x.temp-1)/x.temps*100+(1/x.temps)*50))}%"></i></div>`:"";
   return `<button class="ticket${x.poster?" con-poster":""}" data-open="${x.id}"><span class="stub">${stub}</span><span class="body"><h3>${esc(x.titulo)}</h3><span class="meta">${meta}</span>${x.resena?`<p class="rev">${esc(x.resena)}</p>`:""}${prog}</span>${x.poster?`<img class="poster" src="${esc(x.poster)}" alt="" loading="lazy">`:""}</button>`;
 }
@@ -548,7 +545,7 @@ function perfil(volver){
       <div class="field"><label for="cinE">Entrada sin la suscripción</label><div class="eur"><input type="number" id="cinE" inputmode="decimal" step="0.01" min="0" placeholder="Precio de una entrada" value="${c.entrada>0?c.entrada.toFixed(2):""}"><span>€</span></div></div></div>
       <p class="hint">Con el abono activo, en “Tu mes” verás cuánto te ahorras.</p></section>
     <section class="cin" aria-labelledby="tcH"><span class="eyebrow" id="tcH">Tus cines</span>
-      <p class="hint">Marca los Cinesa a los que sueles ir (hasta ${MAX_CINES}) y en la cartelera verás sus sesiones.</p>
+      <p class="hint">Marca los Cinesa a los que sueles ir (hasta ${MAX_CINES}) y en la cartelera verás sus sesiones de hoy.</p>
       <div class="tc-list" role="group" aria-labelledby="tcH">${Object.entries(CINESA).sort((a,b)=>a[1].localeCompare(b[1],"es")).map(([k,n])=>`<label class="toggle"><input type="checkbox" data-cine="${k}" ${misCines().includes(k)?"checked":""}> ${esc(n)}</label>`).join("")}</div>
       <label class="toggle"><input type="checkbox" id="tcVo" ${priVOSE()?"checked":""}> Priorizar las sesiones en VOSE</label></section>
     <div class="actions"><span></span><span style="display:flex;gap:10px"><button class="btn" id="pfX" type="button">Cerrar</button><button class="btn primary" id="cinG" type="button">Guardar</button></span></div></div></div>`;
@@ -634,8 +631,7 @@ async function cartelera(){
   document.getElementById("cartL").onclick=e=>{let b;
     if(b=e.target.closest("[data-ca]")){quieroVer(CART&&CART.lista[+b.dataset.ca],b);return}
     if(b=e.target.closest("[data-cs]")){const f=SESL[+b.dataset.cs];quieroVer(f&&fichaSes(f),b);return}
-    if(b=e.target.closest("[data-st]")){const i=+b.dataset.st;SESUI.abierta=SESUI.abierta===i?null:i;SESUI.dia=null;pintaCart();return}
-    if(b=e.target.closest("[data-sd]")){SESUI.dia=b.dataset.sd;pintaCart()}};
+    if(b=e.target.closest("[data-st]")){const i=+b.dataset.st;SESUI.abierta=SESUI.abierta===i?null:i;pintaCart()}};
   pintaCart();
   if(hay)cargaSesiones();
   if(!CART&&!cartCargando){cartCargando=true;
@@ -647,21 +643,22 @@ function pintaCart(){
   document.querySelectorAll("[data-cm]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cm===cartModo));
   const E=document.getElementById("caE"),H=document.getElementById("caHint");
   if(cartModo==="cines"){
-    E.textContent="En tus Cinesa";
-    H.textContent=`${Object.values(misCinesN()).join(" · ")}. Sesiones de los próximos siete días${priVOSE()?", con la VOSE primero":""}. Cada hora abre la compra en la web de Cinesa.`;
-    if(!SES){L.innerHTML=`<p class="hint">${SESFALLO?"Ahora no se pueden consultar las sesiones. Prueba en un rato.":"Buscando las sesiones de tus cines…"}</p>`;return}
+    E.textContent="Hoy en tus Cinesa";
+    H.textContent=`Sesiones de hoy en ${Object.values(misCinesN()).join(", ").replace(/, ([^,]*)$/," y $1")}${priVOSE()?", con la VOSE primero":""}. Cada hora abre la compra en la web de Cinesa.`;
+    if(!SES){L.innerHTML=`<p class="hint">${SESFALLO?"Ahora no se pueden consultar las sesiones de tus cines. El resto de Platea funciona igual; prueba más tarde.":"Buscando las sesiones de tus cines…"}</p>${SESFALLO?otrosDias().replace("Para otros días, abre","Mientras, puedes abrir"):""}`;return}
     SESL=SES.lista.map(f=>Object.assign({f},sesDe(f))).filter(z=>z.n).sort((a,b)=>(priVOSE()?(b.v?1:0)-(a.v?1:0):0)||b.n-a.n);
-    if(!SESL.length){L.innerHTML=`<p class="hint">No hay sesiones en tus cines estos días.</p>`;return}
-    L.innerHTML=SESL.map((z,i)=>{const f=fichaSes(z.f),ya=enLista(f);const abierta=SESUI.abierta===i;
+    const aviso=sesAviso();
+    if(!SESL.length){L.innerHTML=`<p class="hint">${aviso||"Hoy ya no quedan sesiones en tus cines."}</p>${otrosDias()}`;return}
+    L.innerHTML=(aviso?`<p class="hint ses-aviso">${aviso}</p>`:"")+SESL.map((z,i)=>{const f=fichaSes(z.f),ya=enLista(f);const abierta=SESUI.abierta===i;
       const donde=Object.keys(z.cines).map(c=>CINESA[c]).join(" · ");
-      return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3><span class="ses-donde">${esc(donde)}${z.v?` <span class="badge">VOSE</span>`:""}</span><button class="ses-tog" type="button" data-st="${i}" aria-expanded="${abierta}">${abierta?"Ocultar sesiones":"Ver sesiones"}</button></div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-cs="${i}">La quiero ver</button>`}${abierta?panelSes(z):""}</div>`}).join("");
+      return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3><span class="ses-donde">${esc(donde)}${z.v?` <span class="badge">VOSE</span>`:""}</span><button class="ses-tog" type="button" data-st="${i}" aria-expanded="${abierta}">${abierta?"Ocultar sesiones":"Ver sesiones"}</button></div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-cs="${i}">La quiero ver</button>`}${abierta?panelSes(z):""}</div>`}).join("")+otrosDias();
     return;
   }
   E.textContent="En cines de España";H.textContent=`Lo que está en salas esta semana. Apunta lo que quieras ver con el Unlimited.`;
   if(!CART){L.innerHTML=`<p class="hint">Buscando la cartelera…</p>`;return}
   if(!CART.lista.length){L.innerHTML=`<p class="hint">${CART.fallo?"Ahora no se puede consultar la cartelera. Prueba en un rato.":"La cartelera necesita la conexión con TMDB."}</p>`;return}
   L.innerHTML=CART.lista.map((f,i)=>{const ya=enLista(f);const tc=enTusCines(f);
-    return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3>${f.anio?`<span class="mono">${esc(f.anio)}</span>`:""}${tc?`<span class="ses-donde">En tus Cinesa${tc.v?` <span class="badge">VOSE</span>`:""}</span>`:""}</div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-ca="${i}">La quiero ver</button>`}</div>`}).join("");
+    return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3>${f.anio?`<span class="mono">${esc(f.anio)}</span>`:""}${tc?`<span class="ses-donde">Hoy en tus Cinesa${tc.v?` <span class="badge">VOSE</span>`:""}</span>`:""}</div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-ca="${i}">La quiero ver</button>`}</div>`}).join("");
 }
 async function quieroVer(f,b){if(!f||enLista(f))return;b.disabled=true;
   const x={poster:f.poster||null,tmdb_id:f.tmdb_id||null,tipo:"peli",estado:"porver",titulo:f.titulo,anio:f.anio||"",donde:"cine",plataforma:platTexto(leePlats(f.plataforma)),fecha:null,nota:0,resena:"",rewatch:false,moods:[],prio:true};
@@ -671,7 +668,7 @@ async function quieroVer(f,b){if(!f||enLista(f))return;b.disabled=true;
 /* Sesiones en tus Cinesa: salen de Sensacine a través de la función «sesiones»; las horas enlazan con la compra en la web de Cinesa */
 const CINESA={E0385:"Equinoccio",E0389:"Las Rozas Heron City",E0646:"Manoteras",E0401:"Príncipe Pío",E0247:"Méndez Álvaro",E0392:"La Moraleja",E0399:"Parquesur",E0406:"Xanadú",E0731:"La Gavia",E0246:"Nassica",E0394:"Plaza Loranca 2"};
 const MAX_CINES=6,SES_LS="platea-sesiones",SES_TTL=3*36e5;
-let SES=null,SESL=[],SESFALLO=false,sesCargando=false;const SESUI={abierta:null,dia:null};
+let SES=null,SESL=[],SESFALLO=false,sesCargando=false;const SESUI={abierta:null};
 const misCines=()=>(AJ.cines&&Array.isArray(AJ.cines.ids)?AJ.cines.ids:[]).filter(c=>CINESA[c]).slice(0,MAX_CINES);
 const misCinesN=()=>Object.fromEntries(misCines().map(c=>[c,CINESA[c]]));
 const priVOSE=()=>!AJ.cines||AJ.cines.vose!==false;
@@ -684,27 +681,32 @@ function sesDe(f){const now=ahoraLocal(),o={};let n=0,v=0;
 function enTusCines(x){if(!SES||!x)return null;const a=+x.anio||0;
   const f=SES.lista.find(f=>(f.tmdb_id&&x.tmdb_id&&+f.tmdb_id===+x.tmdb_id)||([f.titulo_tmdb,f.titulo,f.original].some(t=>t&&normT(t)===normT(x.titulo))&&(!a||!(f.anio_tmdb||f.anio)||Math.abs(a-(f.anio_tmdb||f.anio))<=1)));
   if(!f)return null;const s=sesDe(f);return s.n?Object.assign({f},s):null}
-const DSEM=["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
 function panelSes(z){
-  const dias=[...new Set(Object.values(z.cines).flat().map(s=>s.f))].sort();const hoy=today();
-  const conVo=new Set(Object.values(z.cines).flat().filter(s=>s.v==="VOSE").map(s=>s.f));
-  let dia=SESUI.dia&&dias.includes(SESUI.dia)?SESUI.dia:(priVOSE()&&conVo.size?dias.find(d=>conVo.has(d)):dias[0]);
-  const et=f=>{const d=new Date(f+"T12:00");return f===hoy?"Hoy":DSEM[d.getDay()]};
   const porFila=Math.max(3,Math.floor((Math.min(innerWidth,560)-36+6)/74));
-  const cines=Object.entries(z.cines).map(([c,ss])=>{const l=ss.filter(s=>s.f===dia);if(!l.length)return "";
-    const fil=Math.ceil(l.length/porFila),col=Math.ceil(l.length/fil);
+  const cines=Object.entries(z.cines).map(([c,l])=>{const fil=Math.ceil(l.length/porFila),col=Math.ceil(l.length/fil);
     return `<div class="ses-cine"><b>${esc(CINESA[c])}</b><div class="ses-hs" style="--c:${col}">${l.map(s=>{const tg=[s.v,s.x].filter(Boolean).length?`<small>${esc([s.v,s.x].filter(Boolean).join(" · "))}</small>`:"";const lbl=`${s.h}${s.v?" "+s.v:""}${s.x?" "+s.x:""}`;
       return s.url?`<a class="ses-h${s.v==="VOSE"?" vo":""}" href="${esc(s.url)}" target="_blank" rel="noopener" aria-label="${esc(lbl)}, comprar en Cinesa">${esc(s.h)}${tg}</a>`:`<span class="ses-h${s.v==="VOSE"?" vo":""}">${esc(s.h)}${tg}</span>`}).join("")}</div></div>`}).join("");
-  return `<div class="ses-p"><div class="ses-dias" role="group" aria-label="Día" style="grid-template-columns:repeat(${dias.length},minmax(0,1fr))">${dias.map(d=>`<button type="button" data-sd="${d}" aria-pressed="${d===dia}" class="${conVo.has(d)?"vo":""}"${conVo.has(d)?' title="Con sesiones en VOSE"':""}><span>${et(d)}</span><b>${+d.slice(8,10)}</b></button>`).join("")}</div>${cines}<p class="ses-nota">En rojo, las sesiones en VOSE. Se compran en la web de Cinesa.</p></div>`;
+  return `<div class="ses-p">${cines}<p class="ses-nota">${z.v?"En color, las sesiones en VOSE. ":""}Se compran en la web de Cinesa.</p></div>`;
 }
+/* Otros días: la página de cada cine en Sensacine (la app solo lee las sesiones de hoy) */
+function otrosDias(){const c=misCines();if(!c.length)return "";
+  return `<p class="hint ses-otros">Para otros días, abre tu cine: ${c.map(k=>`<a href="https://www.sensacine.com/cines/cine/${k}/" target="_blank" rel="noopener">${esc(CINESA[k])}</a>`).join(" · ")}.</p>`}
+/* Aviso si Sensacine no ha respondido: datos de antes (con su hora) o cines sin datos */
+function sesAviso(){if(!SES||!SES.por_cine)return "";const hh=t=>{const d=new Date(t);return d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})};
+  const viejos=Object.entries(SES.por_cine).filter(([,e])=>e.estado==="antiguo"),sin=Object.entries(SES.por_cine).filter(([,e])=>e.estado==="fallo");
+  const t=[];if(viejos.length)t.push(`${viejos.map(([c])=>CINESA[c]).join(" y ")}: datos de las ${hh(viejos[0][1].desde)}`);
+  if(sin.length)t.push(`${sin.map(([c])=>CINESA[c]).join(" y ")}: ahora no se pueden consultar`);
+  return t.length?t.join(". ")+".":""}
 async function cargaSesiones(){
-  const ids=misCines(),clave=ids.join(",");
+  const ids=misCines(),clave=ids.join(","),dia=today();
   if(!ids.length){SES=null;return}
-  if(SES&&SES.ids===clave&&Date.now()-SES.t<SES_TTL)return;
-  if(!SES||SES.ids!==clave){SES=null;try{const c=JSON.parse(localStorage.getItem(SES_LS)||"null");if(c&&c.ids===clave&&Date.now()-c.t<SES_TTL&&Array.isArray(c.lista)){SES=c;sesPintar();return}}catch(_){}}
+  const vale=x=>x&&x.ids===clave&&x.hoy===dia&&Array.isArray(x.lista);
+  if(vale(SES)&&Date.now()-SES.t<SES_TTL)return;
+  if(!vale(SES)){SES=null;try{const c=JSON.parse(localStorage.getItem(SES_LS)||"null");if(vale(c)){SES=c;sesPintar();if(Date.now()-c.t<SES_TTL)return}}catch(_){}}
   if(sesCargando)return;sesCargando=true;SESFALLO=false;
   try{const x=await sb.functions.invoke("sesiones",{body:{cines:ids}});const d=x&&x.data;
-    if(d&&Array.isArray(d.peliculas)){SES={ids:clave,t:Date.now(),lista:d.peliculas};try{localStorage.setItem(SES_LS,JSON.stringify(SES))}catch(_){}}else if(!SES)SESFALLO=true}
+    if(d&&Array.isArray(d.peliculas)&&d.estado!=="fallo"){SES={ids:clave,hoy:d.hoy||dia,t:Date.now(),lista:d.peliculas,por_cine:d.por_cine||{}};try{localStorage.setItem(SES_LS,JSON.stringify(SES))}catch(_){}}
+    else if(!SES)SESFALLO=true}
   catch(_){if(!SES)SESFALLO=true}
   sesCargando=false;sesPintar();
 }
