@@ -378,7 +378,7 @@ function pintaPlato(){
   LISTS.forEach(x=>{html+=`<a class="pista${x.id===id?" ya":""}" href="#${x.id}" style="${pos(HORA[x.id],39)}" title="${esc(x.name)} · ${fmtH(HORA[x.id])}" aria-label="${esc(x.name)}, hacia las ${fmtH(HORA[x.id])}"><img src="${RED(x.id)}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${x.img}';this.style.scale='${ZOOM[x.id]||1.08}'"></a>`});
   const ahora=d.getHours()+d.getMinutes()/60;
   html+=`<i class="aguja" style="transform:rotate(${ang(ahora)+180}deg)" aria-hidden="true"></i>`;
-  html+=`<div class="etiqueta" aria-hidden="true"><img src="${RED(l.id)}" alt="" onerror="this.onerror=null;this.src='${l.img}';this.style.scale='${ZOOM[l.id]||1.08}'"></div><button class="vidrio grande" type="button" data-play="${l.sp}" aria-label="Reproducir ${esc(l.name)}">${ICO_PLAY}</button>`;
+  html+=`<div class="etiqueta" aria-hidden="true"><img src="${RED(l.id)}" alt="" onerror="this.onerror=null;this.src='${l.img}';this.style.scale='${ZOOM[l.id]||1.08}'"></div>`;
   html+=`<svg class="brazo" viewBox="0 0 100 220" aria-hidden="true"><defs><linearGradient id="og" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1E2BD"/><stop offset=".5" stop-color="#D9B878"/><stop offset="1" stop-color="#A9823D"/></linearGradient></defs><circle cx="70" cy="22" r="13" fill="none" stroke="url(#og)" stroke-width="9"/><circle cx="70" cy="22" r="8" fill="#2F5A4D"/><path d="M70 35 L70 150 L34 196" fill="none" stroke="url(#og)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><rect x="18" y="186" width="30" height="18" rx="4" fill="url(#og)" transform="rotate(-38 33 195)"/></svg>`;
   dial.innerHTML=html;
   const dia=d.toLocaleDateString("es-ES",{weekday:"long"});const hora=d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
@@ -409,7 +409,7 @@ GROUPS.forEach(g => {
     const dots = Math.ceil(l.energy / 12 * 5);
     const dotHtml = Array.from({ length: 5 }, (_, i) => `<i class="${i < dots ? "on" : ""}"></i>`).join("");
     return `<article class="card" id="${l.id}" data-tags="${l.tags.join(" ")}">
-      <div class="portada"><img src="${l.img}" alt="Portada de ${esc(l.name)}" loading="lazy"><button class="vidrio" type="button" data-play="${l.sp}" aria-label="Reproducir ${esc(l.name)}">${ICO_PLAY}</button></div>
+      <div class="portada"><img src="${l.img}" alt="Portada de ${esc(l.name)}" loading="lazy"></div>
       <div class="txt">
         <div class="tit"><h3>${esc(l.name)}</h3><span class="vol">${esc(l.vol)}</span></div>
         <p class="when">${esc(l.when)}</p>
