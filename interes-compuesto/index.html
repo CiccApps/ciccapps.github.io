@@ -357,16 +357,17 @@ td.wy { color: var(--pink); }
   #bxFlat .cap::after { content: "ahorrando al 0%"; font-size: var(--capfs, 10.5px); }
   .tablewrap { flex: 1 1 0; min-height: 0; overflow: hidden; }
   table { min-width: 0; }
-  col.c-yr { width: 20%; } col.c-cc { width: 22%; } col.c-ic { width: 58%; }
-  .ret col.c-yr { width: 18%; } .ret col.c-cc { width: 19%; } .ret col.c-ic { width: 31%; } .ret col.c-wr { width: 32%; }
+  col.c-yr { width: 23%; } col.c-cc { width: 22%; } col.c-ic { width: 55%; }
+  .ret col.c-yr { width: 21%; } .ret col.c-cc { width: 18%; } .ret col.c-ic { width: 29%; } .ret col.c-wr { width: 32%; }
   #tbl thead tr { height: var(--theadpx, 50px); }
   #tbl tbody tr { height: var(--rowpx, 32px); }
   #tbl th { white-space: normal; font-size: var(--thfs, 11px); line-height: 1.15; padding: 2px 3px; }
-  #tbl.cc #h_cc { font-size: 0; } #tbl.cc #h_cc::after { content: "CC"; font-size: var(--thfs, 11px); }   /* «cuenta corriente» si no cabe */
+  #tbl.cc #h_cc { font-size: 0; } #tbl.cc #h_cc::after { content: "CUENTA"; font-size: var(--thfs, 11px); }   /* «cuenta corriente» si no cabe */
   th .nw { white-space: nowrap; }
+  #tbl th:first-child { white-space: nowrap; }
   #tbl td { white-space: normal; font-size: var(--tdfs, 12px); line-height: 1.22; padding: 0 3px; }
   td.yr, td b, td .w { white-space: nowrap; }
-  #tbl td.yr { font-family: var(--font); font-weight: 800; }   /* los años, del mismo tamaño y peso parecido al resto de la tabla */
+  #tbl td.yr { font-family: var(--font); font-weight: 700; font-size: calc(var(--tdfs, 12px) * .92); }   /* los años: mayúsculas, un poco más pequeñas para que no destaquen   /* los años, del mismo tamaño y peso parecido al resto de la tabla */
   td .f { display: block; font-size: .86em; }      /* la cuenta en una línea y el resultado debajo */
   #tbl.tight td .f { display: inline; }             /* pantallas bajas: todo en una línea */
   #tbl.tight.ret td:last-child { font-size: .82em; line-height: 1.05; }   /* «con retiradas»: hasta dos líneas en la misma fila */
@@ -856,19 +857,19 @@ td.wy { color: var(--pink); }
     document.querySelector('.boxes').style.setProperty('--capfs', capfs.toFixed(2) + 'px');
     // columnas (las mismas proporciones que en el CSS de móvil) y anchos útiles
     const W = tbl.clientWidth, inner = p => W * p - 7;
-    const hasR = hasRet(), NR = [.20, .22, .58], RT = [.18, .19, .31, .32];
+    const hasR = hasRet(), NR = [.23, .22, .55], RT = [.21, .18, .29, .32];
     const hf = fam(tbl.querySelector('th') || tbl), df = fam(tbl.querySelector('td') || tbl), yf = df;
     // cabecera: como mucho dos líneas y el mismo tamaño en todas las celdas
     const lay = hasR ? [NR, RT] : [NR];
     let thfs = 12.5;
     lay.forEach(L => {
-      thfs = Math.min(thfs, inner(L[0]) / tw1('/ MES', 900, hf), inner(L[0]) / (tw1('€', 900, hf) + 3 * tw1('0', 900, hf) + .55));
+      thfs = Math.min(thfs, (inner(L[0]) - 2) / tw1(Math.max(...scs.map(sc => grp(sc.monthly).length)) > 3 ? '0.000 € / MES' : '000 € / MES', 900, hf));   // «100 € / MES» siempre en una línea
       thfs = Math.min(thfs, inner(L[2]) / (L === RT ? tw1('COMPUESTO %', 900, hf) + String(S.rate).length * tw1('0', 900, hf) + .6 : tw1('INTERÉS COMPUESTO', 900, hf)));
       if (L === RT) thfs = Math.min(thfs, inner(L[3]) / tw1('RETIRADAS', 900, hf));
     });
-    thfs = Math.max(9, thfs);
+    thfs = Math.max(8.5, thfs);
     const ccShort = lay.some(L => inner(L[1]) / tw1('CORRIENTE', 900, hf) < thfs);
-    tbl.classList.toggle('cc', ccShort);
+    tbl.classList.toggle('cc', ccShort);   // si «corriente» no cabe, la columna dice solo «CUENTA»
     const head = Math.ceil(2 * 1.15 * thfs + 6);
     tbl.style.setProperty('--thfs', thfs.toFixed(2) + 'px');
     tbl.style.setProperty('--theadpx', head + 'px');
@@ -885,11 +886,11 @@ td.wy { color: var(--pink); }
     scs.forEach(sc => {
       const rows = simulate(sc.years, sc.monthly, R, S.method, ws), last = rows[rows.length - 1], A12 = eur(12 * sc.monthly);
       const fx = rows.length >= 3 ? '(' + eur(rows[1].ic) + ' + ' + A12 + ') + ' + pct(S.rate) + ' = ' : '';
-      fs = Math.min(fs, inner(NR[0]) / tw1('AÑO ' + sc.years, 800, yf), inner(NR[1]) / tw1(eur(last.cc), 700, df));
+      fs = Math.min(fs, inner(NR[0]) / (tw1('AÑO ' + sc.years, 700, yf) * .92), inner(NR[1]) / tw1(eur(last.cc), 700, df));
       fs = Math.min(fs, inner(NR[2]) / (tight || $('stage').clientWidth >= 480 ? tw1(fx, 400, df) * .86 + tw1(eur(rows[Math.min(2, rows.length - 1)].ic), 700, df) : Math.max(tw1(fx, 400, df) * .86, tw1(eur(last.ic), 700, df))));
       if (hasR) {
         const wmax = rows.reduce((m, r) => Math.max(m, tw1(eur(r.before), 700, df), r.w > 0 ? tw1('− ' + eur(r.w), 700, df) : 0), 0);
-        fs = Math.min(fs, inner(RT[0]) / tw1('AÑO ' + sc.years, 800, yf), inner(RT[1]) / tw1(eur(last.cc), 700, df), inner(RT[2]) / tw1(eur(last.ic), 700, df), inner(RT[3]) / wmax / (tight ? .82 : 1));
+        fs = Math.min(fs, inner(RT[0]) / (tw1('AÑO ' + sc.years, 700, yf) * .92), inner(RT[1]) / tw1(eur(last.cc), 700, df), inner(RT[2]) / tw1(eur(last.ic), 700, df), inner(RT[3]) / wmax / (tight ? .82 : 1));
       }
     });
     fs = Math.max(9.5, fs);
