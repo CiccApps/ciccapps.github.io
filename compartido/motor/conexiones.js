@@ -1,11 +1,11 @@
-/* CiccApps · motor común · conexiones con servicios externos (Strava; después Withings, Salud y Google Calendar).
+/* CiccApps · motor común · conexiones con servicios externos: Salud del iPhone (Atajo), Withings y, opcional, Strava. Después, Google Calendar.
    Las claves nunca pasan por aquí: viven en Supabase y solo las usan sus funciones.
-   Uso: CiccConexiones.lista(sb).then(c => c.strava) · CiccConexiones.conectar(sb, 'strava') · CiccConexiones.resultado() */
+   Uso: CiccConexiones.lista(sb).then(c => c.salud) · CiccConexiones.conectar(sb, 'withings') · CiccConexiones.resultado() */
 (function () {
   'use strict';
 
   // Proveedores que ya tienen función en Supabase
-  var ACTIVOS = { strava: true };
+  var ACTIVOS = { salud: true, withings: true, strava: true };
 
   async function lista(sb) {
     var r = await sb.from('conexiones').select('*');
