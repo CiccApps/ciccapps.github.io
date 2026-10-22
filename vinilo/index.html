@@ -94,10 +94,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 @media (max-width: 720px) {
   .shelf { grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 14px; }
 }
-@media (max-width: 420px) {
-  .card { grid-template-columns: 96px 1fr; gap: 12px; }
-  .card img { width: 96px; height: 96px; }
-}
+
 @media (prefers-reduced-motion: reduce) { .shelf img, .card { transition: none; } }
 
 .ia { display: grid; gap: 14px; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
@@ -230,6 +227,28 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .card{align-items:center}
 .energy{white-space:nowrap;min-width:0}
 .portada{position:relative;flex:none;align-self:start;line-height:0}
+/* Tarjetas: la portada ocupa todo el alto del bloque; título arriba y Energía/Spotify alineados con su borde inferior */
+.card{--cv:172px;grid-template-columns:var(--cv) minmax(0,1fr);grid-template-rows:auto auto auto auto 1fr;column-gap:16px;row-gap:6px;align-items:start;
+  grid-template-areas:"cv tit" "cv when" "cv mood" "cv note" "cv meta"}
+.cards{align-items:start}
+.card .txt{display:contents}
+.card .portada{grid-area:cv;align-self:stretch;line-height:0}
+.card .portada img{width:var(--cv);height:var(--cv)}
+.card .tit{grid-area:tit}.card .when{grid-area:when}.card .mood{grid-area:mood}.card .note{grid-area:note}
+.card .meta{grid-area:meta;align-self:end;margin-top:4px}
+@media (max-width:520px){
+  /* móvil: portada con título y «para qué» centrados a su lado; debajo, descripción y la fila Energía · Spotify a todo el ancho */
+  .card{--cv:116px;column-gap:14px;row-gap:0;grid-template-rows:1fr auto auto 1fr auto auto auto;
+    grid-template-areas:"cv ." "cv tit" "cv when" "cv ." "mood mood" "note note" "meta meta"}
+  .card .when{margin-top:6px;font-size:14px;line-height:1.35}
+  .card .tit{flex-direction:column-reverse;align-items:flex-start;gap:4px}
+  .card .tit .vol{font-size:12px;line-height:1}
+  .card h3{font-size:1.28rem}
+  .card .mood{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+  .card .note{margin-top:6px}
+  .card .meta{margin-top:12px}
+}
+}
 /* Cristal líquido: translúcido, con desenfoque, brillo arriba y borde de luz */
 .vidrio{position:absolute;display:grid;place-items:center;border:0;padding:0;cursor:pointer;border-radius:50%;color:#fff;
   width:38px;height:38px;right:8px;bottom:8px;
