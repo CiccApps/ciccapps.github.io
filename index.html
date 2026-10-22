@@ -101,22 +101,22 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 .fam-cab h2::before, .fam-cab h2::after { content: ""; flex: 0 1 72px; height: 1px; background: linear-gradient(to right, transparent, var(--cc-oro)); }
 .fam-cab h2::after { background: linear-gradient(to left, transparent, var(--cc-oro)); }
 .fam-cab p { margin: 0; font-family: var(--cc-serif); font-style: italic; font-size: 15px; color: var(--cc-tinta-suave); text-wrap: balance; }
-/* Una familia impar en el móvil: la primera app va a lo ancho, con el icono a la izquierda, para que ninguna quede sola en su fila */
-.apps > .app:first-child:nth-last-child(odd) { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; row-gap: 4px; align-items: center; text-align: left; padding: 20px 20px 18px; }
-.apps > .app:first-child:nth-last-child(odd) .ico { grid-row: 1 / span 3; align-self: center; margin: 0; }
-.apps > .app:first-child:nth-last-child(odd) small { align-self: start; justify-self: start; padding-top: 2px; }
-.apps > .app:first-child:nth-last-child(odd) p { text-wrap: balance; }
+/* Una familia impar en el móvil: la primera app va a lo ancho (en Despacho, la última), con el icono a la izquierda, para que ninguna quede sola en su fila */
+:is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) { grid-column: 1 / -1; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; row-gap: 4px; align-items: center; text-align: left; padding: 20px 20px 18px; }
+:is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) .ico { grid-row: 1 / span 3; align-self: center; margin: 0; }
+:is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) small { align-self: start; justify-self: start; padding-top: 2px; }
+:is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) p { text-wrap: balance; }
 @media (min-width: 900px) {
   .familias { gap: 44px; }
   /* En el ordenador todas las filas miden lo mismo: dos tarjetas, o una a lo ancho */
   .apps { display: flex; justify-content: center; gap: 20px; }
   .apps > .app { flex: 0 1 calc((100% - 60px) / 4); }
-  .apps > .app:first-child:nth-last-child(odd) { grid-column: auto; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 28px 18px 18px; }
-  .apps > .app:first-child:nth-last-child(odd) .ico { margin-bottom: 4px; }
-  .apps > .app:first-child:nth-last-child(odd) small { align-self: center; }
-  .apps > .app:first-child:only-child { flex-basis: calc((100% - 60px) / 2 + 20px); display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 22px; row-gap: 6px; align-items: center; text-align: left; padding: 24px 26px; }
-  .apps > .app:first-child:only-child .ico { grid-row: 1 / span 3; margin: 0; }
-  .apps > .app:first-child:only-child small { align-self: start; justify-self: start; }
+  :is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) { grid-column: auto; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 28px 18px 18px; }
+  :is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) .ico { margin-bottom: 4px; }
+  :is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) small { align-self: center; }
+  .familia .apps > .app:first-child:only-child { flex-basis: calc((100% - 60px) / 2 + 20px); display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 22px; row-gap: 6px; align-items: center; text-align: left; padding: 24px 26px; }
+  .familia .apps > .app:first-child:only-child .ico { grid-row: 1 / span 3; margin: 0; }
+  .familia .apps > .app:first-child:only-child small { align-self: start; justify-self: start; }
 }
 </style>
 </head>
@@ -144,7 +144,8 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
     </section>
     <section class="familia" aria-labelledby="fDes">
       <div class="fam-cab"><h2 id="fDes">Despacho</h2><p>Para trabajar y llevar en orden lo tuyo.</p></div>
-      <div class="apps">
+      <!-- Interés compuesto siempre la última; Cartapacio y Cochera van antes -->
+      <div class="apps al-final">
     <a class="app a-ic" href="interes-compuesto/"><span class="ico"><img src="iconos/interes-compuesto-192.png?v=6" alt=""></span><h3>Interés compuesto</h3><p>La simulación de ahorro para enseñar en tus reuniones.</p><small>¿Y si empiezas hoy?</small></a>
       </div>
     </section>
