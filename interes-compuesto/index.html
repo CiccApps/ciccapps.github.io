@@ -12,7 +12,7 @@
 @media (max-width: 430px) { .bar .nav .nlbl { display: none; } }
 .hint-movil { display: none; } @media (max-width: 760px) { .hint-movil { display: block; } }
 </style><title>Interés compuesto</title>
-<meta name="description" content="Presentación interactiva de interés compuesto para clientes.">
+<meta name="description" content="La simulación de ahorro para enseñar en tus reuniones.">
 <meta name="theme-color" content="#E9ECF2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1106,8 +1106,8 @@ td.wy { color: var(--pink); }
     fitCopy(d);
     // aviso discreto solo en el PDF, en el margen inferior de la diapositiva
     const sl = d.getElementById('slide'), av = d.createElement('div');
-    av.textContent = 'Simulación orientativa: las rentabilidades no están garantizadas · ' + new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
-    av.style.cssText = 'position:absolute;right:7.3cqw;bottom:1.05cqw;font-size:.78cqw;line-height:1;color:#6B7A8F;letter-spacing:.01em;white-space:nowrap';
+    av.textContent = 'Simulación orientativa: las rentabilidades no están garantizadas · ' + new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }) + ' · © 2026 Miguel Pascual Ciccardini';
+    av.style.cssText = 'position:absolute;right:7.3cqw;bottom:1.05cqw;font-size:.78cqw;line-height:1;color:#6B7A8F;letter-spacing:.01em;white-space:nowrap;text-align:right';
     sl.appendChild(av);
     void c.offsetHeight;
     if (opts.fontEmbedCSS == null) opts.fontEmbedCSS = await window.htmlToImage.getFontEmbedCSS(c).catch(() => '');   // fuentes web, una sola vez

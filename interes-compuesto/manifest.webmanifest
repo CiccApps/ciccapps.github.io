@@ -1,14 +1,14 @@
 {
   "name": "Interés compuesto",
   "short_name": "Interés",
-  "description": "Presentación interactiva de interés compuesto para clientes.",
+  "description": "La simulación de ahorro para enseñar en tus reuniones.",
   "lang": "es",
   "start_url": "/interes-compuesto/",
   "scope": "/interes-compuesto/",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#E9ECF2",
-  "theme_color": "#4B2E19",
+  "theme_color": "#E9ECF2",
   "icons": [
     {
       "src": "/iconos/interes-compuesto-192.png?v=6",
