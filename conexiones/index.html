@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Conexiones · CiccApps</title>
+<meta name="description" content="Los servicios conectados a tus CiccApps: Strava, Withings, Salud y Google Calendar.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F3EFE4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1A17" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" href="../iconos/favicon-32.png">
+<link rel="apple-touch-icon" href="../iconos/ciccapps-180.png">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=19">
+<style>
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--cc-fondo); color: var(--cc-tinta); font-family: var(--cc-sans); font-size: 16px; line-height: 1.5; }
+main { max-width: 640px; margin: 0 auto; padding: max(36px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left)); }
+header { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; margin-bottom: 28px; }
+header a img { width: auto; height: 88px; display: block; }
+header .osc { display: none; }
+@media (prefers-color-scheme: dark) { header .cla { display: none; } header .osc { display: block; } }
+h1 { margin: 0; font-family: var(--cc-display); font-weight: 400; font-size: 34px; line-height: 1.1; }
+header p { margin: 0; font-family: var(--cc-serif); font-style: italic; color: var(--cc-oro); }
+h2 { margin: 0; font-family: var(--cc-display); font-weight: 400; font-size: 22px; line-height: 1.2; }
+.aviso { margin: 0 0 16px; padding: 12px 16px; border-radius: 10px; background: var(--cc-hundido); font-size: 15px; text-align: center; }
+.aviso.error { color: var(--cc-aviso); }
+.aviso:empty { display: none; }
+.tarjetas { display: flex; flex-direction: column; gap: 12px; }
+.tarjeta { padding: 18px 20px; border: 1px solid var(--cc-linea); border-radius: 14px; background: var(--cc-fondo-alto); }
+.tarjeta .cab { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tarjeta p { margin: 6px 0 0; color: var(--cc-tinta-suave); font-size: 15px; }
+.tarjeta .meta { margin-top: 10px; font-size: 14px; color: var(--cc-tinta); text-wrap: pretty; }
+.tarjeta .admin { margin: 10px 0 0; text-align: center; font-size: 13px; color: var(--cc-tinta-suave); }
+.tarjeta .admin button { border: 0; background: none; padding: 4px 6px; color: var(--cc-oro); font: 600 13px var(--cc-sans); cursor: pointer; }
+.tarjeta .admin[hidden] { display: none; }
+.chip { flex: none; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--cc-hundido); color: var(--cc-tinta-suave); white-space: nowrap; }
+.chip.si { background: var(--cc-primario); color: var(--cc-sobre-primario); }
+.chip.mal { background: transparent; border: 1px solid var(--cc-aviso); color: var(--cc-aviso); }
+.botones { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 14px; }
+.botones:empty { display: none; }
+.boton { min-height: 44px; padding: 0 16px; border: 1px solid var(--cc-linea-fuerte); border-radius: 10px; background: transparent; color: var(--cc-tinta); font: 600 15px var(--cc-sans); cursor: pointer; }
+.boton.lleno { border-color: var(--cc-primario); background: var(--cc-primario); color: var(--cc-sobre-primario); }
+.boton.strava { border-color: #FC5200; background: #FC5200; color: #FFFFFF; }
+.boton:disabled { opacity: .5; cursor: default; }
+.boton:focus-visible { outline: 2px solid var(--cc-oro); outline-offset: 2px; }
+.ultimos { margin-top: 28px; }
+.ultimos ol { list-style: none; margin: 12px 0 0; padding: 0; border-top: 1px solid var(--cc-linea); }
+.ultimos li { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 12px 0; border-bottom: 1px solid var(--cc-linea); }
+.ultimos .nom { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.ultimos .cifra { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ultimos .det { grid-column: 1 / -1; font-size: 14px; color: var(--cc-tinta-suave); }
+.compatible { margin: 12px 0 0; font-size: 13px; color: var(--cc-tinta-suave); text-align: center; }
+.compatible b { color: #FC5200; font-weight: 700; letter-spacing: .02em; }
+footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--cc-linea); text-align: center; }
+footer .derechos { margin: 6px 0 0; font-size: 13px; color: var(--cc-tinta-suave); }
+@media (max-width: 520px) { footer .derechos span { display: block; } footer .derechos .sep { display: none; } }
+footer .salir { border: 0; background: none; color: var(--cc-oro); font: 600 13px var(--cc-sans); cursor: pointer; padding: 6px 8px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <a href="../" aria-label="Ir a CiccApps"><img class="cla" src="../iconos/logotipo-apilado-claro.svg" alt="CiccApps"><img class="osc" src="../iconos/logotipo-apilado-oscuro.svg" alt="CiccApps"></a>
+    <h1>Tus conexiones</h1>
+    <p>Los servicios que alimentan tus CiccApps</p>
+  </header>
+
+  <p class="aviso" id="aviso" role="status" aria-live="polite"></p>
+
+  <div class="tarjetas">
+    <section class="tarjeta" aria-labelledby="tStrava">
+      <div class="cab"><h2 id="tStrava">Strava</h2><span class="chip" id="eStrava">Sin conectar</span></div>
+      <p>Los entrenos de tu reloj para Palestra y Sendero. Funciona con Apple Watch, Garmin, Coros, Polar, Suunto y cualquier reloj que sincronice con Strava.</p>
+      <p class="meta" id="mStrava" hidden></p>
+      <div class="botones" id="bStrava"></div>
+      <p class="admin" id="aStrava" hidden>Avisos automáticos de entrenos nuevos · <button type="button" id="webhook">Activar</button></p>
+    </section>
+    <section class="tarjeta" aria-labelledby="tWithings">
+      <div class="cab"><h2 id="tWithings">Withings</h2><span class="chip">Próximamente</span></div>
+      <p>Peso y composición corporal de tu báscula.</p>
+    </section>
+    <section class="tarjeta" aria-labelledby="tSalud">
+      <div class="cab"><h2 id="tSalud">Salud del iPhone</h2><span class="chip">Próximamente</span></div>
+      <p>Pasos, sueño y pulso en reposo, con un Atajo automático.</p>
+    </section>
+    <section class="tarjeta" aria-labelledby="tGoogle">
+      <div class="cab"><h2 id="tGoogle">Google Calendar</h2><span class="chip">Próximamente</span></div>
+      <p>Tu plan semanal y las reservas de Playtomic.</p>
+    </section>
+  </div>
+
+  <section class="ultimos" id="ultimos" hidden aria-labelledby="tUltimos">
+    <h2 id="tUltimos">Últimos entrenos</h2>
+    <ol id="lista"></ol>
+    <p class="compatible">Datos de <b>STRAVA</b> · Compatible con Strava</p>
+  </section>
+
+  <footer id="pie">
+    <button type="button" class="salir" id="salir">Cerrar sesión</button>
+    <p class="derechos"><span>© 2026 Miguel Pascual Ciccardini</span><span class="sep"> · </span><span>Todos los derechos reservados</span></p>
+  </footer>
+</main>
+
+<script src="../compartido/supabase.js"></script>
+<script src="../compartido/cuenta.js?v=19"></script>
+<script src="../compartido/motor/conexiones.js?v=1"></script>
+<script>
+(function () {
+  'use strict';
+  var DUENO = 'mpciccardini@gmail.com';
+  var $ = function (id) { return document.getElementById(id); };
+  var sb, usuario;
+
+  function avisar(t, error) { $('aviso').textContent = t || ''; $('aviso').className = 'aviso' + (error ? ' error' : ''); }
+  function boton(texto, clase, accion) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'boton' + (clase ? ' ' + clase : ''); b.textContent = texto;
+    b.onclick = async function () {
+      var todos = document.querySelectorAll('.boton'); todos.forEach(function (x) { x.disabled = true; });
+      try { await accion(); } catch (e) { avisar(e.message, true); }
+      todos.forEach(function (x) { x.disabled = false; });
+    };
+    return b;
+  }
+  function haceCuanto(fecha) {
+    if (!fecha) return 'nunca';
+    var min = Math.round((Date.now() - new Date(fecha).getTime()) / 60000);
+    if (min < 1) return 'ahora mismo';
+    if (min < 60) return 'hace ' + min + ' min';
+    var h = Math.round(min / 60); if (h < 24) return 'hace ' + h + ' h';
+    var d = Math.round(h / 24); return 'hace ' + d + (d === 1 ? ' día' : ' días');
+  }
+  var TIPOS = { andar: 'Andar', correr: 'Correr', gym: 'Gym', boxeo: 'Boxeo', padel: 'Pádel', raqueta: 'Raqueta', otro: 'Entreno' };
+  var APPS = { palestra: 'Palestra', sendero: 'Sendero' };
+  function duracion(s) { if (!s) return ''; var m = Math.round(s / 60); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + String(m % 60).padStart(2, '0') + ' min'; }
+
+  async function pintar() {
+    var c = await CiccConexiones.lista(sb), s = c.strava;
+    var chip = $('eStrava'), meta = $('mStrava'), bs = $('bStrava');
+    bs.innerHTML = '';
+    if (s && s.estado === 'activa') {
+      chip.textContent = 'Conectado'; chip.className = 'chip si';
+      meta.hidden = false;
+      meta.textContent = (s.cuenta ? 'Cuenta de ' + s.cuenta + ' · ' : '') + 'última sincronización ' + haceCuanto(s.ultima_sync);
+      bs.append(
+        boton('Sincronizar', 'lleno', async function () {
+          avisar('Sincronizando con Strava…');
+          var r = await CiccConexiones.sincronizar(sb, 'strava', 30);
+          avisar(r.importadas === 1 ? '1 entreno al día.' : (r.importadas || 0) + ' entrenos al día.');
+          await pintar();
+        }),
+        boton('Desconectar', '', async function () {
+          if (!confirm('¿Desconectar Strava? Los entrenos ya importados se quedan en tus apps.')) return;
+          await CiccConexiones.desconectar(sb, 'strava');
+          avisar('Strava desconectado.');
+          await pintar();
+        })
+      );
+      $('aStrava').hidden = usuario.email !== DUENO;
+    } else {
+      chip.textContent = s ? (s.estado === 'caducada' ? 'Hay que reconectar' : 'Desconectado') : 'Sin conectar';
+      chip.className = 'chip' + (s ? ' mal' : '');
+      meta.hidden = true; $('aStrava').hidden = true;
+      bs.append(boton('Conectar con Strava', 'strava', function () { avisar('Abriendo Strava…'); return CiccConexiones.conectar(sb, 'strava'); }));
+    }
+    await ultimos();
+  }
+
+  async function ultimos() {
+    var r = await sb.from('actividades').select('nombre, tipo, app, inicio, duracion_s, distancia_m, fuente').order('inicio', { ascending: false }).limit(5);
+    var filas = r.data || [];
+    $('ultimos').hidden = !filas.length;
+    var ol = $('lista'); ol.innerHTML = '';
+    filas.forEach(function (a) {
+      var li = document.createElement('li');
+      var nom = document.createElement('span'); nom.className = 'nom'; nom.textContent = a.nombre || TIPOS[a.tipo] || 'Entreno';
+      var cifra = document.createElement('span'); cifra.className = 'cifra';
+      cifra.textContent = a.distancia_m ? (a.distancia_m / 1000).toLocaleString('es-ES', { maximumFractionDigits: 1 }) + ' km' : duracion(a.duracion_s);
+      var det = document.createElement('span'); det.className = 'det';
+      det.textContent = new Date(a.inicio).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + (TIPOS[a.tipo] || a.tipo) + ' · ' + (APPS[a.app] || a.app) + (a.distancia_m && a.duracion_s ? ' · ' + duracion(a.duracion_s) : '');
+      li.append(nom, cifra, det); ol.append(li);
+    });
+  }
+
+  var MENSAJES = { ok: 'Strava conectado. Hemos traído tus entrenos de los últimos 30 días.', cancelado: 'Has cancelado la conexión con Strava.', sin_permiso: 'Para importar tus entrenos, marca «Ver datos de tus actividades» al conectar Strava.', error: 'Strava no ha podido completar la conexión. Vuelve a intentarlo.' };
+
+  CiccCuenta.iniciar({ app: 'Conexiones', icono: '../iconos/ciccapps-192.png', lema: 'Una CiccApp' }).then(async function (r) {
+    sb = r.sb; usuario = r.usuario;
+    var vuelta = CiccConexiones.resultado();
+    if (vuelta && vuelta.proveedor === 'strava') avisar(MENSAJES[vuelta.resultado] || MENSAJES.error, vuelta.resultado !== 'ok');
+    $('salir').onclick = function () { CiccCuenta.salir(); };
+    $('webhook').onclick = async function () {
+      try {
+        var d = await CiccConexiones.llamar(sb, 'strava', { accion: 'webhook' });
+        var ok = !!(d.suscripcion || d.alta);
+        avisar(ok ? 'Avisos automáticos activos: cada entreno nuevo llegará solo.' : 'Strava no ha aceptado el alta de avisos.', !ok);
+      } catch (e) { avisar(e.message, true); }
+    };
+    $('pie').prepend(CiccCuenta.firma('Conexiones', $('pie')));
+    $('pie').append($('salir'));
+    try { await pintar(); } catch (e) { avisar('No se han podido cargar tus conexiones.', true); }
+  });
+})();
+</script>
+<script src="../compartido/actualizar.js?v=3"></script>
+</body>
+</html>
