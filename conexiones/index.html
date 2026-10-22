@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#0F1A17" media="(prefers-color-scheme: dark)">
 <link rel="icon" type="image/png" href="../iconos/favicon-32.png">
 <link rel="apple-touch-icon" href="../iconos/ciccapps-180.png">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=19">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=20">
 <style>
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
@@ -53,8 +53,6 @@ h2 { margin: 0; font-family: var(--cc-display); font-weight: 400; font-size: 22p
 .compatible { margin: 12px 0 0; font-size: 13px; color: var(--cc-tinta-suave); text-align: center; }
 .compatible b { color: #FC5200; font-weight: 700; letter-spacing: .02em; }
 footer { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--cc-linea); text-align: center; }
-footer .derechos { margin: 6px 0 0; font-size: 13px; color: var(--cc-tinta-suave); }
-@media (max-width: 520px) { footer .derechos span { display: block; } footer .derechos .sep { display: none; } }
 footer .salir { border: 0; background: none; color: var(--cc-oro); font: 600 13px var(--cc-sans); cursor: pointer; padding: 6px 8px; }
 </style>
 </head>
@@ -98,12 +96,11 @@ footer .salir { border: 0; background: none; color: var(--cc-oro); font: 600 13p
 
   <footer id="pie">
     <button type="button" class="salir" id="salir">Cerrar sesión</button>
-    <p class="derechos"><span>© 2026 Miguel Pascual Ciccardini</span><span class="sep"> · </span><span>Todos los derechos reservados</span></p>
   </footer>
 </main>
 
 <script src="../compartido/supabase.js"></script>
-<script src="../compartido/cuenta.js?v=19"></script>
+<script src="../compartido/cuenta.js?v=20"></script>
 <script src="../compartido/motor/conexiones.js?v=1"></script>
 <script>
 (function () {
