@@ -190,6 +190,10 @@ button { display: inline-flex; align-items: center; gap: 7px; }
 .wrap:fullscreen .panel:not([hidden]) { bottom: 60px; padding-bottom: 20px; border-bottom-left-radius: 10px; }
 .stepinfo { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 92px; text-align: center; }
 .hint { font-size: 12.5px; color: var(--muted); }
+.copy { margin: 0; font-size: 11px; line-height: 1.45; color: var(--muted); opacity: .8; }
+.wrap:fullscreen .copy { display: none; }
+@media screen and (max-width: 760px) { .panel[hidden] ~ .copy { display: none; } .copy { text-align: center; text-wrap: balance; } }
+@media print { .copy { display: none !important; } }
 
 /* ---------- panel de datos ---------- */
 .panel {
@@ -420,7 +424,7 @@ td.wy { color: var(--pink); }
   .wrap { max-width: min(1240px, max(640px, calc((100dvh - 150px) * 16 / 9))); }
   .cap { font-size: max(.95cqw, 9.5px); }
   .bar, .bar .nav { justify-content: center; }      /* las dos filas de botones, centradas bajo la diapositiva */
-  .hint { text-align: center; }
+  .hint, .copy { text-align: center; text-wrap: balance; }
 }
 @media screen and (pointer: coarse) and (min-width: 761px) and (max-width: 1199px) {
   .bar button { min-height: 44px; }
@@ -569,6 +573,7 @@ td.wy { color: var(--pink); }
       <p class="small" id="tNote"></p>
     </fieldset>
   </form>
+  <p class="copy">© 2026 Miguel Pascual Ciccardini · Todos los derechos reservados. Herramienta de uso exclusivo de su equipo: prohibida su copia, distribución o venta sin autorización.</p>
 </div>
 
 <script>
