@@ -386,16 +386,32 @@ const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&
 // Zoom de cada portada al recortarla en círculo: lo justo para que no asome su marco sin cortar el título
 const ZOOM = { heavy: 1.07, understatement: 1.04, reading: 1.08, amalfi: 1.09, riviera: 1.08, afterdark: 1.07, gentleman: 1.04, sunday: 1.07, slowroll: 1.03, postcards: 1.09, sobremesa: 1.08, openbar: 1.12 };
 const RED = id => "redondas/" + id + ".webp?v=7";   // versiones redondas de las portadas, hechas para el disco
-const HORA = { afterdark: 3, heavy: 6.75, understatement: 8.5, reading: 10.5, sunday: 12.5, amalfi: 14.5, sobremesa: 16.25, slowroll: 18, riviera: 19.75, postcards: 21.25, gentleman: 22.75, openbar: 0.75 };
+// Horas de cada lista en el disco. Cada jornada (de 6:00 a 6:00) tiene su disco: el día según sea laborable o fin de semana,
+// y la noche según lo que venga después (viernes y sábado se trasnocha; el domingo se recoge porque el lunes se madruga)
+const DIAS = {
+  lab: { heavy: 6.75, understatement: 8.5, reading: 10.5, sunday: 12.5, amalfi: 14.5, sobremesa: 16.25, slowroll: 18 },
+  fin: { understatement: 9.5, heavy: 11, sunday: 12.5, amalfi: 14.5, sobremesa: 16, reading: 17.5, slowroll: 19 }
+};
+const NOCHES = {
+  lab: { riviera: 19.75, postcards: 21.25, gentleman: 22.75, openbar: 0.75, afterdark: 3 },
+  fin: { riviera: 20.5, postcards: 22, gentleman: 23.5, openbar: 1.5, afterdark: 4 },
+  dom: { riviera: 20.25, postcards: 21.5, gentleman: 22.75, openbar: 0.75, afterdark: 3 }   // Slow Roll va a las 19:00 y no caben las de laborables
+};
+function disco(d){
+  const j=new Date(d.getTime()-6*3600e3).getDay();   // la madrugada pertenece a la jornada anterior
+  const dia=j===0||j===6?"fin":"lab",noche=j===5||j===6?"fin":j===0?"dom":"lab";
+  return { clave: dia+"-"+noche, hora: { ...DIAS[dia], ...NOCHES[noche] } };
+}
 const fmtH = h => String(Math.floor(h)).padStart(2, "0") + ":" + String(Math.round((h % 1) * 60)).padStart(2, "0");
-// Suena la lista a la que apunta la aguja: la más cercana en el disco a la hora actual
+// Suena la lista a la que apunta la aguja: la más cercana en el disco a la hora actual (de madrugada, solo las de noche)
 function tocaAhora(d){
-  const t=d.getHours()+d.getMinutes()/60;let id,min=99;
-  for(const k in HORA){let dd=Math.abs(t-HORA[k]);dd=Math.min(dd,24-dd);if(dd<min){min=dd;id=k}}
+  const H=disco(d).hora,t=d.getHours()+d.getMinutes()/60;let id,min=99;
+  for(const k in H){if(t<6&&k in DIAS.lab)continue;let dd=Math.abs(t-H[k]);dd=Math.min(dd,24-dd);if(dd<min){min=dd;id=k}}
   return id;
 }
 function pintaPlato(){
   const d=new Date(),id=tocaAhora(d),l=LISTS.find(x=>x.id===id);const dial=document.getElementById("dial");
+  const D=disco(d),HORA=D.hora,antes=dial.dataset.disco&&dial.dataset.disco!==D.clave?{...horasPintadas}:null;
   const ang=h=>h/24*360; // 00:00 arriba, 12:00 abajo, como un reloj de 24 horas
   const pos=(h,r)=>{const a=(ang(h)-90)*Math.PI/180;return `left:${50+r*Math.cos(a)}%;top:${50+r*Math.sin(a)}%`};
   let html="";
@@ -406,13 +422,24 @@ function pintaPlato(){
   html+=`<i class="aguja" style="transform:rotate(${ang(ahora)+180}deg)" aria-hidden="true"></i>`;
   html+=`<div class="etiqueta" aria-hidden="true"><img src="${RED(l.id)}" alt="" onerror="this.onerror=null;this.src='${l.img}';this.style.scale='${ZOOM[l.id]||1.08}'"></div>`;
   html+=`<svg class="brazo" viewBox="0 0 100 220" aria-hidden="true"><defs><linearGradient id="og" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F1E2BD"/><stop offset=".5" stop-color="#D9B878"/><stop offset="1" stop-color="#A9823D"/></linearGradient></defs><circle cx="70" cy="22" r="13" fill="none" stroke="url(#og)" stroke-width="9"/><circle cx="70" cy="22" r="8" fill="#2F5A4D"/><path d="M70 35 L70 150 L34 196" fill="none" stroke="url(#og)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><rect x="18" y="186" width="30" height="18" rx="4" fill="url(#og)" transform="rotate(-38 33 195)"/></svg>`;
-  dial.innerHTML=html;
+  dial.innerHTML=html;dial.dataset.disco=D.clave;horasPintadas=HORA;
+  if(antes&&!matchMedia("(prefers-reduced-motion: reduce)").matches)mueveDisco(antes,HORA,pos);
   const dia=d.toLocaleDateString("es-ES",{weekday:"long"});const hora=d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
   document.getElementById("ahora").innerHTML=`<div class="eb">Ahora suena · ${dia} ${hora}</div><h2>${esc(l.name)}</h2><p>${esc(l.when)}</p><div class="acc"><a href="#${l.id}">Ver ficha</a><a class="pri" href="${SP(l.sp)}" data-play="${l.sp}" target="_blank" rel="noopener">${LOGO_SP}Spotify</a></div>`;
 }
+// Al cambiar de disco, cada portada viaja por el borde del disco hasta su nueva hora
+let horasPintadas={};
+function mueveDisco(de,a,pos){
+  const els=[...document.querySelectorAll("#dial a.pista")],t0=performance.now(),dur=1400;
+  const paso=now=>{const k=Math.min(1,(now-t0)/dur),e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;
+    els.forEach(el=>{const id=el.getAttribute("href").slice(1);let dh=a[id]-de[id];if(dh>12)dh-=24;if(dh<-12)dh+=24;
+      const h=de[id]+dh*e;const [l,t]=pos(h,39).split(";");el.style.left=l.split(":")[1];el.style.top=t.split(":")[1]});
+    if(k<1)requestAnimationFrame(paso)};
+  paso(t0);
+}
 pintaPlato();
 setInterval(()=>{const d=new Date();const ag=document.querySelector(".aguja");const ya=document.querySelector(".pista.ya");
-  if(ya&&ya.getAttribute("href")==="#"+tocaAhora(d)&&ag){ag.style.transform=`rotate(${(d.getHours()+d.getMinutes()/60)/24*360+180}deg)`;
+  if(ya&&ya.getAttribute("href")==="#"+tocaAhora(d)&&ag&&document.getElementById("dial").dataset.disco===disco(d).clave){ag.style.transform=`rotate(${(d.getHours()+d.getMinutes()/60)/24*360+180}deg)`;
     const eb=document.querySelector(".suena .eb");if(eb)eb.textContent="Ahora suena · "+d.toLocaleDateString("es-ES",{weekday:"long"})+" "+d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})}
   else pintaPlato()},60000);
 // shelf ordered by energy
