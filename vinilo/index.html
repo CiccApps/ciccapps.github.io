@@ -147,7 +147,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .suena .acc{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .suena a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;font:700 14px var(--body);text-decoration:none;border:1px solid rgba(217,184,120,.55);color:#F1E6CF}
 .suena a.pri{background:#D9B878;border-color:#D9B878;color:#0F1528}
-.dial-wrap{display:grid;justify-items:center;gap:26px;position:relative;padding-top:10px}
+.dial-wrap{display:grid;justify-items:center;gap:36px;position:relative;padding-top:10px}
 .dial{--d:min(calc(100% - 36px),330px);width:var(--d);aspect-ratio:1;position:relative;border-radius:50%;
   background:radial-gradient(circle,#0a0a0d 0 17%,transparent 17.4%),repeating-radial-gradient(circle,#15151b 0 2px,#1d1d25 2px 4px);box-shadow:0 0 0 2px rgba(217,184,120,.85),0 0 0 9px #0b0f1e,0 0 0 10px rgba(217,184,120,.35),0 14px 30px rgba(0,0,0,.45)}
 .dial::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 210deg,transparent 0 40deg,rgba(255,255,255,.07) 55deg,transparent 80deg,transparent 220deg,rgba(255,255,255,.05) 240deg,transparent 260deg);pointer-events:none}
@@ -177,7 +177,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
   .plato .kicker{order:3;margin:2px 0 0}
   .dial-wrap{order:4;margin:22px 0 4px;gap:0;padding-top:0;width:100%}
   .dial{--d:min(calc(100% - 64px),270px)}
-  .dial-pie{order:6;margin:14px 0 0}
+  .dial-pie{order:6;margin:28px 0 0}
   .suena{order:5;margin-top:20px;justify-items:center;gap:4px}
   .suena .acc{justify-content:center;margin-top:12px}
   .suena p{max-width:30ch}
@@ -388,10 +388,11 @@ const ZOOM = { heavy: 1.07, understatement: 1.04, reading: 1.08, amalfi: 1.09, r
 const RED = id => "redondas/" + id + ".webp?v=7";   // versiones redondas de las portadas, hechas para el disco
 const HORA = { afterdark: 3, heavy: 6.75, understatement: 8.5, reading: 10.5, sunday: 12.5, amalfi: 14.5, sobremesa: 16.25, slowroll: 18, riviera: 19.75, postcards: 21.25, gentleman: 22.75, openbar: 0.75 };
 const fmtH = h => String(Math.floor(h)).padStart(2, "0") + ":" + String(Math.round((h % 1) * 60)).padStart(2, "0");
+// Suena la lista a la que apunta la aguja: la más cercana en el disco a la hora actual
 function tocaAhora(d){
-  const h=d.getHours(),fin=d.getDay()===0||d.getDay()===6;
-  if(h<6)return "afterdark";if(h<10)return fin?"sunday":"understatement";if(h<14)return fin?"sunday":"reading";
-  if(h<16)return "sobremesa";if(h<19)return fin?"amalfi":"reading";if(h<21)return "riviera";return "gentleman";
+  const t=d.getHours()+d.getMinutes()/60;let id,min=99;
+  for(const k in HORA){let dd=Math.abs(t-HORA[k]);dd=Math.min(dd,24-dd);if(dd<min){min=dd;id=k}}
+  return id;
 }
 function pintaPlato(){
   const d=new Date(),id=tocaAhora(d),l=LISTS.find(x=>x.id===id);const dial=document.getElementById("dial");
