@@ -423,7 +423,7 @@ function vistaPlan(){
   const creado=new Date(PLAN.creado);
   const cat=CAT?CAT.filter(c=>c.kcal&&c.kcal>=200&&c.kcal<=1100&&c.disponible):[];
   const filtro=window.__fCat||"wetaca";
-  const catHTML=cat.filter(c=>c.fuente===filtro).sort((a,b)=>b.proteinas-a.proteinas).map(c=>`<div class="cat"><span class="n">${esc(c.nombre)}</span><span class="m">${c.kcal} kcal · P${Math.round(c.proteinas)} H${Math.round(c.hidratos)} G${Math.round(c.grasas)}${c.precio?" · "+Number(c.precio).toLocaleString("es-ES",{style:"currency",currency:"EUR"}):""}</span>${c.url?`<a class="btn" href="${esc(c.url)}" target="_blank" rel="noopener" style="min-height:36px">Pedir</a>`:""}</div>`).join("");
+  const catHTML=cat.filter(c=>c.fuente===filtro).sort((a,b)=>b.proteinas-a.proteinas).map(c=>`<div class="cat"><span class="n">${esc(c.nombre)}</span><span class="m">${c.kcal} kcal · P${Math.round(c.proteinas)} H${Math.round(c.hidratos)} G${Math.round(c.grasas)}${c.precio?' <span style="white-space:nowrap">· '+Number(c.precio).toLocaleString("es-ES",{style:"currency",currency:"EUR"})+"</span>":""}</span>${c.url?`<a class="btn" href="${esc(c.url)}" target="_blank" rel="noopener" style="min-height:36px">Pedir</a>`:""}</div>`).join("");
   const act=CAT&&CAT.length?new Date(Math.max(...CAT.map(c=>+new Date(c.visto)))):null;
   return `<div class="pila g24" style="max-width:760px;width:100%;margin:0 auto">
 <div class="pila g8"><span class="ojo">Mi plan</span><h2 class="tit">${PLAN.origen==="nutricionista"?"La dieta de tu nutricionista":"Tu dieta, hecha a medida"}</h2><p class="p suave">Desde el ${creado.getDate()} de ${MESES[creado.getMonth()]}. ${esc(o.explicacion||"")}</p></div>
@@ -434,6 +434,8 @@ ${PLAN.notas?`<div class="aviso">${esc(PLAN.notas)}</div>`:""}
 <section class="pila"><div class="pila g8"><span class="ojo">Platos preparados</span><h2 class="tit" style="font-size:24px;line-height:29px">Wetaca y Knoweats</h2><p class="p suave">Sus cartas con kilocalorías y macros por ración, para pedir cuando no te apetezca cocinar. Se actualizan solas${act?"; la última vez, el "+act.getDate()+" de "+MESES[act.getMonth()]:""}.</p></div>
 <div class="fila2"><button class="chip" data-fcat="wetaca" aria-pressed="${filtro==="wetaca"}">Wetaca</button><button class="chip" data-fcat="knoweats" aria-pressed="${filtro==="knoweats"}">Knoweats</button></div>
 <div class="carta">${CAT?catHTML||'<p class="p suave" style="padding:12px 16px">Aún no hay platos en este catálogo.</p>':'<p class="p suave" style="padding:12px 16px">Cargando el catálogo…</p>'}</div></section>
+<section class="pila g8"><span class="ojo">Tus datos</span><p class="p suave" style="text-wrap:pretty">Tus respuestas, tu peso, tus alergias, tu plan y lo que marcas cada día solo los ves tú. Puedes borrarlos cuando quieras y empezar de cero.</p>
+<div class="fila2"><a class="btn grande" href="../privacidad/#alacena">Privacidad</a><button class="btn grande" data-acc="borrar">Borrar datos</button></div></section>
 </div>`;
 }
 
@@ -470,7 +472,20 @@ function enlaza(){
     if(a==="importar")abreCuestionario("importar");
     if(a==="copiar")copiaLista();
     if(a==="reiniciar"){COMPRA.marcados=[];guardaCompra();pinta()}
+    if(a==="borrar")borraDatos();
   });
+}
+
+// borra todo lo de Alacena de esta cuenta (cada tabla solo deja tocar las filas propias)
+async function borraDatos(){
+  if(!confirm("¿Borrar todos tus datos de Alacena? Se borran tus respuestas, tus planes, las recetas guardadas, la compra y lo que has marcado. No se puede deshacer."))return;
+  for(const t of["alacena_recetas","alacena_registro","alacena_compra","alacena_planes","alacena_perfil"]){
+    const r=await sb.from(t).delete().not("user_id","is",null);
+    if(r.error){toast("No se han podido borrar. Revisa la conexión y vuelve a probar.");return}
+  }
+  try{localStorage.removeItem("alacena-cat")}catch(_){}
+  PERFIL=null;PLAN=null;REG={};RECETAS={};COMPRA={marcados:[],extra:[]};VISTA="hoy";
+  pinta();window.scrollTo(0,0);toast("Tus datos de Alacena se han borrado");
 }
 
 async function marcar(clave,estado){
