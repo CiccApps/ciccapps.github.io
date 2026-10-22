@@ -357,11 +357,11 @@ td.wy { color: var(--pink); }
   #bxFlat .cap::after { content: "ahorrando al 0%"; font-size: var(--capfs, 10.5px); }
   .tablewrap { flex: 1 1 0; min-height: 0; overflow: hidden; }
   table { min-width: 0; }
-  col.c-yr { width: 23%; } col.c-cc { width: 22%; } col.c-ic { width: 55%; }
-  .ret col.c-yr { width: 21%; } .ret col.c-cc { width: 18%; } .ret col.c-ic { width: 29%; } .ret col.c-wr { width: 32%; }
+  col.c-yr { width: 24%; } col.c-cc { width: 22%; } col.c-ic { width: 54%; }
+  .ret col.c-yr { width: 24%; } .ret col.c-cc { width: 16%; } .ret col.c-ic { width: 35%; } .ret col.c-wr { width: 25%; }
   #tbl thead tr { height: var(--theadpx, 50px); }
   #tbl tbody tr { height: var(--rowpx, 32px); }
-  #tbl th { white-space: normal; font-size: var(--thfs, 11px); line-height: 1.15; padding: 2px 3px; }
+  #tbl th { white-space: normal; font-size: var(--thfs, 11px); line-height: 1.2; padding: 4px 4px; }
   #tbl.cc #h_cc { font-size: 0; } #tbl.cc #h_cc::after { content: "CUENTA"; font-size: var(--thfs, 11px); }   /* «cuenta corriente» si no cabe */
   th .nw { white-space: nowrap; }
   #tbl th:first-child { white-space: nowrap; }
@@ -857,20 +857,20 @@ td.wy { color: var(--pink); }
     document.querySelector('.boxes').style.setProperty('--capfs', capfs.toFixed(2) + 'px');
     // columnas (las mismas proporciones que en el CSS de móvil) y anchos útiles
     const W = tbl.clientWidth, inner = p => W * p - 7;
-    const hasR = hasRet(), NR = [.23, .22, .55], RT = [.21, .18, .29, .32];
+    const hasR = hasRet(), NR = [.24, .22, .54], RT = [.24, .16, .35, .25];
     const hf = fam(tbl.querySelector('th') || tbl), df = fam(tbl.querySelector('td') || tbl), yf = df;
     // cabecera: como mucho dos líneas y el mismo tamaño en todas las celdas
     const lay = hasR ? [NR, RT] : [NR];
-    let thfs = 12.5;
+    let thfs = 13;
     lay.forEach(L => {
-      thfs = Math.min(thfs, (inner(L[0]) - 2) / tw1(Math.max(...scs.map(sc => grp(sc.monthly).length)) > 3 ? '0.000 € / MES' : '000 € / MES', 900, hf));   // «100 € / MES» siempre en una línea
+      thfs = Math.min(thfs, (inner(L[0]) - 6) / tw1(Math.max(...scs.map(sc => grp(sc.monthly).length)) > 3 ? '0.000 € / MES' : '000 € / MES', 900, hf));   // «100 € / MES» siempre en una línea
       thfs = Math.min(thfs, inner(L[2]) / (L === RT ? tw1('COMPUESTO %', 900, hf) + String(S.rate).length * tw1('0', 900, hf) + .6 : tw1('INTERÉS COMPUESTO', 900, hf)));
-      if (L === RT) thfs = Math.min(thfs, inner(L[3]) / tw1('RETIRADAS', 900, hf));
+      if (L === RT) thfs = Math.min(thfs, inner(L[3]) / tw1('RETIRADAS', 900, hf));   // «CON / RETIRADAS» puede ir en dos líneas
     });
-    thfs = Math.max(8.5, thfs);
+    thfs = Math.max(9, thfs);
     const ccShort = lay.some(L => inner(L[1]) / tw1('CORRIENTE', 900, hf) < thfs);
     tbl.classList.toggle('cc', ccShort);   // si «corriente» no cabe, la columna dice solo «CUENTA»
-    const head = Math.ceil(2 * 1.15 * thfs + 6);
+    const head = Math.ceil(2 * 1.2 * thfs + 16);   // cabecera con aire: dos líneas cómodas
     tbl.style.setProperty('--thfs', thfs.toFixed(2) + 'px');
     tbl.style.setProperty('--theadpx', head + 'px');
     // si ni así cabe (pantallas muy bajas), la tarjeta crece lo justo: la página se desplaza un poco, pero nunca salta entre pasos
