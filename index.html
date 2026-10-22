@@ -26,7 +26,7 @@ header img { width: auto; height: 132px; max-width: 82%; }
 header .osc { display: none; }
 @media (prefers-color-scheme: dark) { header .cla { display: none; } header .osc { display: block; } }
 header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-style: italic; font-size: 19px; color: var(--cc-oro); }
-.apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.apps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .app { display: flex; flex-direction: column; gap: 12px; padding: 28px 18px 18px; background: var(--cc-fondo-alto); border: 1px solid var(--cc-linea); border-radius: 10px; text-decoration: none; color: inherit; transition: border-color .15s, transform .15s; min-width: 0; }
 .app:hover { border-color: var(--cc-oro); transform: translateY(-2px); }
 .app:focus-visible { outline: 2px solid var(--cc-oro); outline-offset: 2px; }
@@ -94,7 +94,7 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 
   <main class="apps">
     <a class="app a-bit" href="bitacora/"><span class="ico"><img src="iconos/bitacora-192.png?v=5" alt=""></span><h2>Bitácora</h2><p>Tu plan de lectura, los libros que te faltan y tu ritmo.</p><small>¿Qué leo ahora?</small></a>
-    <a class="app a-pla" href="platea/"><span class="ico"><img src="iconos/platea-192.png?v=5" alt=""></span><h2>Platea</h2><p>Tu diario de cine y series, con watchlist y cartelera.</p><small>¿Qué veo ahora?</small></a>
+    <a class="app a-pla" href="platea/"><span class="ico"><img src="iconos/platea-192.png?v=5" alt=""></span><h2>Platea</h2><p>Tu diario de cine y series, con watchlist y cartelera semanal.</p><small>¿Qué veo ahora?</small></a>
     <a class="app a-vin" href="vinilo/"><span class="ico"><img src="iconos/vinilo-192.png?v=5" alt=""></span><h2>Vinilo</h2><p>Música para cada hora del día, con tus listas de Spotify.</p><small>¿Qué escucho ahora?</small></a>
     <a class="app a-ic" href="interes-compuesto/"><span class="ico"><img src="iconos/interes-compuesto-192.png?v=5" alt=""></span><h2>Interés compuesto</h2><p>La simulación de ahorro para enseñar en tus reuniones.</p><small>¿Y si empiezas hoy?</small></a>
   </main>
