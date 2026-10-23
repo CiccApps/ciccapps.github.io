@@ -324,7 +324,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
   </section>
 
   <section class="mis" id="mis" aria-labelledby="mis-h">
-    <div><div class="eyebrow" id="misCount">Biblioteca</div><h2 id="mis-h">Tus listas</h2><p class="sub">Las que te crea la IA y, si conectas Spotify, las tuyas de siempre.</p></div>
+    <div><div class="eyebrow" id="misCount">Listas</div><h2 id="mis-h">Tu biblioteca</h2><p class="sub">Las que te crea la IA y, si conectas Spotify, las tuyas de siempre.</p></div>
     <div class="sp-con" id="spCon" hidden></div>
     <section class="mes-sp" id="mesSp" hidden aria-labelledby="mesSpH"></section>
     <div class="sp-grid" id="spGrid" hidden></div>
@@ -574,7 +574,7 @@ TAGS.forEach(([key, label]) => {
     if(r.ok){const j=await r.json();SPOT.guarda({access:j.access_token,refresh:j.refresh_token,exp:Date.now()+j.expires_in*1000,scope:j.scope||""})}
   }
   let misSp=[];
-  function pintaCuenta(){const n=favs.length+misSp.length;$("misCount").textContent=n?`Biblioteca · ${n}`:"Biblioteca"}
+  function pintaCuenta(){const n=favs.length+misSp.length;$("misCount").textContent=n?`Listas · ${n}`:"Listas"}
   function pintaCon(msg){
     const c=$("spCon");if(!SPOTIFY_ID){c.hidden=true;return}c.hidden=false;
     if(SPOT.ok()&&!(SPOT.t.scope||"").includes("user-modify-playback-state")&&!msg){c.innerHTML=`<p>Vuelve a conectar Spotify para que el botón ▶ haga sonar las listas directamente.</p><button class="sp-btn" id="spIn" type="button">Reconectar</button>`;$("spIn").onclick=conectar;return}
