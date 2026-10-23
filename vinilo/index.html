@@ -133,12 +133,22 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .fav summary b { font-family: var(--display); font-weight: 400; font-size: 1.15rem; line-height: 1.2; }
 .fav summary span { font-size: 13px; color: var(--muted); }
 .fav .ia-list { padding: 0 12px 12px; }
-.fav .borrar { margin: 0 12px 12px; border: 0; background: none; color: var(--muted); font: 600 13px var(--body); cursor: pointer; padding: 4px; }
+.fav-acc { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 0 12px 12px; }
+.fav-acc.dos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.fav-acc button { padding: 10px 8px; font-size: 13.5px; }
+.fav-acc .ia-go { font-size: 13.5px; padding: 10px 8px; }
+.fav-info { margin: -4px 16px 12px; font-size: 13.5px; color: var(--muted); }
+.fav-ed { display: grid; gap: 6px; margin: 0 12px 12px; font-size: 13px; color: var(--muted); }
+.fav-ed input { font: inherit; font-size: 16px; color: var(--ink); padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); width: 100%; }
+.fav-ed input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.ia-list .quita { appearance: none; border: 1px solid var(--line); background: transparent; color: var(--muted); border-radius: 999px; width: 32px; height: 32px; font-size: 14px; cursor: pointer; }
+.ia-list .quita:hover { color: var(--ink); border-color: var(--accent); }
+.ia-mas[disabled], .fav-acc button[disabled] { opacity: .6; }
 @media (min-width: 900px) { .fav-list { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
 .salir-wrap { margin: -16px 0 0; text-align: center; }
 .salir { border: 0; background: none; color: var(--muted); font: 600 13px var(--body); cursor: pointer; padding: 6px; }
 .ia-sec { appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 10px 12px; font: 600 14px var(--body); cursor: pointer; }
-@media (min-width: 900px) { .ia-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .ia-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fav .ia-list { grid-template-columns: 1fr; } }
 
 /* ===== Plato: la cabecera es un tocadiscos. El disco es un reloj de 24 horas con cada lista en su hora; en el centro gira la que toca ahora ===== */
 .plato{position:relative;display:grid;gap:22px;max-width:none;background:radial-gradient(130% 120% at 22% 8%,#2B3A5E,#1A2440 55%,#0D1324);color:#F1E6CF;border-radius:12px;padding:26px 22px 22px;box-shadow:0 1px 2px rgba(13,19,36,.3),0 12px 30px rgba(13,19,36,.28);overflow:hidden}
@@ -323,13 +333,14 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
     <div>
       <div class="eyebrow">Con IA</div>
       <h2 id="ia-h">Créame una playlist</h2>
-      <p class="sub">Cuéntame el momento o lo que te apetece y te propongo veinte canciones seguidas. Cada una se abre en Spotify.</p>
+      <p class="sub">Cuéntame el momento o lo que te apetece y te propongo treinta canciones seguidas. Cada una se abre en Spotify.</p>
     </div>
     <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: domingo por la mañana, jazz suave y algo de bossa nova"></textarea>
     <button class="ia-go" id="iaGo" type="button">Créame una playlist</button>
     <p class="sub" id="iaInfo" aria-live="polite"></p>
     <div class="ia-cab" id="iaCab" hidden></div>
     <ol class="ia-list" id="iaList"></ol>
+    <button class="ia-sec ia-mas" id="iaMas" type="button" hidden>Ampliar · +30 canciones</button>
     <div class="ia-acc" id="iaAcc" hidden><button class="ia-sp" id="iaSp" type="button" hidden>Guardar en Spotify</button><button class="ia-sec" id="iaFav" type="button">Guardar en tu biblioteca</button><button class="ia-sec" id="iaCopy" type="button">Copiar la lista</button></div>
   </section>
 
@@ -339,7 +350,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
     <section class="mes-sp" id="mesSp" hidden aria-labelledby="mesSpH"></section>
     <div class="sp-h" id="spH" hidden></div>
     <div class="sp-grid" id="spGrid" hidden></div>
-    <div class="favs" id="favs" hidden><div class="sp-h"><div class="eyebrow">Con IA</div><h3>Las que te ha creado la IA</h3></div><div class="fav-list" id="favList"></div></div>
+    <div class="favs" id="favs" hidden><div class="sp-h"><div class="eyebrow">Con IA</div><h3>Prensadas para ti</h3></div><div class="fav-list" id="favList"></div></div>
   </section>
 
   <footer>Si una lista no te encaja en un momento, prueba la de al lado en la escala de energía: suelen funcionar como plan B.</footer>
@@ -524,7 +535,7 @@ TAGS.forEach(([key, label]) => {
   const DISP='"DM Serif Display",Georgia,serif';
   const TEMA={oscuro:{fondo:"#0F1528","fondo-alto":"#172038",hundido:"#1C2742",linea:"#283454","linea-fuerte":"#46557A",tinta:"#efe6d6","tinta-suave":"#A9AEC0",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#0F1528","display-app":DISP,"color-scheme":"dark"},
     claro:{fondo:"#F4EEE2","fondo-alto":"#FBF8F1",hundido:"#ECE4D3",linea:"#E1D8C6","linea-fuerte":"#A9A08C",tinta:"#172038","tinta-suave":"#5B6378",oro:"#8A6A2B",primario:"#172038","sobre-primario":"#F4EEE2","display-app":DISP,"color-scheme":"light"}};
-  let sb=null,res=[],meta=null,busy=false;const $=id=>document.getElementById(id);
+  let sb=null,res=[],meta=null,busy=false,ampliando=false,spId=null,favId=null;const $=id=>document.getElementById(id);
   const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=6",lema:"¿Qué escucho ahora?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs();ordenaSp()});
   // Portada de una lista creada con la IA, al estilo de la selección: papel azul noche, doble marco dorado,
@@ -601,7 +612,8 @@ TAGS.forEach(([key, label]) => {
       portadaIA(meta,320).then(c=>{const i=$("iaPort");if(i)i.src=c.toDataURL("image/jpeg",.9)})}
     $("iaGo").disabled=busy;$("iaGo").textContent=busy?"Pensando…":"Créame una playlist";
     $("iaList").innerHTML=res.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}${c.por_que?` — ${esc(c.por_que)}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("");
-    $("iaAcc").hidden=!res.length;$("iaFav").textContent="Guardar en tu biblioteca";$("iaSp").hidden=!SPOT.ok();$("iaSp").textContent="Guardar en Spotify";$("iaAcc").classList.toggle("tres",SPOT.ok());$("iaCopy").textContent="Copiar la lista";
+    $("iaAcc").hidden=!res.length;$("iaFav").textContent=favId?"Guardada en tu biblioteca ✓":"Guardar en tu biblioteca";$("iaSp").hidden=!SPOT.ok();$("iaSp").textContent=spId?"En tu Spotify ✓":"Guardar en Spotify";$("iaAcc").classList.toggle("tres",SPOT.ok());$("iaCopy").textContent="Copiar la lista";
+    $("iaMas").hidden=!res.length;$("iaMas").disabled=busy||ampliando;
   }
   $("iaGo").onclick=async()=>{
     const t=$("iaTxt").value.trim();if(t.length<3){$("iaInfo").textContent="Cuéntame qué te apetece.";return}
@@ -609,20 +621,70 @@ TAGS.forEach(([key, label]) => {
     busy=true;$("iaInfo").textContent="";pinta();
     try{const r=await sb.functions.invoke("ia-lista",{body:{tipo:"musica",peticion:t}});
       if(r.error){let m="La IA no ha podido responder. Prueba en un rato.";try{const j=await r.error.context.json();if(j&&j.mensaje)m=j.mensaje}catch(_){}$("iaInfo").textContent=m}
-      else{res=r.data.items||[];meta=r.data.lista&&r.data.lista.nombre?{...r.data.lista,vol:r.data.usados}:null;const q=r.data.limite-r.data.usados;$("iaInfo").textContent=q>0?`Te quedan ${q} ${q===1?"lista":"listas"} este mes.`:"Era tu última lista de este mes."}
+      else{res=r.data.items||[];meta=r.data.lista&&r.data.lista.nombre?{...r.data.lista,vol:r.data.usados}:null;spId=favId=null;$("iaInfo").textContent=quedan(r.data.limite-r.data.usados)}
     }catch(e){$("iaInfo").textContent="No se pudo conectar con la IA."}
     busy=false;pinta();
   };
-  // Favoritas
-  let favs=[];
+  const quedan=q=>q>0?`Te quedan ${q} ${q===1?"uso":"usos"} de la IA este mes.`:"Era tu último uso de la IA este mes.";
+  // La lista que se está viendo, con la forma de una fila de «playlists»
+  const actual=()=>({titulo:nombreLista(),descripcion:meta&&meta.descripcion||null,detalles:{...(meta?{generos:meta.generos,etiqueta:meta.etiqueta,vol:meta.vol}:{}),...(spId?{sp:spId}:{})},canciones:res});
+  // Ampliar: otras 30 canciones en la misma línea, sin repetir (1 uso)
+  async function pideAmpliar(L,pet){const d=L.detalles||{};
+    const r=await sb.functions.invoke("ia-lista",{body:{tipo:"musica",peticion:String(pet||L.descripcion||L.titulo||"Mi playlist").slice(0,400),ampliar:{nombre:L.titulo,descripcion:L.descripcion||"",generos:d.generos||"",canciones:L.canciones.map(c=>c.titulo+" — "+c.artista)}}});
+    if(r.error){let m="La IA no ha podido responder. Prueba en un rato.";try{const j=await r.error.context.json();if(j&&j.mensaje)m=j.mensaje}catch(_){}throw new Error(m)}
+    const ya=new Set(L.canciones.map(c=>(c.titulo+"|"+c.artista).toLowerCase()));
+    return {items:(r.data.items||[]).filter(c=>!ya.has((c.titulo+"|"+c.artista).toLowerCase())),q:r.data.limite-r.data.usados}}
+  $("iaMas").onclick=async()=>{if(!res.length||!sb||busy||ampliando)return;ampliando=true;pinta();$("iaMas").textContent="Ampliando…";
+    try{const r=await pideAmpliar(actual(),$("iaTxt").value.trim());res=res.concat(r.items);$("iaInfo").textContent=`Añadidas ${r.items.length} canciones. `+quedan(r.q);
+      if(favId)await sb.from("playlists").update({canciones:res}).eq("id",favId);
+      if(spId&&SPOT.ok())try{await aSpotify(actual())}catch(_){}
+      if(favId)cargarFavs();
+    }catch(e){$("iaInfo").textContent=e.message||"No se pudo ampliar."}
+    ampliando=false;pinta();$("iaMas").textContent="Ampliar · +30 canciones"};
+  // Prensadas para ti: las listas de la IA guardadas. Se pueden ampliar, editar (nombre y canciones) y llevar a Spotify
+  let favs=[],abiertas=new Set(),edit=null,avisos={};
   async function cargarFavs(){if(!sb)return;const r=await sb.from("playlists").select("*").order("creado",{ascending:false});favs=r.data||[];pintaFavs()}
   function lista(cs){return cs.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("")}
-  function pintaFavs(){$("favs").hidden=!favs.length;pintaCuenta();$("favList").innerHTML=favs.map((f,i)=>`<details class="fav"><summary><img class="fav-img" data-port="${i}" alt=""><b>${esc(f.titulo)}</b><span>${(f.canciones||[]).length} ${(f.canciones||[]).length===1?"canción":"canciones"}</span></summary>${f.descripcion?`<p class="fav-d">${esc(f.descripcion)}</p>`:""}<ol class="ia-list">${lista(f.canciones||[])}</ol><button class="borrar" data-borrar="${f.id}" type="button">Quitar de tu biblioteca</button></details>`).join("");
+  function pintaFavs(){$("favs").hidden=!favs.length;pintaCuenta();$("favList").innerHTML=favs.map((f,i)=>{
+      const ed=edit&&edit.id===f.id,cs=ed?edit.canciones:(f.canciones||[]),sp=(f.detalles||{}).sp,n=cs.length;
+      const acc=ed?`<button class="ia-sec" data-cancela type="button">Cancelar</button><button class="ia-go" data-guarda="${i}" type="button">Guardar cambios</button>`
+        :`<button class="ia-sec" data-ampliar="${i}" type="button">Ampliar +30</button><button class="ia-sec" data-editar="${i}" type="button">Editar</button>${SPOT.ok()?`<button class="ia-sec" data-sp="${i}" type="button">${sp?"Abrir en Spotify":"Guardar en Spotify"}</button>`:""}<button class="ia-sec" data-borrar="${f.id}" type="button">Quitar</button>`;
+      return `<details class="fav" data-id="${f.id}"${abiertas.has(f.id)?" open":""}><summary><img class="fav-img" data-port="${i}" alt=""><b>${esc(f.titulo)}</b><span>${n} ${n===1?"canción":"canciones"}</span></summary>`
+        +(ed?`<label class="fav-ed"><span>Nombre de la lista</span><input id="edTit" maxlength="60" value="${esc(edit.titulo)}"></label>`:f.descripcion?`<p class="fav-d">${esc(f.descripcion)}</p>`:"")
+        +`<ol class="ia-list">${ed?cs.map((c,j)=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}</span></div><button class="quita" data-quita="${j}" type="button" aria-label="Quitar ${esc(c.titulo)}">✕</button></li>`).join(""):lista(cs)}</ol>`
+        +`<div class="fav-acc${ed||SPOT.ok()?" dos":""}">${acc}</div>${avisos[f.id]?`<p class="fav-info" aria-live="polite">${esc(avisos[f.id])}</p>`:""}</details>`}).join("");
     document.querySelectorAll("#favList [data-port]").forEach(im=>{const f=favs[im.dataset.port],d=f.detalles||{};portadaIA({nombre:f.titulo,generos:d.generos||"",etiqueta:d.etiqueta||"",vol:d.vol||""},160).then(c=>{im.src=c.toDataURL("image/jpeg",.9)})})}
-  $("favList").onclick=async e=>{const b=e.target.closest("[data-borrar]");if(!b)return;if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="Toca otra vez para quitarla";return}
-    await sb.from("playlists").delete().eq("id",b.dataset.borrar);cargarFavs()};
-  $("iaFav").onclick=async()=>{if(!res.length||!sb)return;
-    const r=await sb.from("playlists").insert({titulo:nombreLista(),descripcion:meta&&meta.descripcion||null,detalles:meta?{generos:meta.generos,etiqueta:meta.etiqueta,vol:meta.vol}:{},canciones:res});$("iaFav").textContent=r.error?"No se pudo guardar":"Guardada en tu biblioteca ✓";if(!r.error)cargarFavs()};
+  $("favList").addEventListener("toggle",e=>{const d=e.target.closest&&e.target.closest("details[data-id]");if(!d)return;d.open?abiertas.add(+d.dataset.id||d.dataset.id):abiertas.delete(+d.dataset.id||d.dataset.id)},true);
+  $("favList").addEventListener("input",e=>{if(e.target.id==="edTit"&&edit)edit.titulo=e.target.value});
+  $("favList").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
+    const f=favs[b.dataset.ampliar??b.dataset.editar??b.dataset.sp??b.dataset.guarda];const aviso=(id,t)=>{avisos[id]=t;pintaFavs()};
+    if(b.dataset.borrar){if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="¿Seguro?";return}
+      await sb.from("playlists").delete().eq("id",b.dataset.borrar);cargarFavs();return}
+    if(b.dataset.quita!=null){edit.canciones.splice(+b.dataset.quita,1);pintaFavs();return}
+    if(b.hasAttribute("data-cancela")){edit=null;pintaFavs();return}
+    if(b.dataset.editar){edit={id:f.id,titulo:f.titulo,canciones:(f.canciones||[]).slice()};delete avisos[f.id];pintaFavs();return}
+    if(b.dataset.guarda){const t=edit.titulo.replace(/\s+/g," ").trim()||f.titulo;if(!edit.canciones.length){aviso(f.id,"Deja al menos una canción.");return}
+      b.disabled=true;b.textContent="Guardando…";const nueva={...f,titulo:t,canciones:edit.canciones};
+      const r=await sb.from("playlists").update({titulo:t,canciones:edit.canciones}).eq("id",f.id);
+      if(r.error){aviso(f.id,"No se han podido guardar los cambios.");return}
+      edit=null;avisos[f.id]="Cambios guardados.";
+      if(nueva.detalles&&nueva.detalles.sp&&SPOT.ok())try{await aSpotify(nueva);avisos[f.id]="Cambios guardados, también en Spotify."}catch(_){avisos[f.id]="Cambios guardados. En Spotify no se han podido aplicar."}
+      cargarFavs();return}
+    if(b.dataset.ampliar){b.disabled=true;b.textContent="Ampliando…";
+      try{const r=await pideAmpliar(f);const cs=(f.canciones||[]).concat(r.items);await sb.from("playlists").update({canciones:cs}).eq("id",f.id);
+        avisos[f.id]=`Añadidas ${r.items.length} canciones. `+quedan(r.q);
+        if((f.detalles||{}).sp&&SPOT.ok())try{await aSpotify({...f,canciones:cs})}catch(_){}
+      }catch(err){avisos[f.id]=err.message||"No se pudo ampliar."}
+      cargarFavs();return}
+    if(b.dataset.sp){const d=f.detalles||{};if(d.sp){window.open(SP(d.sp),"_blank");return}
+      b.disabled=true;b.textContent="Buscando…";
+      try{const L={...f,canciones:(f.canciones||[]).slice()};const r=await aSpotify(L);
+        await sb.from("playlists").update({detalles:{...d,sp:r.id},canciones:L.canciones}).eq("id",f.id);avisos[f.id]=`En tu Spotify ✓ (${r.n} canciones)`;cargarSpotify()}
+      catch(_){avisos[f.id]="No se pudo guardar en Spotify."}
+      cargarFavs();return}
+  };
+  $("iaFav").onclick=async()=>{if(!res.length||!sb||favId)return;
+    const r=await sb.from("playlists").insert(actual()).select("id").single();$("iaFav").textContent=r.error?"No se pudo guardar":"Guardada en tu biblioteca ✓";if(!r.error){favId=r.data.id;cargarFavs()}};
   $("iaCopy").onclick=async()=>{try{await navigator.clipboard.writeText((meta?`${meta.nombre}\n${meta.descripcion}\n\n`:"")+res.map((c,i)=>`${i+1}. ${c.titulo} — ${c.artista}`).join("\n"));$("iaCopy").textContent="Copiada"}catch(e){$("iaCopy").textContent="No se pudo copiar"}};
   $("iaSalir").onclick=()=>CiccCuenta.salir();
 
@@ -640,7 +702,7 @@ TAGS.forEach(([key, label]) => {
       if(!r.ok){this.guarda(null);return null}const j=await r.json();this.guarda({access:j.access_token,refresh:j.refresh_token||this.t.refresh,exp:Date.now()+j.expires_in*1000,scope:j.scope||this.t.scope||""});return this.t.access},
     async api(path,opt={}){const tk=await this.token();if(!tk)throw new Error("sin_sesion");
       const r=await fetch("https://api.spotify.com/v1"+path,Object.assign({},opt,{headers:Object.assign({Authorization:"Bearer "+tk},opt.body?{"Content-Type":"application/json"}:{})}));
-      if(r.status===204)return null;if(!r.ok){const e=new Error("spotify "+r.status);e.status=r.status;throw e}return r.json()}
+      if(r.status===204)return null;if(!r.ok){const e=new Error("spotify "+r.status);e.status=r.status;throw e}const t=await r.text();return t?JSON.parse(t):null}
   };
   const b64url=buf=>btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
   async function conectar(){
@@ -703,16 +765,23 @@ TAGS.forEach(([key, label]) => {
       $("mesSp").hidden=false;
     }catch(e){/* Spotify puede no ofrecer este dato en modo desarrollo: no se enseña */}
   }
+  // De canciones a URIs de Spotify (solo busca las que aún no lo tienen; se guarda en cada canción)
+  async function conUris(cs){for(const c of cs){if(c.uri)continue;try{const q=encodeURIComponent(`track:${c.titulo} artist:${c.artista}`);const r=await SPOT.api(`/search?type=track&limit=1&q=${q}`);const it=r&&r.tracks&&r.tracks.items&&r.tracks.items[0];if(it)c.uri=it.uri}catch(_){}}return cs}
+  // Crea la lista en Spotify o, si ya está, la pone al día: nombre, descripción, canciones y portada de la casa
+  async function aSpotify(L){
+    const uris=(await conUris(L.canciones)).map(c=>c.uri).filter(Boolean).slice(0,100);if(!uris.length)throw new Error("vacia");
+    const d=L.detalles||{},desc=((L.descripcion?L.descripcion+" · ":"")+"Creada con Vinilo, una CiccApp").slice(0,300);let id=d.sp||null;
+    if(id)try{await SPOT.api(`/playlists/${id}`,{method:"PUT",body:JSON.stringify({name:L.titulo,description:desc})})}catch(e){if(e.status===404)id=null;else throw e}
+    if(!id)id=(await SPOT.api("/me/playlists",{method:"POST",body:JSON.stringify({name:L.titulo,description:desc,public:false})})).id;
+    await SPOT.api(`/playlists/${id}/items`,{method:"PUT",body:JSON.stringify({uris})});
+    // portada (JPEG en base64, máx. 256 KB); si falta el permiso, Spotify deja su mosaico
+    if((SPOT.t.scope||"").includes("ugc-image-upload"))try{const c=await portadaIA({nombre:L.titulo,generos:d.generos||"",etiqueta:d.etiqueta||"",vol:d.vol||""},640);const tk=await SPOT.token();
+      await fetch(`https://api.spotify.com/v1/playlists/${id}/images`,{method:"PUT",headers:{Authorization:"Bearer "+tk,"Content-Type":"image/jpeg"},body:c.toDataURL("image/jpeg",.88).split(",")[1]})}catch(_){}
+    return {id,n:uris.length}}
   $("iaSp").onclick=async()=>{if(!res.length||!SPOT.ok())return;const b=$("iaSp");b.disabled=true;b.textContent="Buscando canciones…";
-    try{const uris=[];for(const c of res){try{const q=encodeURIComponent(`track:${c.titulo} artist:${c.artista}`);const r=await SPOT.api(`/search?type=track&limit=1&q=${q}`);const it=r.tracks&&r.tracks.items&&r.tracks.items[0];if(it)uris.push(it.uri)}catch(_){}}
-      if(!uris.length)throw new Error("vacia");
-      const desc=((meta&&meta.descripcion?meta.descripcion+" · ":"")+"Creada con Vinilo, una CiccApp").slice(0,300);
-      const pl=await SPOT.api("/me/playlists",{method:"POST",body:JSON.stringify({name:nombreLista(),description:desc,public:false})});
-      await SPOT.api(`/playlists/${pl.id}/items`,{method:"POST",body:JSON.stringify({uris})});
-      // portada de la casa (JPEG en base64, máx. 256 KB); si falta el permiso, Spotify deja su mosaico
-      if(meta&&(SPOT.t.scope||"").includes("ugc-image-upload"))try{const c=await portadaIA(meta,640);const tk=await SPOT.token();
-        await fetch(`https://api.spotify.com/v1/playlists/${pl.id}/images`,{method:"PUT",headers:{Authorization:"Bearer "+tk,"Content-Type":"image/jpeg"},body:c.toDataURL("image/jpeg",.88).split(",")[1]})}catch(_){}
-      b.textContent=`En tu Spotify ✓ (${uris.length} canciones)`;cargarSpotify();
+    try{const r=await aSpotify(actual());spId=r.id;
+      if(favId)await sb.from("playlists").update({detalles:actual().detalles,canciones:res}).eq("id",favId);
+      b.textContent=`En tu Spotify ✓ (${r.n} canciones)`;cargarSpotify();if(favId)cargarFavs();
     }catch(e){b.textContent="No se pudo guardar en Spotify"}
     b.disabled=false};
   // Reproducir una lista en el dispositivo de Spotify activo (necesita Premium y Spotify abierto en algún sitio)
