@@ -4,7 +4,7 @@
      CiccLogros.evaluar({ racha: 12, paginas_total: 3400 });   // cada vez que cambian los datos
      CiccLogros.vitrina();                                     // desde el botón «Vitrina»
    Cada entrada del catálogo: { clave, nombre, texto, metrica, niveles: [7, 30, 100] o [1], unidad: 'días', unidad1: 'día', motivo, secreto, especial }.
-   Medalla especial (estrella dorada en vez de rombos y canto de rayos): la llevan los secretos y los que marquen especial: true.
+   Medalla especial (el lucero de la marca en vez de rombos y canto de rayos): la llevan los secretos y los que marquen especial: true.
    Y entre todas, «Gran Colección»: todas las vitrinas completas, la de cada app y la de los logros comunes.
    Cada app tiene además, sin declararlo, «Vitrina completa»: todas sus medallas en oro. Se cambia con todos: { nombre, texto, motivo } o se quita con todos: false.
    Los colores y letras salen de las variables --cl-* (con las de la marca, --cc-*, por defecto). */
@@ -80,7 +80,7 @@
         '<circle cx="50" cy="50" r="40" fill="url(#' + id + 'd)"/>' +
         '<circle cx="50" cy="50" r="36" fill="none" stroke="#D9B878" stroke-opacity=".75" stroke-width=".9"/>' +
         '<g transform="translate(32 26) scale(1.5)" fill="#E8CF97" stroke="#E8CF97">' + motivo + '</g>';
-      if (o.especial) s += '<path d="M50 66.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="url(#' + id + 'c)" stroke="#EADBB4" stroke-width=".9" stroke-linejoin="round"/>';
+      if (o.especial) s += '<path d="' + LUCERO + '" fill="url(#' + id + 'c)" stroke="#EADBB4" stroke-width=".8" stroke-linejoin="round"/>'; // el lucero de la marca
       else for (var i = 0; i < niv; i++) {
         var x = 50 + (i - (niv - 1) / 2) * 10.5;
         s += '<path d="M' + x + ' 69l4 4.4-4 4.4-4-4.4z" fill="url(#' + id + 'c)" stroke="#EADBB4" stroke-width=".9"/>';
@@ -97,6 +97,8 @@
   }
 
   // Canto de la medalla especial: 32 rayos, como el de una condecoración
+  // Lucero: la estrella fina de cuatro puntas de la marca (la del sello), bajo el motivo
+  var LUCERO = 'M50 65.6Q51.3 73.2 58.9 74.5Q51.3 75.8 50 83.4Q48.7 75.8 41.1 74.5Q48.7 73.2 50 65.6z';
   var RAYOS = null;
   function rayos() {
     if (RAYOS) return RAYOS;
