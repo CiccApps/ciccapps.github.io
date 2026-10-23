@@ -192,10 +192,12 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .sp-btn{appearance:none;border:0;border-radius:999px;background:#1DB954;color:#0b1a10;font:700 14px var(--body);padding:10px 16px;cursor:pointer;white-space:nowrap}
 .sp-out{appearance:none;border:0;background:none;color:var(--muted);font:600 13px var(--body);cursor:pointer;padding:4px}
 .sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.sp-pl{display:grid;gap:6px;text-decoration:none;color:var(--ink)}
+.sp-pl{display:grid;gap:6px;align-content:start;text-decoration:none;color:var(--ink)}
 .sp-pl img,.sp-pl i{width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;display:block;background:var(--surface);box-shadow:0 0 0 1px rgba(217,184,120,.35),0 6px 14px rgba(0,0,0,.3)}
 .sp-pl b{font-weight:700;font-size:14px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .sp-pl span{font-size:12.5px;color:var(--muted)}
+.sp-pl em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--accent);margin-top:-4px}
+.sp-h{display:grid;gap:2px;margin-top:6px}.sp-h h3{margin:0;font-family:var(--display);font-weight:400;font-size:1.35rem}
 .mes-sp{display:grid;gap:14px;padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .mes-cols{display:grid;gap:18px}
 @media (min-width:720px){.mes-cols{grid-template-columns:1fr 1fr}}
@@ -320,15 +322,16 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
     <button class="ia-go" id="iaGo" type="button">Créame una playlist</button>
     <p class="sub" id="iaInfo" aria-live="polite"></p>
     <ol class="ia-list" id="iaList"></ol>
-    <div class="ia-acc" id="iaAcc" hidden><button class="ia-sp" id="iaSp" type="button" hidden>Guardar en Spotify</button><button class="ia-sec" id="iaFav" type="button">Guardar en mis listas</button><button class="ia-sec" id="iaCopy" type="button">Copiar la lista</button></div>
+    <div class="ia-acc" id="iaAcc" hidden><button class="ia-sp" id="iaSp" type="button" hidden>Guardar en Spotify</button><button class="ia-sec" id="iaFav" type="button">Guardar en tu biblioteca</button><button class="ia-sec" id="iaCopy" type="button">Copiar la lista</button></div>
   </section>
 
   <section class="mis" id="mis" aria-labelledby="mis-h">
     <div><div class="eyebrow" id="misCount">Listas</div><h2 id="mis-h">Tu biblioteca</h2><p class="sub">Las que te crea la IA y, si conectas Spotify, las tuyas de siempre.</p></div>
     <div class="sp-con" id="spCon" hidden></div>
     <section class="mes-sp" id="mesSp" hidden aria-labelledby="mesSpH"></section>
+    <div class="sp-h" id="spH" hidden></div>
     <div class="sp-grid" id="spGrid" hidden></div>
-    <div class="favs" id="favs" hidden><div class="fav-list" id="favList"></div></div>
+    <div class="favs" id="favs" hidden><div class="sp-h"><div class="eyebrow">Con IA</div><h3>Las que te ha creado la IA</h3></div><div class="fav-list" id="favList"></div></div>
   </section>
 
   <footer>Si una lista no te encaja en un momento, prueba la de al lado en la escala de energía: suelen funcionar como plan B.</footer>
@@ -515,11 +518,11 @@ TAGS.forEach(([key, label]) => {
     claro:{fondo:"#F4EEE2","fondo-alto":"#FBF8F1",hundido:"#ECE4D3",linea:"#E1D8C6","linea-fuerte":"#A9A08C",tinta:"#172038","tinta-suave":"#5B6378",oro:"#8A6A2B",primario:"#172038","sobre-primario":"#F4EEE2","display-app":DISP,"color-scheme":"light"}};
   let sb=null,res=[],busy=false;const $=id=>document.getElementById(id);
   const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=6",lema:"¿Qué escucho ahora?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs()});
+  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=6",lema:"¿Qué escucho ahora?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs();ordenaSp()});
   function pinta(){
     $("iaGo").disabled=busy;$("iaGo").textContent=busy?"Pensando…":"Créame una playlist";
     $("iaList").innerHTML=res.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}${c.por_que?` — ${esc(c.por_que)}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("");
-    $("iaAcc").hidden=!res.length;$("iaFav").textContent="Guardar en mis listas";$("iaSp").hidden=!SPOT.ok();$("iaSp").textContent="Guardar en Spotify";$("iaAcc").classList.toggle("tres",SPOT.ok());$("iaCopy").textContent="Copiar la lista";
+    $("iaAcc").hidden=!res.length;$("iaFav").textContent="Guardar en tu biblioteca";$("iaSp").hidden=!SPOT.ok();$("iaSp").textContent="Guardar en Spotify";$("iaAcc").classList.toggle("tres",SPOT.ok());$("iaCopy").textContent="Copiar la lista";
   }
   $("iaGo").onclick=async()=>{
     const t=$("iaTxt").value.trim();if(t.length<3){$("iaInfo").textContent="Cuéntame qué te apetece.";return}
@@ -535,18 +538,18 @@ TAGS.forEach(([key, label]) => {
   let favs=[];
   async function cargarFavs(){if(!sb)return;const r=await sb.from("playlists").select("*").order("creado",{ascending:false});favs=r.data||[];pintaFavs()}
   function lista(cs){return cs.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("")}
-  function pintaFavs(){$("favs").hidden=!favs.length;pintaCuenta();$("favList").innerHTML=favs.map(f=>`<details class="fav"><summary><b>${esc(f.titulo)}</b><span>${(f.canciones||[]).length} canciones</span></summary><ol class="ia-list">${lista(f.canciones||[])}</ol><button class="borrar" data-borrar="${f.id}" type="button">Quitar de mis listas</button></details>`).join("")}
+  function pintaFavs(){$("favs").hidden=!favs.length;pintaCuenta();$("favList").innerHTML=favs.map(f=>`<details class="fav"><summary><b>${esc(f.titulo)}</b><span>${(f.canciones||[]).length} ${(f.canciones||[]).length===1?"canción":"canciones"}</span></summary><ol class="ia-list">${lista(f.canciones||[])}</ol><button class="borrar" data-borrar="${f.id}" type="button">Quitar de mis listas</button></details>`).join("")}
   $("favList").onclick=async e=>{const b=e.target.closest("[data-borrar]");if(!b)return;if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="Toca otra vez para quitarla";return}
     await sb.from("playlists").delete().eq("id",b.dataset.borrar);cargarFavs()};
   $("iaFav").onclick=async()=>{if(!res.length||!sb)return;const t=($("iaTxt").value.trim()||"Mi playlist").slice(0,80);
-    const r=await sb.from("playlists").insert({titulo:t.charAt(0).toUpperCase()+t.slice(1),canciones:res});$("iaFav").textContent=r.error?"No se pudo guardar":"Guardada en mis listas ✓";if(!r.error)cargarFavs()};
+    const r=await sb.from("playlists").insert({titulo:t.charAt(0).toUpperCase()+t.slice(1),canciones:res});$("iaFav").textContent=r.error?"No se pudo guardar":"Guardada en tu biblioteca ✓";if(!r.error)cargarFavs()};
   $("iaCopy").onclick=async()=>{try{await navigator.clipboard.writeText(res.map((c,i)=>`${i+1}. ${c.titulo} — ${c.artista}`).join("\n"));$("iaCopy").textContent="Copiada"}catch(e){$("iaCopy").textContent="No se pudo copiar"}};
   $("iaSalir").onclick=()=>CiccCuenta.salir();
 
   /* ===== Spotify (PKCE, sin secreto). Solo funciona para las cuentas dadas de alta en el panel de Spotify ===== */
   const SPOTIFY_ID="f8fc9ff49eef41ee836095a25cda4445";   // Client ID de la app «Vinilo» en developer.spotify.com
   const REDIR=location.origin+"/vinilo/";
-  const SCOPES="playlist-read-private playlist-modify-private playlist-modify-public user-top-read user-modify-playback-state user-read-playback-state";
+  const SCOPES="playlist-read-private playlist-modify-private playlist-modify-public user-top-read user-modify-playback-state user-read-playback-state user-read-recently-played ugc-image-upload";
   const LSK="vinilo-spotify";
   const SPOT={
     t:(()=>{try{return JSON.parse(localStorage.getItem(LSK)||"null")}catch(_){return null}})(),
@@ -574,20 +577,43 @@ TAGS.forEach(([key, label]) => {
     if(r.ok){const j=await r.json();SPOT.guarda({access:j.access_token,refresh:j.refresh_token,exp:Date.now()+j.expires_in*1000,scope:j.scope||""})}
   }
   let misSp=[];
-  function pintaCuenta(){const n=favs.length+misSp.length;$("misCount").textContent=n?`Listas · ${n}`:"Listas"}
+  function pintaCuenta(){const n=favs.length+misSp.length;$("misCount").textContent=n?`${n} ${n===1?"lista":"listas"}`:"Listas"}
   function pintaCon(msg){
     const c=$("spCon");if(!SPOTIFY_ID){c.hidden=true;return}c.hidden=false;
-    if(SPOT.ok()&&!(SPOT.t.scope||"").includes("user-modify-playback-state")&&!msg){c.innerHTML=`<p>Vuelve a conectar Spotify para que el botón ▶ haga sonar las listas directamente.</p><button class="sp-btn" id="spIn" type="button">Reconectar</button>`;$("spIn").onclick=conectar;return}
+    const sc=SPOT.ok()?SPOT.t.scope||"":"";
+    if(SPOT.ok()&&!msg&&!["user-modify-playback-state","user-read-recently-played"].every(x=>sc.includes(x))){c.innerHTML=`<p>Vuelve a conectar Spotify una vez para que Vinilo ordene tus listas por las que más escuchas.</p><button class="sp-btn" id="spIn" type="button">Reconectar</button>`;$("spIn").onclick=conectar;return}
     c.innerHTML=SPOT.ok()?`<p>${msg||"Spotify conectado. Tus listas, tu mes y el botón «Guardar en Spotify» ya funcionan."}</p><button class="sp-out" id="spOut" type="button">Desconectar</button>`
       :`<p>${msg||"Conecta tu cuenta de Spotify para ver tus listas, tu resumen del mes y guardar ahí las playlists de la IA."}</p><button class="sp-btn" id="spIn" type="button">Conectar con Spotify</button>`;
     if($("spIn"))$("spIn").onclick=conectar;
-    if($("spOut"))$("spOut").onclick=()=>{SPOT.guarda(null);misSp=[];$("spGrid").hidden=true;$("mesSp").hidden=true;pintaCon();pintaCuenta();pinta()};
+    if($("spOut"))$("spOut").onclick=()=>{SPOT.guarda(null);misSp=[];$("spGrid").hidden=$("spH").hidden=true;$("mesSp").hidden=true;pintaCon();pintaCuenta();pinta()};
   }
+  // Tus listas de Spotify, de la más escuchada este mes a la menos. Spotify no da ese dato: Vinilo apunta en «escuchas»
+  // las últimas 50 canciones cada vez que se abre (las que sonaron desde una lista) y cuenta las del mes.
+  // Las que no han sonado: primero las de la selección en el orden del día y luego el resto, por orden alfabético.
+  let veces={};
+  function pintaSp(){
+    const g=$("spGrid"),h=$("spH");g.hidden=h.hidden=!misSp.length;if(!misSp.length)return;
+    const sel=new Map(LISTS.map(l=>[l.sp,l.id])),H=disco(new Date()).hora,dia=x=>sel.has(x.id)?(H[sel.get(x.id)]-6+24)%24:99;
+    misSp.sort((a,b)=>(veces[b.id]||0)-(veces[a.id]||0)||dia(a)-dia(b)||a.name.localeCompare(b.name,"es"));
+    const top=misSp.some(x=>veces[x.id]);
+    h.innerHTML=top?`<div class="eyebrow">Este mes</div><h3>Tus listas más escuchadas</h3>`:`<div class="eyebrow">En Spotify</div><h3>Tus listas</h3>`;
+    g.innerHTML=misSp.map(x=>`<a class="sp-pl" href="${esc(x.external_urls&&x.external_urls.spotify||"#")}" target="_blank" rel="noopener">${x.images&&x.images[0]?`<img src="${esc(x.images[0].url)}" alt="" loading="lazy">`:"<i></i>"}<b>${esc(x.name)}</b><span>${(x.items||x.tracks||{}).total??""} canciones</span>${veces[x.id]?`<em>${veces[x.id]} ${veces[x.id]===1?"escucha":"escuchas"} este mes</em>`:""}</a>`).join("");
+  }
+  let ordenando=null;
+  function ordenaSp(){return ordenando||(ordenando=(async()=>{
+    if(!sb||!SPOT.ok()||!misSp.length)return;
+    try{const r=await SPOT.api("/me/player/recently-played?limit=50");
+      const filas=(r.items||[]).filter(x=>x.played_at&&x.context&&x.context.type==="playlist").map(x=>({sonada:x.played_at,lista:x.context.uri.split(":").pop()}));
+      if(filas.length)await sb.from("escuchas").upsert(filas,{onConflict:"user_id,sonada",ignoreDuplicates:true,defaultToNull:false});
+    }catch(_){/* sin permiso todavía o Spotify no responde: se ordena con lo que ya hay */}
+    const ini=new Date();ini.setDate(1);ini.setHours(0,0,0,0);
+    const q=await sb.from("escuchas").select("lista").gte("sonada",ini.toISOString()).limit(20000);
+    veces={};(q.data||[]).forEach(f=>veces[f.lista]=(veces[f.lista]||0)+1);pintaSp();
+  })().finally(()=>{ordenando=null}))}
   async function cargarSpotify(){
     pintaCon();if(!SPOT.ok())return;
-    try{const p=await SPOT.api("/me/playlists?limit=50");misSp=(p.items||[]).filter(Boolean);
-      $("spGrid").innerHTML=misSp.map(x=>`<a class="sp-pl" href="${esc(x.external_urls&&x.external_urls.spotify||"#")}" target="_blank" rel="noopener">${x.images&&x.images[0]?`<img src="${esc(x.images[0].url)}" alt="" loading="lazy">`:"<i></i>"}<b>${esc(x.name)}</b><span>${(x.items||x.tracks||{}).total??""} canciones</span></a>`).join("");
-      $("spGrid").hidden=!misSp.length;pintaCuenta();
+    try{const p=await SPOT.api("/me/playlists?limit=50");misSp=(p.items||[]).filter(Boolean);pintaSp();
+      pintaCuenta();ordenaSp();
     }catch(e){if(e.message==="sin_sesion"){pintaCon("La conexión con Spotify ha caducado. Vuelve a conectar.");return}pintaCon("Spotify no ha dejado leer tus listas ahora mismo.")}
     try{const [ar,tr]=await Promise.all([SPOT.api("/me/top/artists?time_range=short_term&limit=5"),SPOT.api("/me/top/tracks?time_range=short_term&limit=5")]);
       const A=ar.items||[],T=tr.items||[];if(!A.length&&!T.length)return;
