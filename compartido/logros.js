@@ -5,6 +5,7 @@
      CiccLogros.vitrina();                                     // desde el botón «Vitrina»
    Cada entrada del catálogo: { clave, nombre, texto, metrica, niveles: [7, 30, 100] o [1], unidad: 'días', unidad1: 'día', motivo, secreto, especial }.
    Medalla especial (estrella dorada en vez de rombos y canto de rayos): la llevan los secretos y los que marquen especial: true.
+   Y entre todas, «Gran Colección»: todas las vitrinas completas, la de cada app y la de los logros comunes.
    Cada app tiene además, sin declararlo, «Vitrina completa»: todas sus medallas en oro. Se cambia con todos: { nombre, texto, motivo } o se quita con todos: false.
    Los colores y letras salen de las variables --cl-* (con las de la marca, --cc-*, por defecto). */
 (function () {
@@ -24,6 +25,7 @@
     calendario: '<rect x="3" y="4.5" width="18" height="16" rx="2" fill="none" stroke-width="1.6"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4" fill="none" stroke-width="1.6" stroke-linecap="round"/><path d="M7.5 15l3 3 6-6" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
     laurel: '<path d="M12 21.5V9" fill="none" stroke-width="1.6" stroke-linecap="round"/><path d="M12 9c-1.6-2-1.6-4.4 0-6.5 1.6 2.1 1.6 4.5 0 6.5zM12 13.5c-2.6.2-4.5-1.2-5.3-3.6 2.5-.3 4.4 1.1 5.3 3.6zM12 13.5c2.6.2 4.5-1.2 5.3-3.6-2.5-.3-4.4 1.1-5.3 3.6zM12 18c-2.6.2-4.5-1.2-5.3-3.6 2.5-.3 4.4 1.1 5.3 3.6zM12 18c2.6.2 4.5-1.2 5.3-3.6-2.5-.3-4.4 1.1-5.3 3.6z"/>',
     corona: '<path d="M3 18.5h18l1.2-11-5.7 4.3L12 4l-4.5 7.8L1.8 7.5z" stroke-linejoin="round"/><path d="M3.5 21h17" fill="none" stroke-width="1.6" stroke-linecap="round"/>',
+    monograma: '<text x="9.6" y="18" text-anchor="middle" font-family="Georgia, serif" font-size="17" stroke="none">C</text><text x="14.4" y="18" text-anchor="middle" font-family="Georgia, serif" font-size="17" stroke="none">C</text>',
     llave: '<circle cx="7.5" cy="12" r="4.3" fill="none" stroke-width="1.8"/><path d="M11.8 12h10M18.5 12v3.5M21.8 12v2.5" fill="none" stroke-width="1.8" stroke-linecap="round"/>',
     secreto: '<text x="12" y="18.5" text-anchor="middle" font-family="Georgia, serif" font-size="20" stroke="none">?</text>'
   };
@@ -31,6 +33,10 @@
   var COMUNES = [
     { clave: 'mente_cuerpo', nombre: 'Mente y cuerpo', texto: 'Días con lectura y entreno o salida', metrica: 'dias_mente_cuerpo', niveles: [10, 50, 150], unidad: 'días', unidad1: 'día', motivo: 'laurel' }
   ];
+  // Apps con logros: cuentan para «Gran Colección» (añadir aquí cada app nueva que los tenga)
+  var APPS_CON_LOGROS = ['bitacora', 'platea', 'vinilo', 'palestra', 'sendero'];
+  var GRAN = { clave: 'gran_coleccion', nombre: 'Gran Colección', texto: 'Todas las medallas de todas las CiccApps en oro', metrica: '_gran', niveles: [APPS_CON_LOGROS.length + 1], unidad: 'vitrinas', unidad1: 'vitrina', motivo: 'monograma', especial: true };
+  COMUNES.push(GRAN);
   var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
   var cfg = null, usuario = null, estado = {}, cola = [], avisando = false, listo = null, n = 0;
@@ -153,7 +159,20 @@
       var oros = cfg.catalogo.filter(function (l) { return fila(cfg.app, l.clave).nivel >= 3; }).length;
       nuevos = nuevos.concat(await comparar(cfg.app, c, { _todos: oros }, false));
     }
-    return nuevos;
+    return nuevos.concat(await gran());
+  }
+
+  // «Gran Colección»: cuántas vitrinas están completas (cada app con logros y la de los comunes)
+  async function gran() {
+    if (!usuario) return [];
+    var hechas = {};
+    try {
+      var r = await cfg.sb.from('logros').select('app,nivel').eq('clave', '_todos').in('app', APPS_CON_LOGROS);
+      (r.data || []).forEach(function (f) { if (f.nivel >= 3) hechas[f.app] = 1; });
+    } catch (e) { return []; }
+    if (fila(cfg.app, '_todos').nivel >= 3) hechas[cfg.app] = 1;
+    if (COMUNES.every(function (l) { return l === GRAN || fila('ciccapps', l.clave).nivel >= 3; })) hechas.ciccapps = 1;
+    return comparar('ciccapps', [GRAN], { _gran: Object.keys(hechas).length }, false);
   }
 
   // Aviso: baja desde arriba, la medalla gira, dura cinco segundos y al tocarlo abre la vitrina
