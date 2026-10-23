@@ -103,6 +103,11 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .ia textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .ia-go { appearance: none; border: 0; border-radius: 999px; background: var(--accent); color: #0F1528; font: 700 15px var(--body); padding: 13px 18px; cursor: pointer; }
 .ia-go[disabled] { opacity: .6; }
+.ia-cab { display: grid; grid-template-columns: 132px 1fr; gap: 18px; align-items: center; }
+.ia-cab img { width: 132px; height: 132px; border-radius: 3px; display: block; background: #1A2440; box-shadow: 0 0 0 1px rgba(217,184,120,.45), 0 8px 18px rgba(0,0,0,.35); }
+.ia-cab h3 { margin: 4px 0 6px; font-family: var(--display); font-weight: 400; font-size: 1.5rem; line-height: 1.15; }
+.ia-cab p { margin: 0; color: var(--muted); font-size: 14.5px; }
+@media (max-width: 420px) { .ia-cab { grid-template-columns: 104px 1fr; gap: 14px; } .ia-cab img { width: 104px; height: 104px; } .ia-cab h3 { font-size: 1.3rem; } }
 .ia-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: c; }
 .ia-list li { counter-increment: c; display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
 .ia-list li::before { content: counter(c, decimal-leading-zero); font-family: var(--tag); color: var(--accent); font-size: 18px; letter-spacing: .04em; }
@@ -121,9 +126,11 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .favs { display: grid; gap: 14px; }
 .fav-list { display: grid; gap: 10px; }
 .fav { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
-.fav summary { list-style: none; cursor: pointer; padding: 14px 16px; display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: baseline; }
+.fav summary { list-style: none; cursor: pointer; padding: 12px 16px 12px 12px; display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; }
+.fav-img { width: 56px; height: 56px; border-radius: 3px; display: block; background: #1A2440; box-shadow: 0 0 0 1px rgba(217,184,120,.4); }
+.fav-d { margin: 0 16px 12px; color: var(--muted); font-size: 14.5px; }
 .fav summary::-webkit-details-marker { display: none; }
-.fav summary b { font-family: var(--display); font-weight: 400; font-size: 1.15rem; }
+.fav summary b { font-family: var(--display); font-weight: 400; font-size: 1.15rem; line-height: 1.2; }
 .fav summary span { font-size: 13px; color: var(--muted); }
 .fav .ia-list { padding: 0 12px 12px; }
 .fav .borrar { margin: 0 12px 12px; border: 0; background: none; color: var(--muted); font: 600 13px var(--body); cursor: pointer; padding: 4px; }
@@ -146,7 +153,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .suena p{margin:0;color:rgba(241,230,207,.78);font-size:15px}
 .suena .acc{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .suena a{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;font:700 14px var(--body);text-decoration:none;border:1px solid rgba(217,184,120,.55);color:#F1E6CF}
-.suena a.pri{background:#D9B878;border-color:#D9B878;color:#0F1528}
+.suena a.pri{color:#D9B878}
 .dial-wrap{display:grid;justify-items:center;gap:36px;position:relative;padding-top:10px}
 .dial{--d:min(calc(100% - 36px),330px);width:var(--d);aspect-ratio:1;position:relative;border-radius:50%;
   background:radial-gradient(circle,#0a0a0d 0 17%,transparent 17.4%),repeating-radial-gradient(circle,#15151b 0 2px,#1d1d25 2px 4px);box-shadow:0 0 0 2px rgba(217,184,120,.85),0 0 0 9px #0b0f1e,0 0 0 10px rgba(217,184,120,.35),0 14px 30px rgba(0,0,0,.45)}
@@ -192,10 +199,12 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .sp-btn{appearance:none;border:0;border-radius:999px;background:#1DB954;color:#0b1a10;font:700 14px var(--body);padding:10px 16px;cursor:pointer;white-space:nowrap}
 .sp-out{appearance:none;border:0;background:none;color:var(--muted);font:600 13px var(--body);cursor:pointer;padding:4px}
 .sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.sp-pl{display:grid;gap:6px;text-decoration:none;color:var(--ink)}
+.sp-pl{display:grid;gap:6px;align-content:start;text-decoration:none;color:var(--ink)}
 .sp-pl img,.sp-pl i{width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;display:block;background:var(--surface);box-shadow:0 0 0 1px rgba(217,184,120,.35),0 6px 14px rgba(0,0,0,.3)}
 .sp-pl b{font-weight:700;font-size:14px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .sp-pl span{font-size:12.5px;color:var(--muted)}
+.sp-pl em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--accent);margin-top:-4px}
+.sp-h{display:grid;gap:2px;margin-top:6px}.sp-h h3{margin:0;font-family:var(--display);font-weight:400;font-size:1.35rem}
 .mes-sp{display:grid;gap:14px;padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
 .mes-cols{display:grid;gap:18px}
 @media (min-width:720px){.mes-cols{grid-template-columns:1fr 1fr}}
@@ -216,13 +225,13 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .sp-logo{width:16px;height:16px;flex:none;display:block}
 .suena .acc{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:min(100%,320px)}
 .suena .acc a{justify-content:center;gap:7px}
-.suena a.pri{--sp-c:#D9B878}
-.suena a.pri .sp-logo{color:#0F1528}
+.suena a.pri{--sp-c:#16203A}
+.suena a.pri .sp-logo{color:#D9B878}
 .go{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 6px;font-size:12.5px}
 .go .sp-logo{color:var(--accent);--sp-c:var(--surface)}
 [data-play].cargando{opacity:.6;pointer-events:none}
 .go.sonando{border-color:#1DB954;color:#1DB954}.go.sonando .sp-logo{color:#1DB954}
-.suena a.pri.sonando{background:#1DB954;border-color:#1DB954;color:#0F1528}
+.suena a.pri.sonando{border-color:#1DB954;color:#1DB954}.suena a.pri.sonando .sp-logo{color:#1DB954}
 .meta{flex-wrap:nowrap;gap:6px}
 .tit{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
 .tit h3{min-width:0}
@@ -312,23 +321,25 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 
   <section class="ia" id="ia" aria-labelledby="ia-h">
     <div>
-      <div class="eyebrow">Con inteligencia artificial</div>
+      <div class="eyebrow">Con IA</div>
       <h2 id="ia-h">Créame una playlist</h2>
       <p class="sub">Cuéntame el momento o lo que te apetece y te propongo veinte canciones seguidas. Cada una se abre en Spotify.</p>
     </div>
     <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: domingo por la mañana, jazz suave y algo de bossa nova"></textarea>
     <button class="ia-go" id="iaGo" type="button">Créame una playlist</button>
     <p class="sub" id="iaInfo" aria-live="polite"></p>
+    <div class="ia-cab" id="iaCab" hidden></div>
     <ol class="ia-list" id="iaList"></ol>
-    <div class="ia-acc" id="iaAcc" hidden><button class="ia-sp" id="iaSp" type="button" hidden>Guardar en Spotify</button><button class="ia-sec" id="iaFav" type="button">Guardar en mis listas</button><button class="ia-sec" id="iaCopy" type="button">Copiar la lista</button></div>
+    <div class="ia-acc" id="iaAcc" hidden><button class="ia-sp" id="iaSp" type="button" hidden>Guardar en Spotify</button><button class="ia-sec" id="iaFav" type="button">Guardar en tu biblioteca</button><button class="ia-sec" id="iaCopy" type="button">Copiar la lista</button></div>
   </section>
 
   <section class="mis" id="mis" aria-labelledby="mis-h">
-    <div><div class="eyebrow" id="misCount">Mis listas</div><h2 id="mis-h">Tus listas</h2><p class="sub">Las que te crea la IA y, si conectas Spotify, las tuyas de siempre.</p></div>
+    <div><div class="eyebrow" id="misCount">Listas</div><h2 id="mis-h">Tu biblioteca</h2><p class="sub">Las que te crea la IA y, si conectas Spotify, las tuyas de siempre.</p></div>
     <div class="sp-con" id="spCon" hidden></div>
     <section class="mes-sp" id="mesSp" hidden aria-labelledby="mesSpH"></section>
+    <div class="sp-h" id="spH" hidden></div>
     <div class="sp-grid" id="spGrid" hidden></div>
-    <div class="favs" id="favs" hidden><div class="fav-list" id="favList"></div></div>
+    <div class="favs" id="favs" hidden><div class="sp-h"><div class="eyebrow">Con IA</div><h3>Las que te ha creado la IA</h3></div><div class="fav-list" id="favList"></div></div>
   </section>
 
   <footer>Si una lista no te encaja en un momento, prueba la de al lado en la escala de energía: suelen funcionar como plan B.</footer>
@@ -513,13 +524,84 @@ TAGS.forEach(([key, label]) => {
   const DISP='"DM Serif Display",Georgia,serif';
   const TEMA={oscuro:{fondo:"#0F1528","fondo-alto":"#172038",hundido:"#1C2742",linea:"#283454","linea-fuerte":"#46557A",tinta:"#efe6d6","tinta-suave":"#A9AEC0",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#0F1528","display-app":DISP,"color-scheme":"dark"},
     claro:{fondo:"#F4EEE2","fondo-alto":"#FBF8F1",hundido:"#ECE4D3",linea:"#E1D8C6","linea-fuerte":"#A9A08C",tinta:"#172038","tinta-suave":"#5B6378",oro:"#8A6A2B",primario:"#172038","sobre-primario":"#F4EEE2","display-app":DISP,"color-scheme":"light"}};
-  let sb=null,res=[],busy=false;const $=id=>document.getElementById(id);
+  let sb=null,res=[],meta=null,busy=false;const $=id=>document.getElementById(id);
   const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=6",lema:"¿Qué escucho ahora?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs()});
+  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=6",lema:"¿Qué escucho ahora?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs();ordenaSp()});
+  // Portada de una lista creada con la IA, al estilo de la selección: papel azul noche, doble marco dorado,
+  // VOL y etiqueta arriba, el nombre en DM Serif, los géneros entre filetes y un vinilo con «VINILO» y el monograma en la galleta
+  async function portadaIA({ nombre, generos, etiqueta, vol }, lado = 640) {
+    await Promise.all(['400 60px "DM Serif Display"', '400 20px "Bebas Neue"'].map(f => document.fonts.load(f)));
+    const mono = await new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = "../iconos/monograma-dorado.svg"; });
+    const c = document.createElement("canvas"); c.width = c.height = lado; const x = c.getContext("2d"), k = lado / 640;
+    x.scale(k, k);
+    const ORO = "#D9B878", MARFIL = "#F1E6CF";
+    // fondo con luz arriba a la izquierda, como la cabecera
+    const g = x.createRadialGradient(150, 90, 40, 260, 260, 620); g.addColorStop(0, "#2B3A5E"); g.addColorStop(.55, "#1A2440"); g.addColorStop(1, "#0D1324");
+    x.fillStyle = g; x.fillRect(0, 0, 640, 640);
+    // grano de papel
+    for (let i = 0; i < 9000; i++) { x.fillStyle = `rgba(255,255,255,${Math.random() * .035})`; x.fillRect(Math.random() * 640, Math.random() * 640, 1, 1); }
+    // doble marco
+    x.strokeStyle = ORO; x.lineWidth = 2; x.strokeRect(22, 22, 596, 596);
+    x.globalAlpha = .45; x.lineWidth = 1; x.strokeRect(31, 31, 578, 578); x.globalAlpha = 1;
+    // VOL y etiqueta
+    x.font = '400 19px "Bebas Neue"'; x.fillStyle = ORO; x.letterSpacing = "2px";
+    x.textAlign = "left"; if (vol) x.fillText(`VOL. ${vol}`, 52, 66);
+    x.textAlign = "right"; x.fillText(String(etiqueta || "").toUpperCase().slice(0, 22), 588, 66);
+    // nombre: hasta tres líneas, el tamaño se ajusta al ancho
+    x.textAlign = "center"; x.fillStyle = MARFIL; x.letterSpacing = "0px";
+    const palabras = String(nombre).split(/\s+/); let tam = 76, lineas;
+    for (; tam >= 40; tam -= 4) {
+      x.font = `400 ${tam}px "DM Serif Display"`; lineas = []; let l = "";
+      for (const p of palabras) { const t = l ? l + " " + p : p; if (x.measureText(t).width > 500 && l) { lineas.push(l); l = p } else l = t }
+      lineas.push(l); if (lineas.length <= (tam > 60 ? 2 : 3) && lineas.every(t => x.measureText(t).width <= 520)) break;
+    }
+    // márgenes: el marco interior está a 31 px; VOL y etiqueta, a 21 px de él; el título empieza 44 px por debajo
+    const alto = tam * 1.06, y0 = 112 + tam * .74;
+    lineas.forEach((t, i) => x.fillText(t, 320, y0 + i * alto));
+    // géneros entre filetes
+    const yg = y0 + (lineas.length - 1) * alto + 50;
+    x.font = '400 17px "Bebas Neue"'; x.letterSpacing = "4px"; x.fillStyle = ORO;
+    const gt = String(generos || "").toUpperCase(), w = x.measureText(gt).width;
+    x.fillText(gt, 320, yg);
+    x.strokeStyle = ORO; x.globalAlpha = .6; x.lineWidth = 1; x.beginPath();
+    x.moveTo(320 - w / 2 - 54, yg - 6); x.lineTo(320 - w / 2 - 16, yg - 6); x.moveTo(320 + w / 2 + 16, yg - 6); x.lineTo(320 + w / 2 + 54, yg - 6); x.stroke(); x.globalAlpha = 1;
+    // vinilo entero y centrado en el hueco que queda, con el mismo aire arriba y abajo, y el brazo dorado del icono de Vinilo a un lado
+    const libre = 578 - (yg + 34), r = Math.min(126, libre / 2), cx = 320, cy = yg + 34 + libre / 2;
+    x.save(); x.shadowColor = "rgba(0,0,0,.5)"; x.shadowBlur = 24; x.shadowOffsetY = 10;
+    x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fillStyle = "#111116"; x.fill(); x.restore();
+    const rg = r * .36;
+    for (let rr = r - 6; rr > rg + 2; rr -= 3) { x.beginPath(); x.arc(cx, cy, rr, 0, 7); x.strokeStyle = rr % 2 ? "#1d1d25" : "#15151b"; x.lineWidth = 1.4; x.stroke(); }
+    const b = x.createLinearGradient(cx - r, cy - r, cx + r, cy + r); b.addColorStop(.3, "rgba(255,255,255,0)"); b.addColorStop(.5, "rgba(255,255,255,.09)"); b.addColorStop(.7, "rgba(255,255,255,0)");
+    x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fillStyle = b; x.fill();
+    x.beginPath(); x.arc(cx, cy, r, 0, 7); x.strokeStyle = ORO; x.lineWidth = 2; x.stroke();
+    const GALLETAS = ["#7A2633", "#2F5A4D", "#8C4A2F", "#3B3F7A", "#6B4E1E"];
+    let h = 0; for (const ch of String(nombre)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    x.beginPath(); x.arc(cx, cy, rg, 0, 7); x.fillStyle = GALLETAS[h % GALLETAS.length]; x.fill();
+    x.beginPath(); x.arc(cx, cy, rg, 0, 7); x.strokeStyle = ORO; x.lineWidth = 1.5; x.stroke();
+    const m = rg * .5; if (mono) { x.globalAlpha = .9; x.drawImage(mono, cx - m / 2, cy + rg * .16, m, m); x.globalAlpha = 1; }
+    x.font = `400 ${Math.round(rg * .23)}px "Bebas Neue"`; x.letterSpacing = "2px"; x.fillStyle = ORO; x.globalAlpha = .85; x.fillText("VINILO", cx + 1, cy - rg * .28); x.globalAlpha = 1;
+    x.beginPath(); x.arc(cx, cy, 3.5, 0, 7); x.fillStyle = "#0D1324"; x.fill();
+    {
+      // brazo: pivote verde con aro dorado arriba a la derecha y la cápsula apoyada en el borde del disco
+      const oro = x.createLinearGradient(cx, cy - r, cx + r, cy + r); oro.addColorStop(0, "#F1E2BD"); oro.addColorStop(.5, ORO); oro.addColorStop(1, "#A9823D");
+      const px = cx + r + 44, py = cy - r + 18, qx = cx + r + 30, qy = cy + r * .25, sx = cx + r * .52, sy = cy + r * .55;
+      x.save(); x.shadowColor = "rgba(0,0,0,.45)"; x.shadowBlur = 10; x.shadowOffsetY = 5;
+      x.strokeStyle = oro; x.lineWidth = 7; x.lineCap = x.lineJoin = "round";
+      x.beginPath(); x.moveTo(px, py); x.lineTo(qx, qy); x.lineTo(sx, sy); x.stroke();
+      x.translate(sx, sy); x.rotate(Math.atan2(sy - qy, sx - qx)); x.fillStyle = oro; x.beginPath(); x.roundRect(-4, -9, 22, 18, 3); x.fill(); x.restore();
+      x.beginPath(); x.arc(px, py, 13, 0, 7); x.fillStyle = "#2F5A4D"; x.fill(); x.lineWidth = 5; x.strokeStyle = oro; x.stroke();
+    }
+    return c;
+  }
+  // Nombre de la lista: el que propone la IA o, si no llega, lo que escribiste
+  const nombreLista=()=>meta&&meta.nombre||(t=>t.charAt(0).toUpperCase()+t.slice(1))(($("iaTxt").value.trim()||"Mi playlist").slice(0,80));
   function pinta(){
+    const cab=$("iaCab");cab.hidden=!(res.length&&meta);
+    if(!cab.hidden){cab.innerHTML=`<img id="iaPort" alt="Portada de ${esc(meta.nombre)}"><div><div class="eyebrow">${esc(meta.generos)}</div><h3>${esc(meta.nombre)}</h3><p>${esc(meta.descripcion)}</p></div>`;
+      portadaIA(meta,320).then(c=>{const i=$("iaPort");if(i)i.src=c.toDataURL("image/jpeg",.9)})}
     $("iaGo").disabled=busy;$("iaGo").textContent=busy?"Pensando…":"Créame una playlist";
     $("iaList").innerHTML=res.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}${c.por_que?` — ${esc(c.por_que)}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("");
-    $("iaAcc").hidden=!res.length;$("iaFav").textContent="Guardar en mis listas";$("iaSp").hidden=!SPOT.ok();$("iaSp").textContent="Guardar en Spotify";$("iaAcc").classList.toggle("tres",SPOT.ok());$("iaCopy").textContent="Copiar la lista";
+    $("iaAcc").hidden=!res.length;$("iaFav").textContent="Guardar en tu biblioteca";$("iaSp").hidden=!SPOT.ok();$("iaSp").textContent="Guardar en Spotify";$("iaAcc").classList.toggle("tres",SPOT.ok());$("iaCopy").textContent="Copiar la lista";
   }
   $("iaGo").onclick=async()=>{
     const t=$("iaTxt").value.trim();if(t.length<3){$("iaInfo").textContent="Cuéntame qué te apetece.";return}
@@ -527,7 +609,7 @@ TAGS.forEach(([key, label]) => {
     busy=true;$("iaInfo").textContent="";pinta();
     try{const r=await sb.functions.invoke("ia-lista",{body:{tipo:"musica",peticion:t}});
       if(r.error){let m="La IA no ha podido responder. Prueba en un rato.";try{const j=await r.error.context.json();if(j&&j.mensaje)m=j.mensaje}catch(_){}$("iaInfo").textContent=m}
-      else{res=r.data.items||[];const q=r.data.limite-r.data.usados;$("iaInfo").textContent=q>0?`Te quedan ${q} ${q===1?"lista":"listas"} este mes.`:"Era tu última lista de este mes."}
+      else{res=r.data.items||[];meta=r.data.lista&&r.data.lista.nombre?{...r.data.lista,vol:r.data.usados}:null;const q=r.data.limite-r.data.usados;$("iaInfo").textContent=q>0?`Te quedan ${q} ${q===1?"lista":"listas"} este mes.`:"Era tu última lista de este mes."}
     }catch(e){$("iaInfo").textContent="No se pudo conectar con la IA."}
     busy=false;pinta();
   };
@@ -535,18 +617,19 @@ TAGS.forEach(([key, label]) => {
   let favs=[];
   async function cargarFavs(){if(!sb)return;const r=await sb.from("playlists").select("*").order("creado",{ascending:false});favs=r.data||[];pintaFavs()}
   function lista(cs){return cs.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("")}
-  function pintaFavs(){$("favs").hidden=!favs.length;pintaCuenta();$("favList").innerHTML=favs.map(f=>`<details class="fav"><summary><b>${esc(f.titulo)}</b><span>${(f.canciones||[]).length} canciones</span></summary><ol class="ia-list">${lista(f.canciones||[])}</ol><button class="borrar" data-borrar="${f.id}" type="button">Quitar de mis listas</button></details>`).join("")}
+  function pintaFavs(){$("favs").hidden=!favs.length;pintaCuenta();$("favList").innerHTML=favs.map((f,i)=>`<details class="fav"><summary><img class="fav-img" data-port="${i}" alt=""><b>${esc(f.titulo)}</b><span>${(f.canciones||[]).length} ${(f.canciones||[]).length===1?"canción":"canciones"}</span></summary>${f.descripcion?`<p class="fav-d">${esc(f.descripcion)}</p>`:""}<ol class="ia-list">${lista(f.canciones||[])}</ol><button class="borrar" data-borrar="${f.id}" type="button">Quitar de tu biblioteca</button></details>`).join("");
+    document.querySelectorAll("#favList [data-port]").forEach(im=>{const f=favs[im.dataset.port],d=f.detalles||{};portadaIA({nombre:f.titulo,generos:d.generos||"",etiqueta:d.etiqueta||"",vol:d.vol||""},160).then(c=>{im.src=c.toDataURL("image/jpeg",.9)})})}
   $("favList").onclick=async e=>{const b=e.target.closest("[data-borrar]");if(!b)return;if(b.dataset.arm!=="1"){b.dataset.arm="1";b.textContent="Toca otra vez para quitarla";return}
     await sb.from("playlists").delete().eq("id",b.dataset.borrar);cargarFavs()};
-  $("iaFav").onclick=async()=>{if(!res.length||!sb)return;const t=($("iaTxt").value.trim()||"Mi playlist").slice(0,80);
-    const r=await sb.from("playlists").insert({titulo:t.charAt(0).toUpperCase()+t.slice(1),canciones:res});$("iaFav").textContent=r.error?"No se pudo guardar":"Guardada en mis listas ✓";if(!r.error)cargarFavs()};
-  $("iaCopy").onclick=async()=>{try{await navigator.clipboard.writeText(res.map((c,i)=>`${i+1}. ${c.titulo} — ${c.artista}`).join("\n"));$("iaCopy").textContent="Copiada"}catch(e){$("iaCopy").textContent="No se pudo copiar"}};
+  $("iaFav").onclick=async()=>{if(!res.length||!sb)return;
+    const r=await sb.from("playlists").insert({titulo:nombreLista(),descripcion:meta&&meta.descripcion||null,detalles:meta?{generos:meta.generos,etiqueta:meta.etiqueta,vol:meta.vol}:{},canciones:res});$("iaFav").textContent=r.error?"No se pudo guardar":"Guardada en tu biblioteca ✓";if(!r.error)cargarFavs()};
+  $("iaCopy").onclick=async()=>{try{await navigator.clipboard.writeText((meta?`${meta.nombre}\n${meta.descripcion}\n\n`:"")+res.map((c,i)=>`${i+1}. ${c.titulo} — ${c.artista}`).join("\n"));$("iaCopy").textContent="Copiada"}catch(e){$("iaCopy").textContent="No se pudo copiar"}};
   $("iaSalir").onclick=()=>CiccCuenta.salir();
 
   /* ===== Spotify (PKCE, sin secreto). Solo funciona para las cuentas dadas de alta en el panel de Spotify ===== */
   const SPOTIFY_ID="f8fc9ff49eef41ee836095a25cda4445";   // Client ID de la app «Vinilo» en developer.spotify.com
   const REDIR=location.origin+"/vinilo/";
-  const SCOPES="playlist-read-private playlist-modify-private playlist-modify-public user-top-read user-modify-playback-state user-read-playback-state";
+  const SCOPES="playlist-read-private playlist-modify-private playlist-modify-public user-top-read user-modify-playback-state user-read-playback-state user-read-recently-played ugc-image-upload";
   const LSK="vinilo-spotify";
   const SPOT={
     t:(()=>{try{return JSON.parse(localStorage.getItem(LSK)||"null")}catch(_){return null}})(),
@@ -574,20 +657,43 @@ TAGS.forEach(([key, label]) => {
     if(r.ok){const j=await r.json();SPOT.guarda({access:j.access_token,refresh:j.refresh_token,exp:Date.now()+j.expires_in*1000,scope:j.scope||""})}
   }
   let misSp=[];
-  function pintaCuenta(){const n=favs.length+misSp.length;$("misCount").textContent=n?`Mis listas · ${n}`:"Mis listas"}
+  function pintaCuenta(){const n=favs.length+misSp.length;$("misCount").textContent=n?`${n} ${n===1?"lista":"listas"}`:"Listas"}
   function pintaCon(msg){
     const c=$("spCon");if(!SPOTIFY_ID){c.hidden=true;return}c.hidden=false;
-    if(SPOT.ok()&&!(SPOT.t.scope||"").includes("user-modify-playback-state")&&!msg){c.innerHTML=`<p>Vuelve a conectar Spotify para que el botón ▶ haga sonar las listas directamente.</p><button class="sp-btn" id="spIn" type="button">Reconectar</button>`;$("spIn").onclick=conectar;return}
+    const sc=SPOT.ok()?SPOT.t.scope||"":"";
+    if(SPOT.ok()&&!msg&&!["user-modify-playback-state","user-read-recently-played"].every(x=>sc.includes(x))){c.innerHTML=`<p>Vuelve a conectar Spotify una vez para que Vinilo ordene tus listas por las que más escuchas.</p><button class="sp-btn" id="spIn" type="button">Reconectar</button>`;$("spIn").onclick=conectar;return}
     c.innerHTML=SPOT.ok()?`<p>${msg||"Spotify conectado. Tus listas, tu mes y el botón «Guardar en Spotify» ya funcionan."}</p><button class="sp-out" id="spOut" type="button">Desconectar</button>`
       :`<p>${msg||"Conecta tu cuenta de Spotify para ver tus listas, tu resumen del mes y guardar ahí las playlists de la IA."}</p><button class="sp-btn" id="spIn" type="button">Conectar con Spotify</button>`;
     if($("spIn"))$("spIn").onclick=conectar;
-    if($("spOut"))$("spOut").onclick=()=>{SPOT.guarda(null);misSp=[];$("spGrid").hidden=true;$("mesSp").hidden=true;pintaCon();pintaCuenta();pinta()};
+    if($("spOut"))$("spOut").onclick=()=>{SPOT.guarda(null);misSp=[];$("spGrid").hidden=$("spH").hidden=true;$("mesSp").hidden=true;pintaCon();pintaCuenta();pinta()};
   }
+  // Tus listas de Spotify, de la más escuchada este mes a la menos. Spotify no da ese dato: Vinilo apunta en «escuchas»
+  // las últimas 50 canciones cada vez que se abre (las que sonaron desde una lista) y cuenta las del mes.
+  // Las que no han sonado: primero las de la selección en el orden del día y luego el resto, por orden alfabético.
+  let veces={};
+  function pintaSp(){
+    const g=$("spGrid"),h=$("spH");g.hidden=h.hidden=!misSp.length;if(!misSp.length)return;
+    const sel=new Map(LISTS.map(l=>[l.sp,l.id])),H=disco(new Date()).hora,dia=x=>sel.has(x.id)?(H[sel.get(x.id)]-6+24)%24:99;
+    misSp.sort((a,b)=>(veces[b.id]||0)-(veces[a.id]||0)||dia(a)-dia(b)||a.name.localeCompare(b.name,"es"));
+    const top=misSp.some(x=>veces[x.id]);
+    h.innerHTML=top?`<div class="eyebrow">Este mes</div><h3>Tus listas más escuchadas</h3>`:`<div class="eyebrow">En Spotify</div><h3>Tus listas</h3>`;
+    g.innerHTML=misSp.map(x=>`<a class="sp-pl" href="${esc(x.external_urls&&x.external_urls.spotify||"#")}" target="_blank" rel="noopener">${x.images&&x.images[0]?`<img src="${esc(x.images[0].url)}" alt="" loading="lazy">`:"<i></i>"}<b>${esc(x.name)}</b><span>${(x.items||x.tracks||{}).total??""} canciones</span>${veces[x.id]?`<em>${veces[x.id]} ${veces[x.id]===1?"escucha":"escuchas"} este mes</em>`:""}</a>`).join("");
+  }
+  let ordenando=null;
+  function ordenaSp(){return ordenando||(ordenando=(async()=>{
+    if(!sb||!SPOT.ok()||!misSp.length)return;
+    try{const r=await SPOT.api("/me/player/recently-played?limit=50");
+      const filas=(r.items||[]).filter(x=>x.played_at&&x.context&&x.context.type==="playlist").map(x=>({sonada:x.played_at,lista:x.context.uri.split(":").pop()}));
+      if(filas.length)await sb.from("escuchas").upsert(filas,{onConflict:"user_id,sonada",ignoreDuplicates:true,defaultToNull:false});
+    }catch(_){/* sin permiso todavía o Spotify no responde: se ordena con lo que ya hay */}
+    const ini=new Date();ini.setDate(1);ini.setHours(0,0,0,0);
+    const q=await sb.from("escuchas").select("lista").gte("sonada",ini.toISOString()).limit(20000);
+    veces={};(q.data||[]).forEach(f=>veces[f.lista]=(veces[f.lista]||0)+1);pintaSp();
+  })().finally(()=>{ordenando=null}))}
   async function cargarSpotify(){
     pintaCon();if(!SPOT.ok())return;
-    try{const p=await SPOT.api("/me/playlists?limit=50");misSp=(p.items||[]).filter(Boolean);
-      $("spGrid").innerHTML=misSp.map(x=>`<a class="sp-pl" href="${esc(x.external_urls&&x.external_urls.spotify||"#")}" target="_blank" rel="noopener">${x.images&&x.images[0]?`<img src="${esc(x.images[0].url)}" alt="" loading="lazy">`:"<i></i>"}<b>${esc(x.name)}</b><span>${(x.items||x.tracks||{}).total??""} canciones</span></a>`).join("");
-      $("spGrid").hidden=!misSp.length;pintaCuenta();
+    try{const p=await SPOT.api("/me/playlists?limit=50");misSp=(p.items||[]).filter(Boolean);pintaSp();
+      pintaCuenta();ordenaSp();
     }catch(e){if(e.message==="sin_sesion"){pintaCon("La conexión con Spotify ha caducado. Vuelve a conectar.");return}pintaCon("Spotify no ha dejado leer tus listas ahora mismo.")}
     try{const [ar,tr]=await Promise.all([SPOT.api("/me/top/artists?time_range=short_term&limit=5"),SPOT.api("/me/top/tracks?time_range=short_term&limit=5")]);
       const A=ar.items||[],T=tr.items||[];if(!A.length&&!T.length)return;
@@ -600,9 +706,12 @@ TAGS.forEach(([key, label]) => {
   $("iaSp").onclick=async()=>{if(!res.length||!SPOT.ok())return;const b=$("iaSp");b.disabled=true;b.textContent="Buscando canciones…";
     try{const uris=[];for(const c of res){try{const q=encodeURIComponent(`track:${c.titulo} artist:${c.artista}`);const r=await SPOT.api(`/search?type=track&limit=1&q=${q}`);const it=r.tracks&&r.tracks.items&&r.tracks.items[0];if(it)uris.push(it.uri)}catch(_){}}
       if(!uris.length)throw new Error("vacia");
-      const t=($("iaTxt").value.trim()||"Mi playlist").slice(0,80);const nombre=t.charAt(0).toUpperCase()+t.slice(1);
-      const pl=await SPOT.api("/me/playlists",{method:"POST",body:JSON.stringify({name:nombre,description:"Creada con Vinilo · una CiccApp",public:false})});
+      const desc=((meta&&meta.descripcion?meta.descripcion+" · ":"")+"Creada con Vinilo, una CiccApp").slice(0,300);
+      const pl=await SPOT.api("/me/playlists",{method:"POST",body:JSON.stringify({name:nombreLista(),description:desc,public:false})});
       await SPOT.api(`/playlists/${pl.id}/items`,{method:"POST",body:JSON.stringify({uris})});
+      // portada de la casa (JPEG en base64, máx. 256 KB); si falta el permiso, Spotify deja su mosaico
+      if(meta&&(SPOT.t.scope||"").includes("ugc-image-upload"))try{const c=await portadaIA(meta,640);const tk=await SPOT.token();
+        await fetch(`https://api.spotify.com/v1/playlists/${pl.id}/images`,{method:"PUT",headers:{Authorization:"Bearer "+tk,"Content-Type":"image/jpeg"},body:c.toDataURL("image/jpeg",.88).split(",")[1]})}catch(_){}
       b.textContent=`En tu Spotify ✓ (${uris.length} canciones)`;cargarSpotify();
     }catch(e){b.textContent="No se pudo guardar en Spotify"}
     b.disabled=false};

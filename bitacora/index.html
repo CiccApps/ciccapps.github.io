@@ -374,7 +374,7 @@ h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:4
 
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
-<script src="../compartido/logros.js?v=2"></script>
+<script src="../compartido/logros.js?v=3"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -642,7 +642,7 @@ function viewIA(){
     <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><h3>${esc(l.titulo)}</h3><span class="why2">${esc(l.autor)}${l.paginas?` · ≈${l.paginas} páginas`:""}</span>
     ${l.por_que?`<span class="ia-why">${esc(l.por_que)}</span>`:""}
     <span class="ia-acc">${l.added?`<span class="ia-ok">Añadido a Intercalables</span>`:`<button class="btn sm primary" data-ia-add="${i}">Añadir a mi lista</button>`}</span></span></article>`).join("");
-  return `<section class="ia" aria-labelledby="iaH"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Con inteligencia artificial</span><h2 id="iaH">Créame una lista</h2>
+  return `<section class="ia" aria-labelledby="iaH"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Con IA</span><h2 id="iaH">Créame una lista</h2>
     <p class="hint">Cuéntame qué te apetece y te propongo diez libros que no estén ya en tu bitácora.</p></div>
     <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: novelas cortas de misterio ambientadas en Japón">${esc(IA.txt)}</textarea>
     <button class="btn primary" id="iaGo" ${IA.busy?"disabled":""}>${IA.busy?"Pensando…":"Créame una lista"}</button>
@@ -998,10 +998,16 @@ const LOGROS=[
  {clave:"gran_tomo",nombre:"Gran tomo",texto:"En un solo libro terminado",metrica:"libro_mayor",niveles:[500,800,1000],unidad:"páginas",unidad1:"página",motivo:"tomo"},
  {clave:"maraton",nombre:"Maratón",texto:"Leídas en un solo día",metrica:"pags_dia",niveles:[50,100,150],unidad:"páginas",unidad1:"página",motivo:"reloj"},
  {clave:"objetivo",nombre:"Meta del año",texto:"Cumplir tu objetivo anual de libros",metrica:"objetivo",niveles:[1],motivo:"laurel"},
- {clave:"mes_impecable",nombre:"Mes impecable",texto:"Leer todos los días de un mes",metrica:"meses_completos",niveles:[1],motivo:"ancla",secreto:true}];
+ {clave:"mes_impecable",nombre:"Mes impecable",texto:"Leer todos los días de un mes",metrica:"meses_completos",niveles:[1],motivo:"ancla",secreto:true},
+ {clave:"itaca",nombre:"Rumbo a Ítaca",texto:"Terminar la Ilíada, La canción de Aquiles, la Odisea y Circe",metrica:"itaca",niveles:[1],motivo:"velero",secreto:true},
+ {clave:"sant_jordi",nombre:"Libro y rosa",texto:"Terminar un libro un 23 de abril, Día del Libro",metrica:"dia_libro",niveles:[1],motivo:"rosaflor",secreto:true},
+ {clave:"doce_meses",nombre:"La vuelta al año",texto:"Terminar al menos un libro en cada mes de un mismo año",metrica:"doce_meses",niveles:[1],motivo:"anio",secreto:true}];
 const MOTIVOS_LOGROS={
  tomo:'<rect x="6" y="2.5" width="12" height="19" rx="1.2" fill="none" stroke-width="1.6"/><path d="M6 6.2h12M6 7.9h12M6 16.1h12M6 17.8h12" fill="none" stroke-width="1.1"/><rect x="9.5" y="10.3" width="5" height="3.4" rx=".4" stroke="none"/>',
  reloj:'<path d="M5.5 2.5h13M5.5 21.5h13" fill="none" stroke-width="1.7" stroke-linecap="round"/><path d="M7.5 2.5c0 5 4.5 6 4.5 9.5s-4.5 4.5-4.5 9.5M16.5 2.5c0 5-4.5 6-4.5 9.5s4.5 4.5 4.5 9.5" fill="none" stroke-width="1.6"/><path d="M8.8 20.5c1-2 2.1-2.8 3.2-2.8s2.2.8 3.2 2.8z" stroke-width=".6"/>',
+ velero:'<path d="M12 2.8v14.4" fill="none" stroke-width="1.4"/><path d="M12.9 3.8l6.6 11.4h-6.6zM11.1 6.3l-5.4 8.9h5.4z" stroke="none"/><path d="M3 17.6h18l-2.6 3.6H5.6z" stroke="none"/>',
+ rosaflor:'<path d="M12 3.2c3.1 0 5.2 2.1 5.2 4.8 0 2.9-2.3 4.8-5.2 4.8S6.8 10.9 6.8 8c0-2.7 2.1-4.8 5.2-4.8z" stroke="none"/><path d="M9.4 6.6c1.6 1.4 3.6 1.4 5.2 0M9.9 9.2c1.3.9 2.9.9 4.2 0" fill="none" stroke="#4B2E19" stroke-opacity=".55" stroke-width=".9" stroke-linecap="round"/><path d="M12 12.8v8.4" fill="none" stroke-width="1.5" stroke-linecap="round"/><path d="M12 17.4c-1.5-2.3-3.6-2.8-5.6-2.3.8 2 3 2.9 5.6 2.3zM12 15.8c1.3-1.9 3.2-2.3 4.9-1.9-.7 1.7-2.6 2.5-4.9 1.9z" stroke="none"/>',
+ anio:'<circle cx="12.0" cy="3.8" r="1.7"/><circle cx="16.1" cy="4.9" r="1.15"/><circle cx="19.1" cy="7.9" r="1.15"/><circle cx="20.2" cy="12.0" r="1.15"/><circle cx="19.1" cy="16.1" r="1.15"/><circle cx="16.1" cy="19.1" r="1.15"/><circle cx="12.0" cy="20.2" r="1.15"/><circle cx="7.9" cy="19.1" r="1.15"/><circle cx="4.9" cy="16.1" r="1.15"/><circle cx="3.8" cy="12.0" r="1.15"/><circle cx="4.9" cy="7.9" r="1.15"/><circle cx="7.9" cy="4.9" r="1.15"/><circle cx="12" cy="12" r="2.2"/><path d="M12 12V7" fill="none" stroke-width="1.3" stroke-linecap="round"/>',
  ancla:'<circle cx="12" cy="4.5" r="2" fill="none" stroke-width="1.6"/><path d="M12 6.5v15M8 10h8M4.5 13.5c.5 4.5 3.5 7.5 7.5 8 4-.5 7-3.5 7.5-8" fill="none" stroke-width="1.6" stroke-linecap="round"/><path d="M2.8 15.2l1.7-2.2 2.2 1.8M21.2 15.2l-1.7-2.2-2.2 1.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'};
 function metricas(){
   const leidos=ALL.filter(b=>st(b.id)==="leido");
@@ -1013,7 +1019,10 @@ function metricas(){
   const y=String(new Date().getFullYear());const meta=+AJ.objetivo||12;
   return {libros:leidos.length,mejor_racha:mejor,dias:NDIAS,paginas:leidos.reduce((a,b)=>a+b.p,0),etapas,frases:NFRASES,
     libro_mayor:leidos.reduce((a,b)=>Math.max(a,b.p),0),pags_dia:Math.max(0,...Object.values(PAGS)),
-    objetivo:leidos.filter(b=>String(S(b.id).fin||"").startsWith(y)).length>=meta?1:0,meses_completos:completos};
+    objetivo:leidos.filter(b=>String(S(b.id).fin||"").startsWith(y)).length>=meta?1:0,meses_completos:completos,
+    itaca:["iliada","aquiles","odisea","circe"].every(k=>leidos.some(b=>b.clave===k))?1:0,
+    dia_libro:leidos.some(b=>String(S(b.id).fin||"").slice(5)==="04-23")?1:0,
+    doce_meses:Object.values(leidos.reduce((a,b)=>{const f=String(S(b.id).fin||"");if(f.length>=7)(a[f.slice(0,4)]=a[f.slice(0,4)]||new Set).add(f.slice(5,7));return a},{})).some(m=>m.size===12)?1:0};
 }
 let tLogros;
 function evalLogros(){if(!sb||!STAGES.length||!window.CiccLogros)return;clearTimeout(tLogros);tLogros=setTimeout(()=>CiccLogros.evaluar(metricas()).then(pintarVitrina),600)}
