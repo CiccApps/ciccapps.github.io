@@ -85,7 +85,8 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
   .wrap { padding-block: 32px 28px; gap: 32px; }
   .app { padding: 24px 14px 14px; gap: 10px; }
   .app small { font-size: 10.5px; letter-spacing: .06em; }
-  .app img { width: 68px; height: 68px; }
+  /* Del mismo tamaño que en la pantalla de inicio del iPhone (80 pt en uno de 440 pt de ancho) */
+  .app img { width: min(18vw, 80px); height: min(18vw, 80px); }
   .app h3 { font-size: 19px; }
   .app p { font-size: 13px; }
   .instalar { grid-template-columns: 1fr; gap: 14px; }
