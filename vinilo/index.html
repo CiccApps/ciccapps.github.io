@@ -528,7 +528,7 @@ TAGS.forEach(([key, label]) => {
   const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
   CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=6",lema:"¿Qué escucho ahora?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs();ordenaSp()});
   // Portada de una lista creada con la IA, al estilo de la selección: papel azul noche, doble marco dorado,
-  // VOL y etiqueta arriba, el nombre en DM Serif, los géneros entre filetes y un vinilo con el monograma en la galleta
+  // VOL y etiqueta arriba, el nombre en DM Serif, los géneros entre filetes y un vinilo con «VINILO» y el monograma en la galleta
   async function portadaIA({ nombre, generos, etiqueta, vol }, lado = 640) {
     await Promise.all(['400 60px "DM Serif Display"', '400 20px "Bebas Neue"'].map(f => document.fonts.load(f)));
     const mono = await new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = "../iconos/monograma-dorado.svg"; });
@@ -565,8 +565,8 @@ TAGS.forEach(([key, label]) => {
     x.fillText(gt, 320, yg);
     x.strokeStyle = ORO; x.globalAlpha = .6; x.lineWidth = 1; x.beginPath();
     x.moveTo(320 - w / 2 - 54, yg - 6); x.lineTo(320 - w / 2 - 16, yg - 6); x.moveTo(320 + w / 2 + 16, yg - 6); x.lineTo(320 + w / 2 + 54, yg - 6); x.stroke(); x.globalAlpha = 1;
-    // vinilo entero en el hueco que queda, con el mismo aire arriba y abajo, y el brazo dorado del icono de Vinilo
-    const libre = 578 - (yg + 34), r = Math.min(126, libre / 2), cx = 300, cy = yg + 34 + libre / 2;
+    // vinilo entero y centrado en el hueco que queda, con el mismo aire arriba y abajo, y el brazo dorado del icono de Vinilo a un lado
+    const libre = 578 - (yg + 34), r = Math.min(126, libre / 2), cx = 320, cy = yg + 34 + libre / 2;
     x.save(); x.shadowColor = "rgba(0,0,0,.5)"; x.shadowBlur = 24; x.shadowOffsetY = 10;
     x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fillStyle = "#111116"; x.fill(); x.restore();
     const rg = r * .36;
@@ -578,8 +578,8 @@ TAGS.forEach(([key, label]) => {
     let h = 0; for (const ch of String(nombre)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
     x.beginPath(); x.arc(cx, cy, rg, 0, 7); x.fillStyle = GALLETAS[h % GALLETAS.length]; x.fill();
     x.beginPath(); x.arc(cx, cy, rg, 0, 7); x.strokeStyle = ORO; x.lineWidth = 1.5; x.stroke();
-    const m = rg * .55; if (mono) { x.globalAlpha = .9; x.drawImage(mono, cx - m / 2, cy - rg * .78, m, m); x.globalAlpha = 1; }
-    x.font = `400 ${Math.round(rg * .23)}px "Bebas Neue"`; x.letterSpacing = "2px"; x.fillStyle = ORO; x.globalAlpha = .85; x.fillText("VINILO", cx + 1, cy + rg * .52); x.globalAlpha = 1;
+    const m = rg * .5; if (mono) { x.globalAlpha = .9; x.drawImage(mono, cx - m / 2, cy + rg * .16, m, m); x.globalAlpha = 1; }
+    x.font = `400 ${Math.round(rg * .23)}px "Bebas Neue"`; x.letterSpacing = "2px"; x.fillStyle = ORO; x.globalAlpha = .85; x.fillText("VINILO", cx + 1, cy - rg * .28); x.globalAlpha = 1;
     x.beginPath(); x.arc(cx, cy, 3.5, 0, 7); x.fillStyle = "#0D1324"; x.fill();
     {
       // brazo: pivote verde con aro dorado arriba a la derecha y la cápsula apoyada en el borde del disco
