@@ -9,6 +9,7 @@
 <link rel="apple-touch-icon" href="../iconos/vinilo-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/vinilo-192.png?v=6">
 <link rel="stylesheet" href="../compartido/ciccapps.css?v=20">
+<link rel="stylesheet" href="../compartido/logros.css?v=3">
 </head><body>
 
 <style>
@@ -202,6 +203,15 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 /* Secciones: la selección de la casa y las listas de cada uno */
 
 .mis{display:grid;gap:16px}
+/* Logros: botón de la vitrina, con una medalla de oro y el recuento */
+.vit-btn{appearance:none;display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;width:100%;text-align:left;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.vit-btn:hover{border-color:var(--accent)}
+.vit-btn b{display:block;font-weight:700;font-size:15px}
+.vit-btn small{display:block;font-size:13px;color:var(--muted)}
+.vit-btn>span:last-child{color:var(--accent);font-size:18px}
+#vitrinaMed{display:block;width:32px}
+:root{--cl-fondo:var(--surface);--cl-tinta:var(--ink);--cl-suave:var(--muted);--cl-linea:var(--line);--cl-oro:var(--accent);--cl-vacio:#1C2742;--cl-relieve:#46557A;--cl-titulo:var(--display);--cl-serif:var(--display);--cl-sans:var(--body)}
+@media (prefers-color-scheme: light){:root{--cl-vacio:#ECE4D3;--cl-relieve:#A9A08C}}
 .mis>div:first-child,.sel-h{display:grid;gap:6px}
 .mis h2{margin:0}
 .sp-con{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:14px 16px;border:1px dashed var(--line);border-radius:12px}
@@ -346,6 +356,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 
   <section class="mis" id="mis" aria-labelledby="mis-h">
     <div><div class="eyebrow" id="misCount">Listas</div><h2 id="mis-h">Tu biblioteca</h2><p class="sub">Las que te crea la IA y, si conectas Spotify, las tuyas de siempre.</p></div>
+    <button class="vit-btn" id="vitrinaBtn" type="button" hidden><span id="vitrinaMed"></span><span><b id="vitrinaTxt">Vitrina de medallas</b><small>Tus logros en Vinilo</small></span><span aria-hidden="true">→</span></button>
     <div class="sp-con" id="spCon" hidden></div>
     <section class="mes-sp" id="mesSp" hidden aria-labelledby="mesSpH"></section>
     <div class="sp-h" id="spH" hidden></div>
@@ -530,14 +541,15 @@ TAGS.forEach(([key, label]) => {
 <p class="cc-firma" style="--cc-tinta-suave:var(--muted);--cc-oro:var(--accent);padding-bottom:28px"><a href="../" aria-label="Ir a CiccApps"><img src="../iconos/monograma-dorado.svg" alt=""></a><span class="txt">Vinilo <span class="sep">·</span> una CiccApp</span><small class="cc-copy"><span>© 2026 Miguel Pascual Ciccardini</span><span class="cc-copy-sep"> · </span><span>Todos los derechos reservados</span></small></p>
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
+<script src="../compartido/logros.js?v=3"></script>
 <script>
 (function(){
   const DISP='"DM Serif Display",Georgia,serif';
   const TEMA={oscuro:{fondo:"#0F1528","fondo-alto":"#172038",hundido:"#1C2742",linea:"#283454","linea-fuerte":"#46557A",tinta:"#efe6d6","tinta-suave":"#A9AEC0",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#0F1528","display-app":DISP,"color-scheme":"dark"},
     claro:{fondo:"#F4EEE2","fondo-alto":"#FBF8F1",hundido:"#ECE4D3",linea:"#E1D8C6","linea-fuerte":"#A9A08C",tinta:"#172038","tinta-suave":"#5B6378",oro:"#8A6A2B",primario:"#172038","sobre-primario":"#F4EEE2","display-app":DISP,"color-scheme":"light"}};
-  let sb=null,res=[],meta=null,busy=false,ampliando=false,spId=null,favId=null;const $=id=>document.getElementById(id);
+  let sb=null,res=[],meta=null,busy=false,ampliando=false,spId=null,favId=null,ampN=0;const $=id=>document.getElementById(id);
   const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=6",lema:"¿Qué escucho ahora?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs();ordenaSp()});
+  CiccCuenta.iniciar({app:"Vinilo",icono:"../iconos/vinilo-192.png?v=6",lema:"¿Qué escucho ahora?",tema:TEMA}).then(r=>{sb=r.sb;cargarFavs();ordenaSp();iniciaLogros()});
   // Portada de una lista creada con la IA, al estilo de la selección: papel azul noche, doble marco dorado,
   // VOL y etiqueta arriba, el nombre en DM Serif, los géneros entre filetes y un vinilo con «VINILO» y el monograma en la galleta
   async function portadaIA({ nombre, generos, etiqueta, vol }, lado = 640) {
@@ -621,13 +633,13 @@ TAGS.forEach(([key, label]) => {
     busy=true;$("iaInfo").textContent="";pinta();
     try{const r=await sb.functions.invoke("ia-lista",{body:{tipo:"musica",peticion:t}});
       if(r.error){let m="La IA no ha podido responder. Prueba en un rato.";try{const j=await r.error.context.json();if(j&&j.mensaje)m=j.mensaje}catch(_){}$("iaInfo").textContent=m}
-      else{res=r.data.items||[];meta=r.data.lista&&r.data.lista.nombre?{...r.data.lista,vol:r.data.usados}:null;spId=favId=null;$("iaInfo").textContent=quedan(r.data.limite-r.data.usados)}
+      else{res=r.data.items||[];meta=r.data.lista&&r.data.lista.nombre?{...r.data.lista,vol:r.data.usados}:null;spId=favId=null;ampN=0;$("iaInfo").textContent=quedan(r.data.limite-r.data.usados);evalLogros({creadas:1})}
     }catch(e){$("iaInfo").textContent="No se pudo conectar con la IA."}
     busy=false;pinta();
   };
   const quedan=q=>q>0?`Te quedan ${q} ${q===1?"uso":"usos"} de la IA este mes.`:"Era tu último uso de la IA este mes.";
   // La lista que se está viendo, con la forma de una fila de «playlists»
-  const actual=()=>({titulo:nombreLista(),descripcion:meta&&meta.descripcion||null,detalles:{...(meta?{generos:meta.generos,etiqueta:meta.etiqueta,vol:meta.vol}:{}),...(spId?{sp:spId}:{})},canciones:res});
+  const actual=()=>({titulo:nombreLista(),descripcion:meta&&meta.descripcion||null,detalles:{...(meta?{generos:meta.generos,etiqueta:meta.etiqueta,vol:meta.vol}:{}),...(spId?{sp:spId}:{}),...(ampN?{amp:ampN}:{})},canciones:res});
   // Ampliar: otras 30 canciones en la misma línea, sin repetir (1 uso)
   async function pideAmpliar(L,pet){const d=L.detalles||{};
     const r=await sb.functions.invoke("ia-lista",{body:{tipo:"musica",peticion:String(pet||L.descripcion||L.titulo||"Mi playlist").slice(0,400),ampliar:{nombre:L.titulo,descripcion:L.descripcion||"",generos:d.generos||"",canciones:L.canciones.map(c=>c.titulo+" — "+c.artista)}}});
@@ -635,15 +647,15 @@ TAGS.forEach(([key, label]) => {
     const ya=new Set(L.canciones.map(c=>(c.titulo+"|"+c.artista).toLowerCase()));
     return {items:(r.data.items||[]).filter(c=>!ya.has((c.titulo+"|"+c.artista).toLowerCase())),q:r.data.limite-r.data.usados}}
   $("iaMas").onclick=async()=>{if(!res.length||!sb||busy||ampliando)return;ampliando=true;pinta();$("iaMas").textContent="Ampliando…";
-    try{const r=await pideAmpliar(actual(),$("iaTxt").value.trim());res=res.concat(r.items);$("iaInfo").textContent=`Añadidas ${r.items.length} canciones. `+quedan(r.q);
-      if(favId)await sb.from("playlists").update({canciones:res}).eq("id",favId);
+    try{const r=await pideAmpliar(actual(),$("iaTxt").value.trim());res=res.concat(r.items);ampN++;$("iaInfo").textContent=`Añadidas ${r.items.length} canciones. `+quedan(r.q);
+      if(favId)await sb.from("playlists").update({canciones:res,detalles:actual().detalles}).eq("id",favId);
       if(spId&&SPOT.ok())try{await aSpotify(actual())}catch(_){}
       if(favId)cargarFavs();
     }catch(e){$("iaInfo").textContent=e.message||"No se pudo ampliar."}
     ampliando=false;pinta();$("iaMas").textContent="Ampliar · +30 canciones"};
   // Prensadas para ti: las listas de la IA guardadas. Se pueden ampliar, editar (nombre y canciones) y llevar a Spotify
   let favs=[],abiertas=new Set(),edit=null,avisos={};
-  async function cargarFavs(){if(!sb)return;const r=await sb.from("playlists").select("*").order("creado",{ascending:false});favs=r.data||[];pintaFavs()}
+  async function cargarFavs(){if(!sb)return;const r=await sb.from("playlists").select("*").order("creado",{ascending:false});favs=r.data||[];favsListas=true;pintaFavs();evalLogros()}
   function lista(cs){return cs.map(c=>`<li><div><b>${esc(c.titulo)}</b><span>${esc(c.artista)}${c.anio?` · ${c.anio}`:""}</span></div><a href="https://open.spotify.com/search/${encodeURIComponent(c.titulo+" "+c.artista)}" target="_blank" rel="noopener">Spotify ↗</a></li>`).join("")}
   function pintaFavs(){$("favs").hidden=!favs.length;pintaCuenta();$("favList").innerHTML=favs.map((f,i)=>{
       const ed=edit&&edit.id===f.id,cs=ed?edit.canciones:(f.canciones||[]),sp=(f.detalles||{}).sp,n=cs.length;
@@ -671,7 +683,7 @@ TAGS.forEach(([key, label]) => {
       if(nueva.detalles&&nueva.detalles.sp&&SPOT.ok())try{await aSpotify(nueva);avisos[f.id]="Cambios guardados, también en Spotify."}catch(_){avisos[f.id]="Cambios guardados. En Spotify no se han podido aplicar."}
       cargarFavs();return}
     if(b.dataset.ampliar){b.disabled=true;b.textContent="Ampliando…";
-      try{const r=await pideAmpliar(f);const cs=(f.canciones||[]).concat(r.items);await sb.from("playlists").update({canciones:cs}).eq("id",f.id);
+      try{const r=await pideAmpliar(f);const cs=(f.canciones||[]).concat(r.items),dt={...(f.detalles||{}),amp:((f.detalles||{}).amp||0)+1};await sb.from("playlists").update({canciones:cs,detalles:dt}).eq("id",f.id);f.detalles=dt;
         avisos[f.id]=`Añadidas ${r.items.length} canciones. `+quedan(r.q);
         if((f.detalles||{}).sp&&SPOT.ok())try{await aSpotify({...f,canciones:cs})}catch(_){}
       }catch(err){avisos[f.id]=err.message||"No se pudo ampliar."}
@@ -687,6 +699,59 @@ TAGS.forEach(([key, label]) => {
     const r=await sb.from("playlists").insert(actual()).select("id").single();$("iaFav").textContent=r.error?"No se pudo guardar":"Guardada en tu biblioteca ✓";if(!r.error){favId=r.data.id;cargarFavs()}};
   $("iaCopy").onclick=async()=>{try{await navigator.clipboard.writeText((meta?`${meta.nombre}\n${meta.descripcion}\n\n`:"")+res.map((c,i)=>`${i+1}. ${c.titulo} — ${c.artista}`).join("\n"));$("iaCopy").textContent="Copiada"}catch(e){$("iaCopy").textContent="No se pudo copiar"}};
   $("iaSalir").onclick=()=>CiccCuenta.salir();
+
+  /* ===== Logros: medallas con lo que ya guarda Vinilo (listas de la IA y escuchas). Los secretos no se enseñan hasta conseguirlos ===== */
+  const LOGROS=[
+    {clave:"primera_prensada",nombre:"Primera prensada",texto:"Tu primera lista creada con la IA",metrica:"creadas",niveles:[1],motivo:"disco"},
+    {clave:"sello_propio",nombre:"Sello propio",texto:"Listas de la IA guardadas en tu biblioteca",metrica:"guardadas",niveles:[5,20,50],unidad:"listas",unidad1:"lista",motivo:"sello"},
+    {clave:"cara_b",nombre:"Cara B",texto:"Veces que has ampliado una lista",metrica:"ampliaciones",niveles:[1,5,15],unidad:"veces",unidad1:"vez",motivo:"caraB"},
+    {clave:"en_antena",nombre:"En antena",texto:"Canciones escuchadas en Spotify desde tus prensadas",metrica:"antena",niveles:[30,150,500],unidad:"canciones",unidad1:"canción",motivo:"antena"},
+    {clave:"vuelta_disco",nombre:"La vuelta al disco",texto:"Listas distintas de la selección escuchadas en un mes",metrica:"vuelta",niveles:[4,8,12],unidad:"listas",unidad1:"lista",motivo:"reloj"},
+    {clave:"disco_rayado",nombre:"Disco rayado",texto:"Canciones escuchadas desde una misma lista",metrica:"rayado",niveles:[50,250,1000],unidad:"canciones",unidad1:"canción",motivo:"rayado"},
+    {clave:"vuelta_completa",nombre:"Vuelta completa",texto:"En una misma semana: las doce de la selección, Sunday Service en domingo y After Dark entre las 3 y las 5",metrica:"s_semana",niveles:[1],motivo:"rosa",secreto:true},
+    {clave:"a_su_hora",nombre:"A su hora",texto:"Las doce de la selección, cada una a menos de media hora de su sitio en el disco",metrica:"s_hora",niveles:[1],motivo:"reloj",secreto:true},
+    {clave:"noche_cerrada",nombre:"Noche cerrada",texto:"The Gentleman's Club, Open Bar y After Dark en la misma noche",metrica:"s_noche",niveles:[1],motivo:"luna",secreto:true},
+    {clave:"edicion_coleccionista",nombre:"Edición de coleccionista",texto:"Una prensada de 90 canciones o más, guardada en Spotify",metrica:"s_coleccion",niveles:[1],motivo:"sello",secreto:true}
+  ];
+  const MOTIVOS_LOGROS={
+    disco:'<circle cx="12" cy="12" r="9.5" fill="none" stroke-width="1.6"/><circle cx="12" cy="12" r="6" fill="none" stroke-width=".9"/><circle cx="12" cy="12" r="2.6" stroke="none"/>',
+    sello:'<circle cx="12" cy="12" r="9.5" fill="none" stroke-width="1.6"/><path d="M12 6.3l1.7 3.5 3.8.5-2.8 2.6.7 3.8-3.4-1.9-3.4 1.9.7-3.8-2.8-2.6 3.8-.5z" stroke="none"/>',
+    caraB:'<circle cx="12" cy="12" r="9.5" fill="none" stroke-width="1.6"/><text x="12" y="16.8" text-anchor="middle" font-family="Georgia, serif" font-size="13.5" stroke="none">B</text>',
+    antena:'<circle cx="12" cy="12" r="2.2" stroke="none"/><path d="M8.3 8.3a5.2 5.2 0 0 0 0 7.4M15.7 8.3a5.2 5.2 0 0 1 0 7.4M5.3 5.3a9.5 9.5 0 0 0 0 13.4M18.7 5.3a9.5 9.5 0 0 1 0 13.4" fill="none" stroke-width="1.6" stroke-linecap="round"/>',
+    reloj:'<circle cx="12" cy="12" r="9.5" fill="none" stroke-width="1.6"/><path d="M12 6.5V12l3.8 2.4" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    rayado:'<path d="M18.6 8.6A7.4 7.4 0 1 0 19.4 13" fill="none" stroke-width="1.8" stroke-linecap="round"/><path d="M19.6 4.6v4.6H15" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.4" stroke="none"/>',
+    luna:'<path d="M15 3.2a9 9 0 1 0 5.8 14.6A7.4 7.4 0 0 1 15 3.2z" stroke="none"/>'
+  };
+  let favsListas=false,oidas=null,tLog,porSumar={};
+  // Todas las escuchas guardadas (la tabla solo tiene lo que sonó desde una lista)
+  async function cargaEscuchas(){if(!sb)return;const q=await sb.from("escuchas").select("lista,sonada").order("sonada").limit(50000);if(!q.error){oidas=(q.data||[]).map(f=>({l:f.lista,d:new Date(f.sonada)}));evalLogros()}}
+  function metricasLogros(){
+    const m={creadas:favs.length?1:0,guardadas:favs.length,ampliaciones:favs.reduce((t,f)=>t+((f.detalles||{}).amp||0),0)};
+    m.s_coleccion=favs.some(f=>(f.detalles||{}).sp&&(f.canciones||[]).length>=90)?1:0;
+    if(oidas){const sp2id=new Map(LISTS.filter(l=>l.sp).map(l=>[l.sp,l.id])),mias=new Set(favs.map(f=>(f.detalles||{}).sp).filter(Boolean));
+      const ini=new Date();ini.setDate(1);ini.setHours(0,0,0,0);const cuenta={},mes=new Set(),aHora=new Set(),noches={},semanas={};
+      let antena=0;
+      for(const e of oidas){cuenta[e.l]=(cuenta[e.l]||0)+1;if(mias.has(e.l))antena++;const id=sp2id.get(e.l);if(!id)continue;
+        if(e.d>=ini)mes.add(id);
+        // cada jornada va de 6:00 a 6:00, como el disco
+        const j=new Date(e.d.getTime()-6*3600e3),dia=j.getFullYear()+"-"+j.getMonth()+"-"+j.getDate(),t=e.d.getHours()+e.d.getMinutes()/60,H=disco(e.d).hora;
+        if(id in H){let dd=Math.abs(t-H[id]);dd=Math.min(dd,24-dd);if(dd<=.5)aHora.add(id)}
+        if(["gentleman","openbar","afterdark"].includes(id))(noches[dia]=noches[dia]||new Set()).add(id);
+        const lun=new Date(j);lun.setHours(0,0,0,0);lun.setDate(lun.getDate()-((lun.getDay()+6)%7));const w=lun.getTime(),S=semanas[w]=semanas[w]||{l:new Set(),dom:0,tres:0};
+        S.l.add(id);if(id==="sunday"&&e.d.getDay()===0)S.dom=1;if(id==="afterdark"&&e.d.getHours()>=3&&e.d.getHours()<5)S.tres=1}
+      m.antena=antena;m.vuelta=mes.size;m.rayado=Math.max(0,...Object.values(cuenta));
+      m.s_hora=aHora.size>=12?1:0;m.s_noche=Object.values(noches).some(x=>x.size===3)?1:0;
+      m.s_semana=Object.values(semanas).some(S=>S.l.size>=12&&S.dom&&S.tres)?1:0}
+    return Object.assign(m,porSumar)}
+  // Se evalúa cuando ya están las listas y las escuchas; «creadas» llega solo al crear una lista
+  function evalLogros(extra){if(extra)Object.assign(porSumar,extra);if(!sb||!window.CiccLogros||!favsListas||(SPOT.ok()&&!oidas))return;
+    clearTimeout(tLog);tLog=setTimeout(()=>{const m=metricasLogros();porSumar={};CiccLogros.evaluar(m).then(pintaVitrina)},600)}
+  function pintaVitrina(){const n=CiccLogros.total(),b=$("vitrinaBtn");b.hidden=false;
+    $("vitrinaTxt").textContent=n?`Vitrina · ${n} ${n===1?"medalla":"medallas"}`:"Vitrina de medallas";
+    const md=$("vitrinaMed");if(!md.firstChild)md.innerHTML=CiccLogros.medalla({nivel:3,motivo:"disco",color:"#22305A"})}
+  function iniciaLogros(){if(!window.CiccLogros||!sb)return;
+    CiccLogros.iniciar({sb,app:"vinilo",nombre:"Vinilo",color:"#22305A",catalogo:LOGROS,motivos:MOTIVOS_LOGROS}).then(()=>{pintaVitrina();if(!SPOT.ok())evalLogros();else cargaEscuchas()})}
+  $("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
 
   /* ===== Spotify (PKCE, sin secreto). Solo funciona para las cuentas dadas de alta en el panel de Spotify ===== */
   const SPOTIFY_ID="f8fc9ff49eef41ee836095a25cda4445";   // Client ID de la app «Vinilo» en developer.spotify.com
@@ -750,7 +815,7 @@ TAGS.forEach(([key, label]) => {
     }catch(_){/* sin permiso todavía o Spotify no responde: se ordena con lo que ya hay */}
     const ini=new Date();ini.setDate(1);ini.setHours(0,0,0,0);
     const q=await sb.from("escuchas").select("lista").gte("sonada",ini.toISOString()).limit(20000);
-    veces={};(q.data||[]).forEach(f=>veces[f.lista]=(veces[f.lista]||0)+1);pintaSp();
+    veces={};(q.data||[]).forEach(f=>veces[f.lista]=(veces[f.lista]||0)+1);pintaSp();cargaEscuchas();
   })().finally(()=>{ordenando=null}))}
   async function cargarSpotify(){
     pintaCon();if(!SPOT.ok())return;
