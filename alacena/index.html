@@ -18,7 +18,7 @@
 <style>
 /* Alacena: una carta de restaurante clásica. Mantel de vichy berenjena, plato de porcelana con filete de oro y cubertería de plata.
    La cabecera va dentro del mantel, con el plato: una sola pieza. Debajo, la carta del día; en el ordenador, en dos columnas. */
-@font-face{font-family:"Bodoni Moda";src:url("../compartido/fuentes/BodoniModa-var.woff2") format("woff2");font-weight:400 600;font-display:swap}
+@font-face{font-family:"Bodoni Moda";src:url("../compartido/fuentes/BodoniModa-var.woff2") format("woff2");font-weight:400 900;font-display:swap}
 @font-face{font-family:"Bodoni Moda";src:url("../compartido/fuentes/BodoniModa-var-i.woff2") format("woff2");font-weight:400;font-style:italic;font-display:swap}
 @font-face{font-family:"Figtree";src:url("../compartido/fuentes/Figtree-var.woff2") format("woff2");font-weight:400 600;font-display:swap}
 @font-face{font-family:"IBM Plex Mono";src:url("../compartido/fuentes/IBMPlexMono-500.woff2") format("woff2");font-weight:500;font-display:swap}
@@ -57,7 +57,12 @@ h2.tit{margin:0;font-family:var(--f-tit);font-weight:500;font-size:28px;line-hei
 .pila{display:flex;flex-direction:column;gap:12px}
 .pila.g8{gap:8px}.pila.g24{gap:24px}
 .tarjeta{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--linea);border-radius:8px;background:var(--alto)}
-.aviso{padding:14px 16px;border-radius:8px;background:var(--hundido);font-size:14px;line-height:21px}
+.aviso{padding:16px 18px;border-radius:8px;background:var(--hundido);font-size:14px;line-height:21px;hyphens:auto;-webkit-hyphens:auto;text-wrap:pretty}
+.aviso strong{display:block;margin-bottom:4px;text-align:left}
+/* justificado solo cuando la línea es lo bastante larga para no abrir huecos */
+@media (min-width:360px){.aviso{text-align:justify}}
+/* el título grande de la marca: a este tamaño Bodoni deja los trazos finos casi invisibles; se usa un tamaño óptico menor */
+.marca{font-family:var(--f-tit);font-weight:600;font-variation-settings:"opsz" 30}
 .aviso strong{font-weight:600}
 
 /* botones */
@@ -88,7 +93,7 @@ body.con-pestanas{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 .mantel{position:relative;border-radius:12px;overflow:hidden;line-height:0;background-color:var(--lino);background-image:radial-gradient(ellipse 75% 70% at 50% 52%,rgba(0,0,0,0) 55%,rgba(0,0,0,.16) 100%),linear-gradient(90deg,var(--vichy) 50%,transparent 50%),linear-gradient(var(--vichy) 50%,transparent 50%);background-size:100% 100%,14px 14px,14px 14px}
 .mantel header{line-height:normal;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:30px 20px 0}
 .mantel .fecha{font-family:var(--f-tit);font-size:13px;line-height:18px;font-weight:500;letter-spacing:.2em;color:var(--oro-t);text-transform:uppercase}
-.mantel h1{margin:0;font-family:var(--f-tit);font-weight:500;font-size:clamp(50px,15vw,64px);line-height:1.02;letter-spacing:.01em;color:var(--app-t)}
+.mantel h1{margin:0;font-family:var(--f-tit);font-weight:600;font-variation-settings:"opsz" 30;font-size:clamp(50px,15vw,64px);line-height:1.02;letter-spacing:.01em;color:var(--app-t)}
 .mantel .lema{margin:0;font-family:var(--f-tit);font-style:italic;font-size:22px;line-height:28px;color:var(--oro-t)}
 .mantel svg.plato{width:100%;height:auto;display:block}
 .alh-plato{font-family:var(--f-tit);font-size:11px;line-height:15px;color:#2A1A27;text-align:center;text-wrap:balance;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;hyphens:none}
@@ -442,7 +447,7 @@ ${PLAN.notas?`<div class="aviso">${esc(PLAN.notas)}</div>`:""}
 function inicioHTML(){
   return `<div class="cue" style="padding-bottom:24px"><div class="pila" style="align-items:center;text-align:center;padding-top:24px">
 <img src="../iconos/alacena-192.png?v=1" alt="" width="76" height="76" style="border-radius:17px;box-shadow:0 8px 14px rgba(0,0,0,.28)">
-<h1 style="margin:0;font-family:var(--f-tit);font-weight:500;font-size:52px;line-height:56px;color:var(--app-t)">Alacena</h1><p class="p" style="font-family:var(--f-tit);font-style:italic;font-size:22px;line-height:28px;color:var(--oro-t)">¿Qué comemos hoy?</p></div>
+<h1 class="marca" style="margin:0;font-size:52px;line-height:56px;color:var(--app-t)">Alacena</h1><p class="p" style="font-family:var(--f-tit);font-style:italic;font-size:22px;line-height:28px;color:var(--oro-t)">¿Qué comemos hoy?</p></div>
 <p class="p suave" style="text-align:center">Vamos a preparar tu plan de comidas. Elige cómo empezar.</p>
 <div class="pila"><button class="eleccion oro" data-acc="crear"><b>Crear mi dieta desde cero</b><span>Con la IA, a partir de unas preguntas sobre ti, tus gustos y tu cocina. Unos 5 minutos.</span></button>
 <button class="eleccion" data-acc="importar"><b>Importar la de mi nutricionista</b><span>Subes el PDF o una foto y la IA la convierte en tu plan. Tú lo revisas antes de guardarlo.</span></button></div>
