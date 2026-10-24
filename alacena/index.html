@@ -57,10 +57,10 @@ h2.tit{margin:0;font-family:var(--f-tit);font-weight:500;font-size:28px;line-hei
 .pila{display:flex;flex-direction:column;gap:12px}
 .pila.g8{gap:8px}.pila.g24{gap:24px}
 .tarjeta{display:flex;flex-direction:column;gap:12px;padding:16px;border:1px solid var(--linea);border-radius:8px;background:var(--alto)}
-.aviso{padding:16px 18px;border-radius:8px;background:var(--hundido);font-size:14px;line-height:21px;hyphens:auto;-webkit-hyphens:auto;text-wrap:pretty}
-.aviso strong{display:block;margin-bottom:4px;text-align:left}
-/* justificado solo cuando la línea es lo bastante larga para no abrir huecos */
-@media (min-width:360px){.aviso{text-align:justify}}
+.aviso{padding:16px 18px;border-radius:8px;background:var(--hundido);font-size:14px;line-height:21px;text-wrap:pretty}
+/* el aviso de salud, discreto: texto suelto, sin tarjeta */
+.aviso-nutri{font-size:13.5px;line-height:20px;color:var(--suave);text-wrap:pretty}
+.aviso-nutri strong{font-weight:600;color:var(--tinta)}
 /* el título grande de la marca: a este tamaño Bodoni deja los trazos finos casi invisibles; se usa un tamaño óptico menor */
 .marca{font-family:var(--f-tit);font-weight:600;font-variation-settings:"opsz" 30}
 .aviso strong{font-weight:600}
@@ -213,7 +213,9 @@ body.con-pestanas{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tinta);color:var(--fondo);padding:10px 16px;border-radius:8px;font-size:14px;z-index:30;max-width:calc(100% - 40px);text-align:center}
 .pie{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .pie .aviso-pie{margin:0;max-width:60ch;text-wrap:balance;font-size:13px;line-height:19px;color:var(--suave)}
-.cc-firma{padding-top:12px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+/* el pie va dentro de la columna, que ya deja la franja segura: sin margen propio, para que quede centrado con el resto */
+.cc-firma{padding-top:12px}
+#app .cc-firma{padding-left:0;padding-right:0}
 /* barra lateral: solo en la pantalla exterior del Duo, cuando la franja segura de la derecha deja sitio (44 px) */
 .rail{position:fixed;z-index:9;right:0;top:calc(50% + 24px);transform:translateY(-50%);width:env(safe-area-inset-right,0px);display:none;flex-direction:column;align-items:center;gap:10px}
 body.con-pestanas .rail.si{display:flex}
@@ -452,7 +454,7 @@ function vistaPlan(){
 <div class="macro"><div><b>${fmt(o.kcal)}</b><span>kcal</span></div><div><b>${fmt(o.proteinas)} g</b><span>proteína</span></div><div><b>${fmt(o.hidratos)} g</b><span>hidratos</span></div><div><b>${fmt(o.grasas)} g</b><span>grasas</span></div></div>
 ${PLAN.notas?`<div class="aviso">${esc(PLAN.notas)}</div>`:""}
 <div class="pila g8"><button class="btn prim grande" data-acc="rehacer">Rehacer mi dieta con la IA</button><button class="btn grande" data-acc="importar">Importar la de mi nutricionista</button><button class="btn grande" data-acc="respuestas">Cambiar mis respuestas</button></div>
-<div class="aviso"><strong>Alacena no sustituye a un nutricionista.</strong> Si tienes alguna condición de salud (diabetes, hipertensión, enfermedad renal, embarazo o un trastorno de la conducta alimentaria), lo mejor es importar la dieta de uno.</div>
+<div class="aviso-nutri"><strong>Alacena no sustituye a un nutricionista.</strong> Si tienes alguna condición de salud (diabetes, hipertensión, enfermedad renal, embarazo o un trastorno de la conducta alimentaria), lo mejor es importar la dieta de uno.</div>
 <section class="pila"><div class="pila g8"><span class="ojo">Platos preparados</span><h2 class="tit" style="font-size:24px;line-height:29px">Wetaca y Knoweats</h2><p class="p suave">Sus cartas con kilocalorías y macros por ración, para pedir cuando no te apetezca cocinar. Se actualizan solas${act?"; la última vez, el "+act.getDate()+" de "+MESES[act.getMonth()]:""}.</p></div>
 <div class="fila2"><button class="chip" data-fcat="wetaca" aria-pressed="${filtro==="wetaca"}">Wetaca</button><button class="chip" data-fcat="knoweats" aria-pressed="${filtro==="knoweats"}">Knoweats</button></div>
 <div class="carta">${CAT?catHTML||'<p class="p suave" style="padding:12px 16px">Aún no hay platos en este catálogo.</p>':'<p class="p suave" style="padding:12px 16px">Cargando el catálogo…</p>'}</div></section>
@@ -468,7 +470,7 @@ function inicioHTML(){
 <p class="p suave" style="text-align:center">Vamos a preparar tu plan de comidas. Elige cómo empezar.</p>
 <div class="pila"><button class="eleccion oro" data-acc="crear"><b>Crear mi dieta desde cero</b><span>Con la IA, a partir de unas preguntas sobre ti, tus gustos y tu cocina. Unos 5 minutos.</span></button>
 <button class="eleccion" data-acc="importar"><b>Importar la de mi nutricionista</b><span>Subes el PDF o una foto y la IA la convierte en tu plan. Tú lo revisas antes de guardarlo.</span></button></div>
-<div class="aviso"><strong>Alacena no sustituye a un nutricionista.</strong> Si tienes alguna condición de salud (diabetes, hipertensión, enfermedad renal, embarazo o un trastorno de la conducta alimentaria), lo mejor es importar la dieta de uno.</div>
+<div class="aviso-nutri"><strong>Alacena no sustituye a un nutricionista.</strong> Si tienes alguna condición de salud (diabetes, hipertensión, enfermedad renal, embarazo o un trastorno de la conducta alimentaria), lo mejor es importar la dieta de uno.</div>
 <div id="firma"></div><button class="enlace" data-acc="salir" style="align-self:center">Cerrar sesión</button></div>`;
 }
 function enlazaInicio(){CiccCuenta.firma("Alacena",$("firma"));enlaza()}
