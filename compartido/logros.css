@@ -46,14 +46,16 @@ html.cl-abierta { overflow: hidden; }
 }
 .cl-vitrina.cl-dentro { background: rgba(10, 14, 12, .45); }
 .cl-hoja {
-  box-sizing: border-box; width: 100%; max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px); overflow-y: auto; overscroll-behavior: contain;
-  /* la hoja llega de borde a borde (también por la franja de la cámara); su contenido, centrado con el mismo margen a los dos lados */
-  padding: 6px max(16px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 20px);
+  /* la hoja empieza por debajo de la cámara: con la franja lateral del Duo plegado (inset derecho), baja lo que mide esa franja */
+  box-sizing: border-box; width: 100%; max-height: calc(100% - env(safe-area-inset-top, 0px) - max(24px, env(safe-area-inset-right, 0px))); overflow-y: auto; overscroll-behavior: contain;
+  /* en vertical el contenido usa todo el ancho (la franja solo estorba arriba, donde ya no llega la hoja); en horizontal respeta los bordes */
+  padding: 6px 20px calc(env(safe-area-inset-bottom, 0px) + 20px);
   background: var(--cl-fondo); color: var(--cl-tinta); font-family: var(--cl-sans);
   border-radius: 20px 20px 0 0; box-shadow: var(--cl-sombra);
   transform: translateY(100%); transition: transform .3s cubic-bezier(.2, .8, .3, 1);
 }
 .cl-vitrina.cl-dentro .cl-hoja { transform: none; }
+@media (orientation: landscape) { .cl-hoja { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); } }
 .cl-hoja:focus { outline: none; }
 @media (min-width: 700px) {
   .cl-vitrina { align-items: center; padding: 24px max(24px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
