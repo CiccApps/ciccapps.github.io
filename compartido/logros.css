@@ -42,14 +42,14 @@ html.cl-abierta { overflow: hidden; }
 .cl-vitrina {
   position: fixed; inset: 0; z-index: 1001; display: flex; align-items: flex-end; justify-content: center;
   box-sizing: border-box;
-  background: rgba(10, 14, 12, 0); transition: background .25s;
+  background: rgba(10, 14, 12, 0); transition: background .25s, backdrop-filter .25s, -webkit-backdrop-filter .25s;
 }
-.cl-vitrina.cl-dentro { background: rgba(10, 14, 12, .45); }
+.cl-vitrina.cl-dentro { background: rgba(10, 14, 12, .45); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .cl-hoja {
-  /* --cl-duo vale 12px solo con la franja lateral del Duo plegado (inset derecho de 44px o más) y 0 en el resto:
-     ahí la hoja flota con 12px a los lados y un poco más de aire arriba, para que se vea el velo y libre la cámara */
-  --cl-duo: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 12px);
-  box-sizing: border-box; width: calc(100% - 2 * var(--cl-duo)); max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px - 2 * var(--cl-duo)); overflow-y: auto; overscroll-behavior: contain;
+  /* --cl-duo vale 20px solo con la franja lateral del Duo plegado (inset derecho de 44px o más) y 0 en el resto:
+     ahí la hoja flota con 20px a los lados y 24px más de aire arriba, para que se vea el velo y libre la cámara */
+  --cl-duo: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 20px);
+  box-sizing: border-box; width: calc(100% - 2 * var(--cl-duo)); max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px - 1.2 * var(--cl-duo)); overflow-y: auto; overscroll-behavior: contain;
   /* en vertical el contenido usa todo el ancho (la franja solo estorba arriba, donde ya no llega la hoja); en horizontal respeta los bordes */
   padding: 6px 20px calc(env(safe-area-inset-bottom, 0px) + 20px);
   background: var(--cl-fondo); color: var(--cl-tinta); font-family: var(--cl-sans);
@@ -68,6 +68,8 @@ html.cl-abierta { overflow: hidden; }
 .cl-cab h2 { margin: 0; font-family: var(--cl-titulo); font-weight: 400; font-size: 26px; }
 .cl-cerrar, .cl-volver { font: inherit; color: var(--cl-tinta); background: none; border: 0; cursor: pointer; border-radius: 10px; min-height: 44px; }
 .cl-cerrar { width: 44px; font-size: 28px; line-height: 1; color: var(--cl-suave); margin-left: auto; }
+/* en el Duo plegado la X se queda fuera de la franja derecha, donde baja la burbuja de la música (Live Activity) */
+.cl-cab .cl-cerrar { margin-right: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, env(safe-area-inset-right, 0px) - var(--cl-duo, 0px) - 20px); }
 .cl-volver { padding: 0 8px 0 0; font-size: 15px; color: var(--cl-oro); font-weight: 600; }
 .cl-cerrar:focus-visible, .cl-volver:focus-visible, .cl-med:focus-visible { outline: 2px solid var(--cl-oro); outline-offset: 2px; }
 .cl-cuenta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--cl-suave); }
