@@ -90,7 +90,6 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0
 .note { font-size: 13px; color: var(--muted); font-style: italic; margin: 0; }
 .filtering .card.off { opacity: .22; }
 .filtering .card.hit { border-color: var(--accent); }
-footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; text-wrap: pretty; }
 
 @media (max-width: 720px) {
   .shelf { grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 14px; }
@@ -223,6 +222,9 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 .sp-pl img,.sp-pl i{width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;display:block;background:var(--surface);box-shadow:0 0 0 1px rgba(217,184,120,.35),0 6px 14px rgba(0,0,0,.3)}
 .sp-pl b{font-weight:700;font-size:14px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .sp-pl span{font-size:12.5px;color:var(--muted)}
+.plan-b{margin:-4px 0 0;text-wrap:pretty}
+/* Hueco final de tus listas: si la última fila se queda con una sola, se completa con un acceso a Spotify */
+.sp-pl.mas i{display:grid;place-items:center;background:transparent;box-shadow:none;border:1px dashed color-mix(in srgb,var(--accent) 55%,transparent);color:var(--accent);font-style:normal;font-size:28px}
 .sp-pl em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--accent);margin-top:-4px}
 .sp-h{display:grid;gap:2px;margin-top:6px}.sp-h h3{margin:0;font-family:var(--display);font-weight:400;font-size:1.35rem}
 .mes-sp{display:grid;gap:14px;padding:20px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
@@ -340,6 +342,7 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
     </div>
     <div class="shelf" id="shelf"></div>
     <div class="scale"><span>Calma</span><span>Energía</span></div>
+    <p class="sub plan-b">Si una lista no te encaja en un momento, prueba la de al lado en la escala: suele funcionar como plan&nbsp;B.</p>
     <p class="match" id="match" aria-live="polite"></p>
   </section>
 
@@ -370,7 +373,6 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
     <div class="favs" id="favs" hidden><div class="sp-h"><div class="eyebrow">Con IA</div><h3>Prensadas para ti</h3></div><div class="fav-list" id="favList"></div></div>
   </section>
 
-  <footer>Si una lista no te encaja en un momento, prueba la de al lado en la escala de energía: suelen funcionar como plan&nbsp;B.</footer>
   <nav class="rail" id="rail" aria-label="Ir a">
     <button type="button" data-ir="arriba" aria-label="Arriba" title="Arriba"><svg viewBox="0 0 24 24"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button>
     <button type="button" data-ir="groups" aria-label="La selección" title="La selección"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></button>
@@ -830,7 +832,12 @@ TAGS.forEach(([key, label]) => {
     const top=misSp.some(x=>veces[x.id]);
     h.innerHTML=top?`<div class="eyebrow">Este mes</div><h3>Tus listas más escuchadas</h3>`:`<div class="eyebrow">En Spotify</div><h3>Tus listas</h3>`;
     g.innerHTML=misSp.map(x=>`<a class="sp-pl" href="${esc(x.external_urls&&x.external_urls.spotify||"#")}" target="_blank" rel="noopener">${x.images&&x.images[0]?`<img src="${esc(x.images[0].url)}" alt="" loading="lazy">`:"<i></i>"}<b>${esc(x.name)}</b><span>${(x.items||x.tracks||{}).total??""} canciones</span>${veces[x.id]?`<em>${veces[x.id]} ${veces[x.id]===1?"escucha":"escuchas"} este mes</em>`:""}</a>`).join("");
+    rellenaSp();
   }
+  function rellenaSp(){const g=$("spGrid");if(g.hidden)return;const v=g.querySelector(".mas");if(v)v.remove();
+    const cols=getComputedStyle(g).gridTemplateColumns.split(" ").length;
+    if(cols>1&&misSp.length%cols===1)g.insertAdjacentHTML("beforeend",`<a class="sp-pl mas" href="https://open.spotify.com/collection/playlists" target="_blank" rel="noopener"><i aria-hidden="true">↗</i><b>Todas en Spotify</b><span>Tu biblioteca completa</span></a>`)}
+  addEventListener("resize",()=>{clearTimeout(rellenaSp.t);rellenaSp.t=setTimeout(rellenaSp,150)});
   let ordenando=null;
   function ordenaSp(){return ordenando||(ordenando=(async()=>{
     if(!sb||!SPOT.ok()||!misSp.length)return;
