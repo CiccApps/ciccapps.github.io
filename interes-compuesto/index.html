@@ -1,4 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}*{touch-action:manipulation}
 /* móvil: pasos en una fila de cuatro, el contador encima y el resto en una fila que se reparte por igual */
 @media (max-width: 760px) {
   .bar { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -8,7 +8,7 @@
   .bar button { justify-content: center; padding-inline: 6px; font-size: 13px; }
   .bar .grow { display: none; }
 }
-@media (max-width: 760px) { .note, .note * { white-space: normal !important; } .bar > button .lbl { display: none; } #toggleData::after { content: "Datos"; } #full::after { content: "Ampliar"; } #reset::after { content: "Reiniciar"; } .hint-pc { display: none; } .tablewrap { -webkit-overflow-scrolling: touch; } }
+@media (max-width: 760px) { .note, .note * { white-space: normal !important; } .note .seg { white-space: nowrap !important; } .bar > button .lbl { display: none; } #toggleData::after { content: "Datos"; } #full::after { content: "Ampliar"; } #reset::after { content: "Reiniciar"; } .hint-pc { display: none; } .tablewrap { -webkit-overflow-scrolling: touch; } }
 @media (max-width: 430px) { .bar .nav .nlbl { display: none; } }
 .hint-movil { display: none; } @media (max-width: 760px) { .hint-movil { display: block; } }
 </style><title>Interés compuesto</title>
@@ -327,14 +327,16 @@ td.wy { color: var(--pink); }
    elemento ocupa ya su sitio desde el paso 0: al avanzar solo aparece, nada se mueve ni hace desplazar la página.
    Todos los botones van en una barra fija abajo: pasos arriba, herramientas debajo. */
 @media screen and (max-width: 760px) {
-  :root { --barh: calc(110px + env(safe-area-inset-bottom, 0px)); }
-  body { padding: 12px max(20px, env(safe-area-inset-right, 0px)) calc(var(--barh) + 12px) max(20px, env(safe-area-inset-left, 0px)); }
+  /* un solo espaciado: 16 px alrededor de la tarjeta, 12 px sobre los botones y 8 px entre filas; bajo los botones,
+     la zona de la barra de inicio del iPhone, sin margen extra */
+  :root { padding-bottom: 0; --m: 16px; --bpad: max(12px, calc(env(safe-area-inset-bottom, 0px) - 8px)); --barh: calc(105px + var(--bpad)); }
+  body { padding: var(--m) max(20px, env(safe-area-inset-right, 0px)) calc(var(--barh) + var(--m)) max(20px, env(safe-area-inset-left, 0px)); }
   .wrap { gap: 12px; }
   .hint { display: none !important; }
   /* barra fija: dos filas compactas */
   .wrap:not(:fullscreen) .bar {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 6px;
-    padding: 8px max(20px, env(safe-area-inset-right, 0px), calc((100vw - 680px) / 2)) calc(8px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px), calc((100vw - 680px) / 2));
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 8px;
+    padding: 12px max(20px, env(safe-area-inset-right, 0px), calc((100vw - 680px) / 2)) var(--bpad) max(20px, env(safe-area-inset-left, 0px), calc((100vw - 680px) / 2));
     background: rgba(233, 236, 242, .94); -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px);
     border-top: 1px solid rgba(0, 51, 102, .08);
   }
@@ -348,7 +350,7 @@ td.wy { color: var(--pink); }
   .bar button { height: 42px; min-height: 42px; padding-block: 0; }
   .bar > button, .bar:has(> #full:not([hidden])) > button { flex: 1 1 0; min-width: 0; margin-left: 0; }
   /* tarjeta de alto fijo */
-  .stage { aspect-ratio: auto; height: max(440px, calc(100dvh - env(safe-area-inset-top, 0px) - 24px - var(--barh))); }
+  .stage { aspect-ratio: auto; height: max(440px, calc(100dvh - env(safe-area-inset-top, 0px) - 2 * var(--m) - var(--barh))); }
   .slide { position: absolute; inset: 0; padding: 14px 14px 12px; gap: 10px; }
   h1 { flex: none; text-align: center; font-size: clamp(20px, min(6.6cqw, 3.4dvh), 30px); }
   .boxes { flex: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
@@ -400,6 +402,11 @@ td.wy { color: var(--pink); }
     .slide { padding: 18px 20px 16px; gap: 12px; }
     .note { --noteh: 62px; font-size: 13px; }
   }
+}
+/* móvil: la página queda clavada (sin desplazar ni rebotar) mientras «Datos» está cerrado; si la pantalla es tan baja
+   que la tarjeta no cabe, se puede desplazar como antes */
+@media screen and (max-width: 760px) and (min-height: 600px) {
+  html:has(#panel[hidden]), html:has(#panel[hidden]) body { overflow: hidden; overscroll-behavior: none; }
 }
 /* pantallas bajas (plegable cerrado, vista dividida): todo un poco más compacto para que la tarjeta quepa entera */
 @media screen and (max-width: 760px) and (max-height: 720px) {
@@ -651,6 +658,7 @@ td.wy { color: var(--pink); }
   // 1 años · 2 capital · 3 €/mes · 4 pensión privada · 5 cabecera y 3 primeras filas · 6 resto de la tabla y etiquetas
   // (segundo plazo) 7 años · 8 capital · 9 €/mes · 10 su pensión · 11 la tabla llega al plazo 2 · (retiradas) última: columna «Con retiradas»
   let step = 0;
+  let penSegs = [];
   const lastYears = () => (S.two ? S.B.years : S.A.years);
   const hasRet = () => validW().some(w => w.year <= lastYears());
   const retStep = () => (S.two ? 12 : 7);
@@ -762,7 +770,8 @@ td.wy { color: var(--pink); }
     // Al lado, lo que valdría hoy (descontando la inflación de los años del plazo, hasta que empieza a cobrarla)
     const pr = pv / Math.pow(1 + S.infl / 100, sc.years);
     $('pen').className = 'pill ' + (pv >= 1500 ? 'ok' : pv >= 1000 ? 'mid' : 'ko') + (v.showPen ? '' : ' hide');
-    $('pen').textContent = 'Pensión privada: ' + eur(pv) + '/mes · ' + S.pYears + ' años' + (S.infl > 0 ? ' · hoy serían ' + eur(pr) + '/mes' : '');
+    penSegs = ['Pensión privada: ' + eur(pv) + '/mes', S.pYears + ' años'].concat(S.infl > 0 ? ['hoy serían ' + eur(pr) + '/mes'] : []);
+    paintPen();
     $('res').className = 'pill ' + (ok ? 'ok' : 'ko') + (showRes ? '' : ' hide');
     $('res').textContent = ok ? '✓ En ' + N + ' años llegas a ' + eur(last.ic) + ': objetivo cubierto'
       : 'En ' + N + ' años llegas a ' + eur(last.ic) + ': faltan ' + eur(t.goal - last.ic);
@@ -902,7 +911,17 @@ td.wy { color: var(--pink); }
     tbl.style.setProperty('--rowpx', rowpx + 'px');
     tbl.style.setProperty('--tdfs', fs.toFixed(2) + 'px');
   }
+  // pensión: en el móvil cada dato va en un trozo que no se parte, así que si no cabe salta por los «·» y nunca deja
+  // «mes» solo abajo; en el ordenador (y en el PDF), el texto de siempre
+  function paintPen() {
+    const el = $('pen');
+    if (!window.matchMedia('(max-width: 760px)').matches) { el.textContent = penSegs.join(' · '); return; }
+    const txt = document.createElement('span');      // un solo hijo: la píldora es flex
+    txt.append(...penSegs.flatMap((t, i) => { const e = document.createElement('span'); e.className = 'seg'; e.textContent = t; return i ? [' · ', e] : [e]; }));
+    el.replaceChildren(txt);
+  }
   window.addEventListener('resize', () => fit());
+  window.matchMedia('(max-width: 760px)').addEventListener('change', paintPen);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fit());
 
   // retiradas
@@ -1100,6 +1119,7 @@ td.wy { color: var(--pink); }
     d.body.textContent = '';
     const c = d.importNode($('stage'), true);
     c.querySelectorAll('.ed').forEach((e, i) => { e.value = $('stage').querySelectorAll('.ed')[i].value; });
+    c.querySelector('#pen').textContent = penSegs.join(' · ');
     d.body.appendChild(c);
     void c.offsetHeight;
     if (d.fonts && d.fonts.ready) await Promise.race([d.fonts.ready, sleep(3000)]);

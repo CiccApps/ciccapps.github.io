@@ -14,14 +14,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=20">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=21">
+<link rel="stylesheet" href="../compartido/logros.css?v=1">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
   --paper:#F3EFE4; --card:#FBF8F0; --ink:#4B2E19; --muted:#6B5E52; --line:#E0D9C8;
   --gold:#9C7630; --gold-soft:#F2E6C9; --shelf:#C9BFA8; --empty:#E9E3D3;
   --s1:#2F5D50; --s2:#2B3A5E; --s3:#7A2633; --s4:#8A6A2A; --s5:#4E3552; --sx:#6B6A5E;
-  --ok:#2F6B45; --warn:#9A5B12;
+  --ok:#2F6B45; --warn:#9A5B12; --relieve:#9A8B7C;
   --f-display:"IM Fell English","Libre Caslon Text",Georgia,serif;
   --f-cifra:"EB Garamond",Georgia,serif;
   --f-body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -31,12 +32,12 @@
   --paper:#17110C; --card:#221912; --ink:#EDE6D3; --muted:#ADA092; --line:#3A2C20;
   --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A3A2A; --empty:#2A2018;
   --s1:#5E9B88; --s2:#7F93C4; --s3:#BE6273; --s4:#C99A45; --s5:#A98BB8; --sx:#A39F8E;
-  --ok:#6FBF8A; --warn:#E0A25A; color-scheme:dark}}
+  --ok:#6FBF8A; --warn:#E0A25A; --relieve:#6B5A48; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#17110C; --card:#221912; --ink:#EDE6D3; --muted:#ADA092; --line:#3A2C20;
   --gold:#D9B878; --gold-soft:#3A2F17; --shelf:#4A3A2A; --empty:#2A2018;
   --s1:#5E9B88; --s2:#7F93C4; --s3:#BE6273; --s4:#C99A45; --s5:#A98BB8; --sx:#A39F8E;
-  --ok:#6FBF8A; --warn:#E0A25A; color-scheme:dark}
+  --ok:#6FBF8A; --warn:#E0A25A; --relieve:#6B5A48; color-scheme:dark}
 
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -193,6 +194,12 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .hab .btn.hecho{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .mes-btn{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:6px;padding:11px 16px;font:600 14px var(--f-body,inherit);color:var(--ink);cursor:pointer}
 .mes-btn.nuevo{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+/* Logros: la vitrina común con los colores y letras de Bitácora */
+:root{--cl-fondo:var(--card);--cl-tinta:var(--ink);--cl-suave:var(--muted);--cl-linea:var(--line);--cl-oro:var(--gold);--cl-vacio:var(--empty);--cl-relieve:var(--relieve);
+  --cl-titulo:var(--f-display);--cl-serif:var(--f-display);--cl-sans:var(--f-body)}
+.cl-cuenta b{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums tabular-nums}
+.vit-txt{display:flex;align-items:center;gap:10px;min-width:0}
+#vitrinaMed{display:block;width:24px;flex:none}
 .mes-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 6px}
 @media (max-width:420px){.mes-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mes-grid div{background:var(--paper);border-radius:6px;padding:12px 10px;display:flex;flex-direction:column}
@@ -339,6 +346,7 @@ h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:4
     <div class="hab"><span class="eyebrow">Racha</span><b id="hRacha" class="mono">0</b><span id="hRachaTxt">días seguidos leyendo</span><button class="btn sm" id="hHoy" type="button">He leído hoy</button></div>
     <div class="hab"><span class="eyebrow" id="hObjAnio">Objetivo</span><b id="hObj" class="mono">0</b><span id="hObjTxt">libros este año</span><div class="bar"><i id="hObjBar" style="width:0%"></i></div><button class="btn sm" id="hObjEdit" type="button">Cambiar</button></div>
     <button class="mes-btn" id="mesBtn" type="button"><span id="mesTxt">Tu mes de lectura</span><span aria-hidden="true">→</span></button>
+    <button class="mes-btn" id="vitrinaBtn" type="button"><span class="vit-txt"><span id="vitrinaMed"></span><span id="vitrinaTxt">Vitrina de medallas</span></span><span aria-hidden="true">→</span></button>
   </section>
 
   <section class="now" aria-label="Ahora">
@@ -366,6 +374,7 @@ h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:4
 
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
+<script src="../compartido/logros.js?v=4"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -511,7 +520,7 @@ const ICON={pendiente:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor
  abandonado:'<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 8h8"/></svg>'};
 const LABEL={pendiente:"Pendiente",leyendo:"Leyendo",leido:"Leído",abandonado:"Abandonado"};
 
-function render(){renderTop();renderView();try{renderHabito()}catch(_){}}
+function render(){renderTop();renderView();try{renderHabito()}catch(_){}evalLogros()}
 
 function renderTop(){
   const read=MAIN.filter(b=>st(b.id)==="leido");
@@ -633,7 +642,7 @@ function viewIA(){
     <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><h3>${esc(l.titulo)}</h3><span class="why2">${esc(l.autor)}${l.paginas?` · ≈${l.paginas} páginas`:""}</span>
     ${l.por_que?`<span class="ia-why">${esc(l.por_que)}</span>`:""}
     <span class="ia-acc">${l.added?`<span class="ia-ok">Añadido a Intercalables</span>`:`<button class="btn sm primary" data-ia-add="${i}">Añadir a mi lista</button>`}</span></span></article>`).join("");
-  return `<section class="ia" aria-labelledby="iaH"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Con inteligencia artificial</span><h2 id="iaH">Créame una lista</h2>
+  return `<section class="ia" aria-labelledby="iaH"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Con IA</span><h2 id="iaH">Créame una lista</h2>
     <p class="hint">Cuéntame qué te apetece y te propongo diez libros que no estén ya en tu bitácora.</p></div>
     <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: novelas cortas de misterio ambientadas en Japón">${esc(IA.txt)}</textarea>
     <button class="btn primary" id="iaGo" ${IA.busy?"disabled":""}>${IA.busy?"Pensando…":"Créame una lista"}</button>
@@ -750,7 +759,7 @@ function openSheet(id,msg){
     const pg=parseInt(document.getElementById("frPg").value,10);
     const r=await sb.from("frases").insert({libro_id:id,texto:t,pagina:isNaN(pg)?null:pg}).select().single();
     if(r.error){toast("No se pudo guardar la frase");return}
-    document.getElementById("frTxt").value="";document.getElementById("frPg").value="";toast("Frase guardada");cargarFrases(id)};
+    document.getElementById("frTxt").value="";document.getElementById("frPg").value="";toast("Frase guardada");NFRASES++;evalLogros();cargarFrases(id)};
   if(draft.estado==="leyendo")document.getElementById("dPg").focus({preventScroll:true});
 }
 async function cargarFrases(id){
@@ -758,7 +767,7 @@ async function cargarFrases(id){
   const F=(r.data||[]).filter(f=>f.libro_id===id);
   L.innerHTML=F.length?F.map(f=>`<figure class="fr"><blockquote>${esc(f.texto)}</blockquote><figcaption>${f.pagina?"Pág. "+f.pagina:""}<button type="button" class="fr-del" data-frdel="${f.id}">Borrar</button></figcaption></figure>`).join(""):`<p class="hint" style="margin:0">Aún no has guardado ninguna frase de este libro.</p>`;
   L.querySelectorAll("[data-frdel]").forEach(x=>x.onclick=async()=>{if(x.dataset.ok!=="1"){x.dataset.ok="1";x.textContent="¿Seguro?";setTimeout(()=>{if(x.isConnected){x.dataset.ok="";x.textContent="Borrar"}},3000);return}
-    await sb.from("frases").delete().eq("id",x.dataset.frdel);cargarFrases(id)});
+    const r=await sb.from("frases").delete().eq("id",x.dataset.frdel);if(!r.error)NFRASES=Math.max(0,NFRASES-1);cargarFrases(id)});
 }
 function closeSheet(){document.getElementById("sheetRoot").innerHTML="";sheetId=null;render()}
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&sheetId)closeSheet()});
@@ -829,14 +838,14 @@ async function escanear(cuando){
 }
 
 /* Hábito: racha de días leyendo y objetivo anual */
-let DIAS=new Set(),AJ={},PAGS={};
+let DIAS=new Set(),AJ={},PAGS={},NDIAS=0,NFRASES=0;
 const hoyISO=()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")};
 const diaISO=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 function racha(){let n=0;const d=new Date();if(!DIAS.has(diaISO(d)))d.setDate(d.getDate()-1);while(DIAS.has(diaISO(d))){n++;d.setDate(d.getDate()-1)}return n}
-async function marcarHoy(){const h=hoyISO();if(DIAS.has(h))return;DIAS.add(h);renderHabito();const r=await sb.from("lectura_dias").insert({dia:h});if(r.error&&!/duplicate/i.test(r.error.message))toast("No se pudo guardar el día")}
-async function sumarPaginas(n){if(!(n>0))return;const h=hoyISO();PAGS[h]=(PAGS[h]||0)+n;DIAS.add(h);renderHabito();
+async function marcarHoy(){const h=hoyISO();if(DIAS.has(h))return;DIAS.add(h);NDIAS++;renderHabito();evalLogros();const r=await sb.from("lectura_dias").insert({dia:h});if(r.error&&!/duplicate/i.test(r.error.message))toast("No se pudo guardar el día")}
+async function sumarPaginas(n){if(!(n>0))return;const h=hoyISO();PAGS[h]=(PAGS[h]||0)+n;if(!DIAS.has(h))NDIAS++;DIAS.add(h);renderHabito();evalLogros();
   const r=await sb.from("lectura_dias").upsert({dia:h,paginas:PAGS[h]},{onConflict:"user_id,dia"});if(r.error)toast("No se pudieron guardar las páginas")}
-async function desmarcarHoy(){const h=hoyISO();DIAS.delete(h);delete PAGS[h];renderHabito();await sb.from("lectura_dias").delete().eq("dia",h)}
+async function desmarcarHoy(){const h=hoyISO();if(DIAS.has(h))NDIAS--;DIAS.delete(h);delete PAGS[h];renderHabito();await sb.from("lectura_dias").delete().eq("dia",h)}
 async function guardarAjustes(patch){AJ=Object.assign({},AJ,patch);const r=await sb.from("ajustes").upsert({app:"bitacora",datos:AJ,actualizado:new Date().toISOString()});if(r.error)toast("No se pudo guardar")}
 function renderHabito(){
   marcarMesNuevo();
@@ -977,6 +986,51 @@ document.getElementById("exportGR").onclick=()=>{
 };
 document.getElementById("salir").onclick=()=>CiccCuenta.salir();
 
+/* Logros: medallas de bronce, plata y oro con lo que ya guarda la app */
+const LOGROS=[
+ {clave:"primer_libro",nombre:"Primer libro",texto:"Terminar tu primer libro en Bitácora",metrica:"libros",niveles:[1],motivo:"estrella"},
+ {clave:"lector",nombre:"Lector de fondo",texto:"Terminados en tu bitácora",metrica:"libros",niveles:[5,15,40],unidad:"libros",unidad1:"libro",motivo:"libro"},
+ {clave:"racha",nombre:"Racha",texto:"Seguidos leyendo, tu mejor racha",metrica:"mejor_racha",niveles:[7,30,100],unidad:"días",unidad1:"día",motivo:"llama"},
+ {clave:"constancia",nombre:"Constancia",texto:"Con lectura apuntada",metrica:"dias",niveles:[30,100,365],unidad:"días",unidad1:"día",motivo:"calendario"},
+ {clave:"paginas",nombre:"Páginas",texto:"Leídas en libros terminados",metrica:"paginas",niveles:[1000,5000,15000],unidad:"páginas",unidad1:"página",motivo:"pagina"},
+ {clave:"etapas",nombre:"Rumbo firme",texto:"Del plan, terminadas de principio a fin",metrica:"etapas",niveles:[1,3,5],unidad:"etapas",unidad1:"etapa",motivo:"rosa"},
+ {clave:"frases",nombre:"Subrayados",texto:"Guardadas de tus libros",metrica:"frases",niveles:[1,25,100],unidad:"frases",unidad1:"frase",motivo:"pluma"},
+ {clave:"gran_tomo",nombre:"Gran tomo",texto:"En un solo libro terminado",metrica:"libro_mayor",niveles:[500,800,1000],unidad:"páginas",unidad1:"página",motivo:"tomo"},
+ {clave:"maraton",nombre:"Maratón",texto:"Leídas en un solo día",metrica:"pags_dia",niveles:[50,100,150],unidad:"páginas",unidad1:"página",motivo:"reloj"},
+ {clave:"objetivo",nombre:"Meta del año",texto:"Cumplir tu objetivo anual de libros",metrica:"objetivo",niveles:[1],motivo:"laurel"},
+ {clave:"mes_impecable",nombre:"Mes impecable",texto:"Leer todos los días de un mes",metrica:"meses_completos",niveles:[1],motivo:"ancla",secreto:true},
+ {clave:"itaca",nombre:"Rumbo a Ítaca",texto:"Terminar la Ilíada, La canción de Aquiles, la Odisea y Circe",metrica:"itaca",niveles:[1],motivo:"velero",secreto:true},
+ {clave:"sant_jordi",nombre:"Libro y rosa",texto:"Terminar un libro un 23 de abril, Día del Libro",metrica:"dia_libro",niveles:[1],motivo:"rosaflor",secreto:true},
+ {clave:"doce_meses",nombre:"La vuelta al año",texto:"Terminar al menos un libro en cada mes de un mismo año",metrica:"doce_meses",niveles:[1],motivo:"anio",secreto:true}];
+const MOTIVOS_LOGROS={
+ tomo:'<rect x="6" y="2.5" width="12" height="19" rx="1.2" fill="none" stroke-width="1.6"/><path d="M6 6.2h12M6 7.9h12M6 16.1h12M6 17.8h12" fill="none" stroke-width="1.1"/><rect x="9.5" y="10.3" width="5" height="3.4" rx=".4" stroke="none"/>',
+ reloj:'<path d="M5.5 2.5h13M5.5 21.5h13" fill="none" stroke-width="1.7" stroke-linecap="round"/><path d="M7.5 2.5c0 5 4.5 6 4.5 9.5s-4.5 4.5-4.5 9.5M16.5 2.5c0 5-4.5 6-4.5 9.5s4.5 4.5 4.5 9.5" fill="none" stroke-width="1.6"/><path d="M8.8 20.5c1-2 2.1-2.8 3.2-2.8s2.2.8 3.2 2.8z" stroke-width=".6"/>',
+ velero:'<path d="M12 2.8v14.4" fill="none" stroke-width="1.4"/><path d="M12.9 3.8l6.6 11.4h-6.6zM11.1 6.3l-5.4 8.9h5.4z" stroke="none"/><path d="M3 17.6h18l-2.6 3.6H5.6z" stroke="none"/>',
+ rosaflor:'<path d="M12 3.2c3.1 0 5.2 2.1 5.2 4.8 0 2.9-2.3 4.8-5.2 4.8S6.8 10.9 6.8 8c0-2.7 2.1-4.8 5.2-4.8z" stroke="none"/><path d="M9.4 6.6c1.6 1.4 3.6 1.4 5.2 0M9.9 9.2c1.3.9 2.9.9 4.2 0" fill="none" stroke="#4B2E19" stroke-opacity=".55" stroke-width=".9" stroke-linecap="round"/><path d="M12 12.8v8.4" fill="none" stroke-width="1.5" stroke-linecap="round"/><path d="M12 17.4c-1.5-2.3-3.6-2.8-5.6-2.3.8 2 3 2.9 5.6 2.3zM12 15.8c1.3-1.9 3.2-2.3 4.9-1.9-.7 1.7-2.6 2.5-4.9 1.9z" stroke="none"/>',
+ anio:'<circle cx="12.0" cy="3.8" r="1.7"/><circle cx="16.1" cy="4.9" r="1.15"/><circle cx="19.1" cy="7.9" r="1.15"/><circle cx="20.2" cy="12.0" r="1.15"/><circle cx="19.1" cy="16.1" r="1.15"/><circle cx="16.1" cy="19.1" r="1.15"/><circle cx="12.0" cy="20.2" r="1.15"/><circle cx="7.9" cy="19.1" r="1.15"/><circle cx="4.9" cy="16.1" r="1.15"/><circle cx="3.8" cy="12.0" r="1.15"/><circle cx="4.9" cy="7.9" r="1.15"/><circle cx="7.9" cy="4.9" r="1.15"/><circle cx="12" cy="12" r="2.2"/><path d="M12 12V7" fill="none" stroke-width="1.3" stroke-linecap="round"/>',
+ ancla:'<circle cx="12" cy="4.5" r="2" fill="none" stroke-width="1.6"/><path d="M12 6.5v15M8 10h8M4.5 13.5c.5 4.5 3.5 7.5 7.5 8 4-.5 7-3.5 7.5-8" fill="none" stroke-width="1.6" stroke-linecap="round"/><path d="M2.8 15.2l1.7-2.2 2.2 1.8M21.2 15.2l-1.7-2.2-2.2 1.8" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'};
+function metricas(){
+  const leidos=ALL.filter(b=>st(b.id)==="leido");
+  const dias=[...DIAS].sort();let mejor=0,c=0,prev=null;
+  dias.forEach(k=>{const d=new Date(k+"T12:00");c=prev&&Math.round((d-prev)/864e5)===1?c+1:1;mejor=Math.max(mejor,c);prev=d});
+  const porMes={};dias.forEach(k=>{const m=k.slice(0,7);porMes[m]=(porMes[m]||0)+1});
+  const completos=Object.keys(porMes).filter(m=>{const[y,mm]=m.split("-").map(Number);return porMes[m]===new Date(y,mm,0).getDate()}).length;
+  const etapas=STAGES.filter(s=>!s.extra&&s._all.length&&s._all.every(b=>!open(b.id))&&s._all.some(b=>st(b.id)==="leido")).length;
+  const y=String(new Date().getFullYear());const meta=+AJ.objetivo||12;
+  return {libros:leidos.length,mejor_racha:mejor,dias:NDIAS,paginas:leidos.reduce((a,b)=>a+b.p,0),etapas,frases:NFRASES,
+    libro_mayor:leidos.reduce((a,b)=>Math.max(a,b.p),0),pags_dia:Math.max(0,...Object.values(PAGS)),
+    objetivo:leidos.filter(b=>String(S(b.id).fin||"").startsWith(y)).length>=meta?1:0,meses_completos:completos,
+    itaca:["iliada","aquiles","odisea","circe"].every(k=>leidos.some(b=>b.clave===k))?1:0,
+    dia_libro:leidos.some(b=>String(S(b.id).fin||"").slice(5)==="04-23")?1:0,
+    doce_meses:Object.values(leidos.reduce((a,b)=>{const f=String(S(b.id).fin||"");if(f.length>=7)(a[f.slice(0,4)]=a[f.slice(0,4)]||new Set).add(f.slice(5,7));return a},{})).some(m=>m.size===12)?1:0};
+}
+let tLogros;
+function evalLogros(){if(!sb||!STAGES.length||!window.CiccLogros)return;clearTimeout(tLogros);tLogros=setTimeout(()=>CiccLogros.evaluar(metricas()).then(pintarVitrina),600)}
+function pintarVitrina(){const n=CiccLogros.total();
+  document.getElementById("vitrinaTxt").textContent=n?`Vitrina · ${n} ${n===1?"medalla":"medallas"}`:"Vitrina de medallas";
+  const m=document.getElementById("vitrinaMed");if(!m.firstChild)m.innerHTML=CiccLogros.medalla({nivel:3,motivo:"rosa",color:"#4B2E19"})}
+document.getElementById("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
+
 /* Primera vez: empezar con el plan o con una lista vacía */
 function vistaEmpezar(){
   document.body.classList.add("nuevo");
@@ -1003,8 +1057,9 @@ async function empezar(conPlan){
 /* Arranque */
 async function cargar(){
   const desde=new Date();desde.setDate(desde.getDate()-400);
-  const [e,l,d,a]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*"),sb.from("lectura_dias").select("dia,paginas").gte("dia",diaISO(desde)),sb.from("ajustes").select("datos").eq("app","bitacora").maybeSingle()]);
-  DIAS=new Set((d.data||[]).map(x=>x.dia));PAGS={};(d.data||[]).forEach(x=>{if(x.paginas)PAGS[x.dia]=x.paginas});AJ=(a.data&&a.data.datos)||{};
+  const [e,l,d,a,nd,nf]=await Promise.all([sb.from("etapas").select("*"),sb.from("libros").select("*"),sb.from("lectura_dias").select("dia,paginas").gte("dia",diaISO(desde)),sb.from("ajustes").select("datos").eq("app","bitacora").maybeSingle(),
+    sb.from("lectura_dias").select("dia",{count:"exact",head:true}),sb.from("frases").select("id",{count:"exact",head:true})]);
+  DIAS=new Set((d.data||[]).map(x=>x.dia));NDIAS=Math.max(nd.count||0,DIAS.size);NFRASES=nf.count||0;PAGS={};(d.data||[]).forEach(x=>{if(x.paginas)PAGS[x.dia]=x.paginas});AJ=(a.data&&a.data.datos)||{};
   if(e.error||l.error){document.getElementById("view").innerHTML='<p class="cargando">No se pudo cargar. Comprueba la conexión y vuelve a abrir la app.</p>';return}
   if(!e.data.length){vistaEmpezar();return}
   document.body.classList.remove("nuevo");  construir(e.data,l.data);if(!sheetId)render();
@@ -1012,7 +1067,9 @@ async function cargar(){
 const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FBF8F0",hundido:"#EDE5D6",linea:"#E0D9C8","linea-fuerte":"#9A8B7C",tinta:"#4B2E19","tinta-suave":"#6B5E52",oro:"#9C7630",primario:"#4B2E19","sobre-primario":"#F3EFE4","display-app":'"IM Fell English",Georgia,serif'},
   oscuro:{fondo:"#17110C","fondo-alto":"#221912",hundido:"#2A2018",linea:"#3A2C20","linea-fuerte":"#6B5A48",tinta:"#EDE6D3","tinta-suave":"#ADA092",oro:"#D9B878",primario:"#D9B878","sobre-primario":"#17110C","display-app":'"IM Fell English",Georgia,serif'}};
 CiccCuenta.iniciar({tema:TEMA_ACCESO,app:"Bitácora",icono:"../iconos/bitacora-192.png?v=6",lema:"¿Qué leo ahora?"}).then(async r=>{
-  sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));await cargar();
+  sb=r.sb;CiccCuenta.firma("Bitácora",document.getElementById("pie"));
+  CiccLogros.iniciar({sb,app:"bitacora",color:"#4B2E19",catalogo:LOGROS,motivos:MOTIVOS_LOGROS,nombre:"Bitácora"}).then(pintarVitrina);
+  await cargar();
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!sheetId)cargar()});
 });
 </script>

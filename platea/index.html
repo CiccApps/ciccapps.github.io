@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/platea-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/platea-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=20">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=21">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
 :root{
@@ -622,7 +622,7 @@ function viewIA(){
   const res=IA.res.map((l,i)=>`<article class="ia-item"><div class="ia-top"><h3>${esc(l.titulo)}</h3><span class="ia-meta">${l.anio?`<span class="mono">${l.anio}</span>`:""}<span class="badge ${l.donde==="cine"?"":"alt"}">${l.tipo==="serie"?"Serie":l.donde==="cine"?"En cines":"Película"}</span>${l.plataforma?`<span class="badge alt">${esc(l.plataforma)}</span>`:""}</span></div>
     ${l.por_que?`<p class="ia-why">${esc(l.por_que)}</p>`:""}
     ${l.added?`<span class="ia-ok">En tu lista «Por ver»</span>`:`<button class="add ia-add" data-ia-add="${i}">Añadir a Por ver</button>`}</article>`).join("");
-  return `<section class="ia" aria-labelledby="iaH"><span class="eyebrow">Con inteligencia artificial</span><h2 id="iaH">Créame una watchlist</h2>
+  return `<section class="ia" aria-labelledby="iaH"><span class="eyebrow">Con IA</span><h2 id="iaH">Créame una watchlist</h2>
     <p class="hint">Cuéntame qué te apetece y te propongo diez películas o series que no tengas ya apuntadas.</p>
     <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: thrillers de los 90 para ver en pareja">${esc(IA.txt)}</textarea>
     <button class="add ia-go" id="iaGo" ${IA.busy?"disabled":""}>${IA.busy?"Pensando…":"Créame una watchlist"}</button>
