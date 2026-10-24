@@ -24,6 +24,9 @@
 @font-face { font-family: "Karla"; src: url(fuentes/Karla-700.woff2) format("woff2"); font-weight: 700; font-display: swap; }
 @font-face { font-family: "Bebas Neue"; src: url(fuentes/BebasNeue-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
 
+/* Sin zoom con doble toque: al pulsar rápido un botón no se amplía la página. Ampliar con dos dedos sigue funcionando. */
+* { touch-action: manipulation; }
+
 :root {
   --cc-fondo: #F3EFE4; --cc-fondo-alto: #FBF8F0; --cc-hundido: #E9E3D3; --cc-linea: #E0D9C8; --cc-linea-fuerte: #8F8A78;
   --cc-tinta: #1B2420; --cc-tinta-suave: #5A615A; --cc-oro: #7E6024; --cc-oro-claro: #D9B878;
