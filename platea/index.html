@@ -170,11 +170,8 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 /* Barra lateral (pantalla exterior del iPhone Duo): solo cuando la franja segura de la derecha deja 44 px */
 .rail{position:fixed;z-index:15;right:0;top:calc(50% + 24px);transform:translateY(-50%);width:env(safe-area-inset-right,0px);display:none;flex-direction:column;align-items:center;gap:8px}
 .rail.si{display:flex}
-/* Con la barra lateral (Duo plegado), iOS difumina el borde de arriba: el contenido y la barra de pestañas bajan por debajo */
-html.con-rail{scroll-padding-top:max(calc(env(safe-area-inset-top,0px) + 16px),56px)}
-html.con-rail .wrap{padding-top:56px!important}
-html.con-rail .bar{top:44px}
-html.con-rail body::before{height:44px}
+/* Con la barra lateral (Duo plegado), los saltos dejan margen bajo el difuminado de iOS */
+html.con-rail{scroll-padding-top:36px}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--red);border-color:var(--red)}
 .rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
