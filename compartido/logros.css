@@ -14,9 +14,9 @@
 /* Aviso «logro desbloqueado» */
 .cl-aviso {
   position: fixed; z-index: 1000; top: calc(env(safe-area-inset-top, 0px) + 10px);
-  /* centrado dentro de la zona segura: en el Duo plegado la cámara y la hora van a un lado */
-  left: calc(50% + (env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)) / 2);
-  width: min(400px, calc(100% - 32px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px))); box-sizing: border-box;
+  /* centrado en la pantalla, con el mismo margen a los dos lados aunque la cámara del Duo plegado deje una franja solo a uno */
+  left: 50%;
+  width: min(400px, calc(100% - 2 * max(16px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)))); box-sizing: border-box;
   display: flex; align-items: center; gap: 12px; padding: 10px 14px 10px 10px;
   background: var(--cl-fondo); color: var(--cl-tinta); border: 1px solid var(--cl-linea); border-radius: 16px;
   box-shadow: var(--cl-sombra); cursor: pointer; font-family: var(--cl-sans);
@@ -41,13 +41,14 @@
 html.cl-abierta { overflow: hidden; }
 .cl-vitrina {
   position: fixed; inset: 0; z-index: 1001; display: flex; align-items: flex-end; justify-content: center;
-  padding: 0 env(safe-area-inset-right, 0px) 0 env(safe-area-inset-left, 0px); box-sizing: border-box;
+  box-sizing: border-box;
   background: rgba(10, 14, 12, 0); transition: background .25s;
 }
 .cl-vitrina.cl-dentro { background: rgba(10, 14, 12, .45); }
 .cl-hoja {
   box-sizing: border-box; width: 100%; max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px); overflow-y: auto; overscroll-behavior: contain;
-  padding: 6px 16px calc(env(safe-area-inset-bottom, 0px) + 20px);
+  /* la hoja llega de borde a borde (también por la franja de la cámara); su contenido, centrado con el mismo margen a los dos lados */
+  padding: 6px max(16px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)) calc(env(safe-area-inset-bottom, 0px) + 20px);
   background: var(--cl-fondo); color: var(--cl-tinta); font-family: var(--cl-sans);
   border-radius: 20px 20px 0 0; box-shadow: var(--cl-sombra);
   transform: translateY(100%); transition: transform .3s cubic-bezier(.2, .8, .3, 1);
@@ -55,7 +56,7 @@ html.cl-abierta { overflow: hidden; }
 .cl-vitrina.cl-dentro .cl-hoja { transform: none; }
 .cl-hoja:focus { outline: none; }
 @media (min-width: 700px) {
-  .cl-vitrina { align-items: center; padding: 24px max(24px, env(safe-area-inset-right, 0px)) 24px max(24px, env(safe-area-inset-left, 0px)); }
+  .cl-vitrina { align-items: center; padding: 24px max(24px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
   .cl-hoja { width: min(760px, 100%); max-height: min(86vh, 900px); border-radius: 20px; padding: 8px 28px 28px; transform: translateY(16px) scale(.98); opacity: 0; transition: transform .25s, opacity .25s; }
   .cl-vitrina.cl-dentro .cl-hoja { opacity: 1; }
 }

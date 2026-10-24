@@ -122,6 +122,9 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 /* Barra lateral: en pantallas con una franja segura ancha a un lado (la exterior del iPhone Duo), botones para ir por familias. Igual que en Vinilo */
 .rail { position: fixed; z-index: 40; right: 0; top: calc(50% + 24px); transform: translateY(-50%); width: env(safe-area-inset-right, 0px); display: none; flex-direction: column; align-items: center; gap: 10px; }
 .rail.si { display: flex; }
+/* con la barra, iOS difumina el borde de arriba aunque no haya zona segura: el contenido y los saltos bajan */
+html.con-rail { scroll-padding-top: max(calc(env(safe-area-inset-top, 0px) + 16px), 56px); }
+html.con-rail .wrap { padding-top: 56px; }
 .rail button { appearance: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--cc-linea); background: var(--cc-fondo-alto); color: var(--cc-tinta-suave); display: grid; place-items: center; cursor: pointer; padding: 0; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
 .rail button.on { color: var(--cc-oro); border-color: var(--cc-oro); }
 .rail svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -216,7 +219,7 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
   const r = document.getElementById("rail"), pr = document.createElement("div");
   pr.style.cssText = "position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";
   document.body.appendChild(pr);
-  const ver = () => r.classList.toggle("si", pr.offsetWidth >= 44); ver(); addEventListener("resize", ver);
+  const ver = () => document.documentElement.classList.toggle("con-rail", r.classList.toggle("si", pr.offsetWidth >= 44)); ver(); addEventListener("resize", ver);
   const fam = id => document.getElementById(id).closest("section");
   r.onclick = e => { const b = e.target.closest("[data-ir]"); if (!b) return; const d = b.dataset.ir;
     if (d === "arriba") scrollTo({ top: 0, behavior: "smooth" }); else fam(d).scrollIntoView({ behavior: "smooth", block: "start" }); };
