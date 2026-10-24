@@ -15,7 +15,7 @@
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=6">
 <link rel="stylesheet" href="../compartido/ciccapps.css?v=22">
-<link rel="stylesheet" href="../compartido/logros.css?v=2">
+<link rel="stylesheet" href="../compartido/logros.css?v=3">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
@@ -200,10 +200,14 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .cl-cuenta b{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums tabular-nums}
 .vit-txt{display:flex;align-items:center;gap:10px;min-width:0}
 #vitrinaMed{display:block;width:24px;flex:none}
-/* iPhone Duo plegado: la vitrina y las hojas con el mismo margen izquierdo que el contenido; la franja de la derecha (cámara y hora) queda para la barra lateral */
-.cl-vitrina{padding-left:max(env(safe-area-inset-left,0px),min(20px,env(safe-area-inset-right,0px)))}
-body .sheet-bg{padding-left:max(env(safe-area-inset-left,0px),min(20px,env(safe-area-inset-right,0px)))}
-body .sheet{padding-left:18px;padding-right:18px} /* la franja lateral ya la deja el fondo de la hoja */
+/* iPhone Duo plegado: las hojas llegan de borde a borde, como la vitrina común, y su contenido lleva el mismo margen a los dos lados */
+body .sheet-bg{padding-left:0;padding-right:0}
+body .sheet{padding-left:max(18px,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));padding-right:max(18px,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))}
+/* Con barra lateral, iOS difumina el borde de arriba: el contenido y las pestañas fijas bajan por debajo */
+html.con-rail{scroll-padding-top:max(calc(env(safe-area-inset-top,0px) + 16px),56px)}
+html.con-rail .wrap{padding-top:56px!important}
+html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),48px)}
+html.con-rail body::before{height:max(env(safe-area-inset-top,0px),48px)}
 .rail{position:fixed;z-index:15;right:0;top:calc(50% + 24px);transform:translateY(-50%);width:env(safe-area-inset-right,0px);display:none;flex-direction:column;align-items:center;gap:10px}
 .rail.si{display:flex}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
@@ -1052,7 +1056,7 @@ document.getElementById("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
 /* Barra lateral: solo si la franja segura de la derecha deja sitio para los botones (44 px), como en el iPhone Duo plegado */
 (()=>{const r=document.getElementById("rail"),tabs=document.querySelector(".tabs"),pr=document.createElement("div");
   pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
-  const ver=()=>r.classList.toggle("si",pr.offsetWidth>=44&&!document.body.classList.contains("nuevo"));
+  const ver=()=>document.documentElement.classList.toggle("con-rail",r.classList.toggle("si",pr.offsetWidth>=44&&!document.body.classList.contains("nuevo")));
   const suave=()=>matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
   const marca=()=>{const act=tabs.getBoundingClientRect().top>innerHeight*.35?"arriba":tab;r.querySelectorAll("[data-ir]").forEach(b=>b.classList.toggle("on",b.dataset.ir===act))};
   r.onclick=e=>{const b=e.target.closest("[data-ir]");if(!b)return;const d=b.dataset.ir;
