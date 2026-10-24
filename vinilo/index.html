@@ -312,7 +312,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0
 .rail{position:fixed;z-index:40;right:0;top:calc(50% + 24px);transform:translateY(-50%);width:env(safe-area-inset-right,0px);display:none;flex-direction:column;align-items:center;gap:10px}
 .rail.si{display:flex}
 /* Con la franja lateral (pantalla exterior del Duo) iOS difumina el borde de arriba sin dejar margen seguro: bajamos el contenido y los saltos */
-html.con-rail{scroll-padding-top:max(calc(env(safe-area-inset-top,0px) + 16px),56px)}
+html.con-rail{scroll-padding-top:36px}
 html.con-rail .wrap{padding-top:56px!important}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--accent);border-color:var(--accent)}
