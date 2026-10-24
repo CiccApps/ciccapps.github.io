@@ -200,6 +200,16 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .cl-cuenta b{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums tabular-nums}
 .vit-txt{display:flex;align-items:center;gap:10px;min-width:0}
 #vitrinaMed{display:block;width:24px;flex:none}
+/* iPhone Duo plegado: la vitrina y las hojas con el mismo margen izquierdo que el contenido; la franja de la derecha (cámara y hora) queda para la barra lateral */
+.cl-vitrina{padding-left:max(env(safe-area-inset-left,0px),min(20px,env(safe-area-inset-right,0px)))}
+body .sheet-bg{padding-left:max(env(safe-area-inset-left,0px),min(20px,env(safe-area-inset-right,0px)))}
+body .sheet{padding-left:18px;padding-right:18px} /* la franja lateral ya la deja el fondo de la hoja */
+.rail{position:fixed;z-index:15;right:0;top:calc(50% + 24px);transform:translateY(-50%);width:env(safe-area-inset-right,0px);display:none;flex-direction:column;align-items:center;gap:10px}
+.rail.si{display:flex}
+.rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.rail button.on{color:var(--gold);border-color:var(--gold)}
+.rail button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .mes-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:14px 0 6px}
 @media (max-width:420px){.mes-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .mes-grid div{background:var(--paper);border-radius:6px;padding:12px 10px;display:flex;flex-direction:column}
@@ -277,7 +287,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .seg button[aria-pressed="true"]{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.15);font-weight:600}
 .field{display:flex;flex-direction:column;gap:4px}
 .field label,.field .lbl{font-size:12px;color:var(--muted);font-weight:500}
-.dates{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dates{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
 input[type=date],input[type=number],textarea{font:inherit;font-size:16px;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);width:100%;min-width:0}
 textarea{min-height:90px;resize:vertical}
 .rate{display:flex;gap:4px}
@@ -321,6 +331,7 @@ body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif
 @media (min-width:900px){.shelf{zoom:1.45}}
 h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:400}
 .cc-firma{padding-top:24px}
+#pie .cc-firma{padding-inline:0} /* el pie ya va dentro de .wrap, que deja los márgenes y la franja lateral */
 </style>
 
 </head>
@@ -369,6 +380,13 @@ h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:4
   </footer>
 </div>
 
+<nav class="rail" id="rail" aria-label="Ir a">
+  <button type="button" data-ir="arriba" aria-label="Arriba" title="Arriba"><svg viewBox="0 0 24 24"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button>
+  <button type="button" data-ir="plan" aria-label="Plan" title="Plan"><svg viewBox="0 0 24 24"><path d="M5 4.5v15M9.5 4.5v15M14 5.5l4.5 14M3 19.5h18"/></svg></button>
+  <button type="button" data-ir="mood" aria-label="¿Qué leo?" title="¿Qué leo?"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg></button>
+  <button type="button" data-ir="compras" aria-label="Compras" title="Compras"><svg viewBox="0 0 24 24"><path d="M5.5 8h13l-1 12h-11z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/></svg></button>
+  <button type="button" data-ir="vitrina" aria-label="Vitrina de medallas" title="Vitrina de medallas"><svg viewBox="0 0 24 24"><path d="M8 3h8l-2.6 6.2h-2.8z"/><circle cx="12" cy="15" r="5.5"/><path d="M12 12.6l.8 1.6 1.7.2-1.2 1.2.3 1.7-1.6-.8-1.6.8.3-1.7-1.2-1.2 1.7-.2z" fill="currentColor" stroke="none"/></svg></button>
+</nav>
 <div id="sheetRoot"></div>
 <div class="toast" id="toast" hidden></div>
 
@@ -1030,6 +1048,21 @@ function pintarVitrina(){const n=CiccLogros.total();
   document.getElementById("vitrinaTxt").textContent=n?`Vitrina · ${n} ${n===1?"medalla":"medallas"}`:"Vitrina de medallas";
   const m=document.getElementById("vitrinaMed");if(!m.firstChild)m.innerHTML=CiccLogros.medalla({nivel:3,motivo:"rosa",color:"#4B2E19"})}
 document.getElementById("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
+
+/* Barra lateral: solo si la franja segura de la derecha deja sitio para los botones (44 px), como en el iPhone Duo plegado */
+(()=>{const r=document.getElementById("rail"),tabs=document.querySelector(".tabs"),pr=document.createElement("div");
+  pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
+  const ver=()=>r.classList.toggle("si",pr.offsetWidth>=44&&!document.body.classList.contains("nuevo"));
+  const suave=()=>matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+  const marca=()=>{const act=tabs.getBoundingClientRect().top>innerHeight*.35?"arriba":tab;r.querySelectorAll("[data-ir]").forEach(b=>b.classList.toggle("on",b.dataset.ir===act))};
+  r.onclick=e=>{const b=e.target.closest("[data-ir]");if(!b)return;const d=b.dataset.ir;
+    if(d==="vitrina"){CiccLogros.vitrina();return}
+    if(d==="arriba"){scrollTo({top:0,behavior:suave()});return}
+    if(tab!==d){tab=d;try{localStorage.setItem(LS+"-tab",tab)}catch(err){}renderView()}
+    scrollTo({top:scrollY+tabs.getBoundingClientRect().top-parseFloat(getComputedStyle(tabs).top||0),behavior:suave()});marca()};
+  addEventListener("resize",ver);addEventListener("scroll",marca,{passive:true});
+  new MutationObserver(()=>{ver();marca()}).observe(document.body,{attributes:true,attributeFilter:["class"]});
+  document.addEventListener("click",e=>{if(e.target.closest("[data-tab]"))setTimeout(marca)});ver();marca()})();
 
 /* Primera vez: empezar con el plan o con una lista vacía */
 function vistaEmpezar(){
