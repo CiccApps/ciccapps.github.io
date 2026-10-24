@@ -90,7 +90,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0
 .note { font-size: 13px; color: var(--muted); font-style: italic; margin: 0; }
 .filtering .card.off { opacity: .22; }
 .filtering .card.hit { border-color: var(--accent); }
-footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; }
+footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line); padding-top: 16px; text-wrap: pretty; }
 
 @media (max-width: 720px) {
   .shelf { grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 14px; }
@@ -304,7 +304,13 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
 /* ===== CiccApps · rejilla común (márgenes y ancho); la tipografía y el carácter son de cada app ===== */
 .wrap{max-width:1040px!important;margin-inline:auto!important;padding-block:28px 72px!important;padding-left:max(20px,env(safe-area-inset-left,0px))!important;padding-right:max(20px,env(safe-area-inset-right,0px))!important}
 @media (min-width:768px){.wrap{padding-top:44px!important;padding-left:max(32px,env(safe-area-inset-left,0px))!important;padding-right:max(32px,env(safe-area-inset-right,0px))!important}}
-.cc-firma{padding-top:24px}
+.cc-firma{padding-top:24px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+/* Barra lateral: en pantallas con una franja segura ancha a un lado (la exterior del iPhone Duo), botones para ir por zonas */
+.rail{position:fixed;z-index:40;right:0;top:calc(50% + 24px);transform:translateY(-50%);width:env(safe-area-inset-right,0px);display:none;flex-direction:column;align-items:center;gap:10px}
+.rail.si{display:flex}
+.rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+.rail button.on{color:var(--accent);border-color:var(--accent)}
+.rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 </style>
 
 <div class="wrap">
@@ -364,7 +370,14 @@ footer { color: var(--muted); font-size: 14px; border-top: 1px solid var(--line)
     <div class="favs" id="favs" hidden><div class="sp-h"><div class="eyebrow">Con IA</div><h3>Prensadas para ti</h3></div><div class="fav-list" id="favList"></div></div>
   </section>
 
-  <footer>Si una lista no te encaja en un momento, prueba la de al lado en la escala de energía: suelen funcionar como plan B.</footer>
+  <footer>Si una lista no te encaja en un momento, prueba la de al lado en la escala de energía: suelen funcionar como plan&nbsp;B.</footer>
+  <nav class="rail" id="rail" aria-label="Ir a">
+    <button type="button" data-ir="arriba" aria-label="Arriba" title="Arriba"><svg viewBox="0 0 24 24"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button>
+    <button type="button" data-ir="groups" aria-label="La selección" title="La selección"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg></button>
+    <button type="button" data-ir="ia" aria-label="Créame una playlist" title="Créame una playlist"><svg viewBox="0 0 24 24"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z"/><path d="M18.5 16l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg></button>
+    <button type="button" data-ir="mis" aria-label="Tu biblioteca" title="Tu biblioteca"><svg viewBox="0 0 24 24"><path d="M5 4v16M9.5 4v16M14 5l4.5 14.5"/></svg></button>
+    <button type="button" data-ir="vitrina" aria-label="Vitrina de medallas" title="Vitrina de medallas"><svg viewBox="0 0 24 24"><path d="M8 3h8l-2.6 6.2h-2.8z"/><circle cx="12" cy="15" r="5.5"/><path d="M12 12.6l.8 1.6 1.7.2-1.2 1.2.3 1.7-1.6-.8-1.6.8.3-1.7-1.2-1.2 1.7-.2z" fill="currentColor" stroke="none"/></svg></button>
+  </nav>
   <p class="salir-wrap"><button class="salir" id="iaSalir" type="button">Cerrar sesión</button></p>
 </div>
 
@@ -707,6 +720,7 @@ TAGS.forEach(([key, label]) => {
     {clave:"cara_b",nombre:"Cara B",texto:"Veces que has ampliado una lista",metrica:"ampliaciones",niveles:[1,5,15],unidad:"veces",unidad1:"vez",motivo:"caraB"},
     {clave:"en_antena",nombre:"En antena",texto:"Canciones escuchadas en Spotify desde tus prensadas",metrica:"antena",niveles:[30,150,500],unidad:"canciones",unidad1:"canción",motivo:"antena"},
     {clave:"vuelta_disco",nombre:"La vuelta al disco",texto:"Listas distintas de la selección escuchadas en un mes",metrica:"vuelta",niveles:[4,8,12],unidad:"listas",unidad1:"lista",motivo:"reloj"},
+    {clave:"cada_dia",nombre:"Cada día su disco",texto:"Días en los que suena alguna lista de la selección",metrica:"dias",niveles:[7,30,100],unidad:"días",unidad1:"día",motivo:"calendario"},
     {clave:"disco_rayado",nombre:"Disco rayado",texto:"Canciones escuchadas desde una misma lista",metrica:"rayado",niveles:[50,250,1000],unidad:"canciones",unidad1:"canción",motivo:"rayado"},
     {clave:"vuelta_completa",nombre:"Vuelta completa",texto:"En una misma semana: las doce de la selección, Sunday Service en domingo y After Dark entre las 3 y las 5",metrica:"s_semana",niveles:[1],motivo:"rosa",secreto:true},
     {clave:"a_su_hora",nombre:"A su hora",texto:"Las doce de la selección, cada una a menos de media hora de su sitio en el disco",metrica:"s_hora",niveles:[1],motivo:"reloj",secreto:true},
@@ -729,17 +743,18 @@ TAGS.forEach(([key, label]) => {
     const m={creadas:favs.length?1:0,guardadas:favs.length,ampliaciones:favs.reduce((t,f)=>t+((f.detalles||{}).amp||0),0)};
     m.s_coleccion=favs.some(f=>(f.detalles||{}).sp&&(f.canciones||[]).length>=90)?1:0;
     if(oidas){const sp2id=new Map(LISTS.filter(l=>l.sp).map(l=>[l.sp,l.id])),mias=new Set(favs.map(f=>(f.detalles||{}).sp).filter(Boolean));
-      const ini=new Date();ini.setDate(1);ini.setHours(0,0,0,0);const cuenta={},mes=new Set(),aHora=new Set(),noches={},semanas={};
+      const ini=new Date();ini.setDate(1);ini.setHours(0,0,0,0);const cuenta={},mes=new Set(),aHora=new Set(),noches={},semanas={},dias=new Set();
       let antena=0;
       for(const e of oidas){cuenta[e.l]=(cuenta[e.l]||0)+1;if(mias.has(e.l))antena++;const id=sp2id.get(e.l);if(!id)continue;
         if(e.d>=ini)mes.add(id);
         // cada jornada va de 6:00 a 6:00, como el disco
         const j=new Date(e.d.getTime()-6*3600e3),dia=j.getFullYear()+"-"+j.getMonth()+"-"+j.getDate(),t=e.d.getHours()+e.d.getMinutes()/60,H=disco(e.d).hora;
+        dias.add(dia);
         if(id in H){let dd=Math.abs(t-H[id]);dd=Math.min(dd,24-dd);if(dd<=.5)aHora.add(id)}
         if(["gentleman","openbar","afterdark"].includes(id))(noches[dia]=noches[dia]||new Set()).add(id);
         const lun=new Date(j);lun.setHours(0,0,0,0);lun.setDate(lun.getDate()-((lun.getDay()+6)%7));const w=lun.getTime(),S=semanas[w]=semanas[w]||{l:new Set(),dom:0,tres:0};
         S.l.add(id);if(id==="sunday"&&e.d.getDay()===0)S.dom=1;if(id==="afterdark"&&e.d.getHours()>=3&&e.d.getHours()<5)S.tres=1}
-      m.antena=antena;m.vuelta=mes.size;m.rayado=Math.max(0,...Object.values(cuenta));
+      m.antena=antena;m.vuelta=mes.size;m.dias=dias.size;m.rayado=Math.max(0,...Object.values(cuenta));
       m.s_hora=aHora.size>=12?1:0;m.s_noche=Object.values(noches).some(x=>x.size===3)?1:0;
       m.s_semana=Object.values(semanas).some(S=>S.l.size>=12&&S.dom&&S.tres)?1:0}
     return Object.assign(m,porSumar)}
@@ -752,6 +767,16 @@ TAGS.forEach(([key, label]) => {
   function iniciaLogros(){if(!window.CiccLogros||!sb)return;
     CiccLogros.iniciar({sb,app:"vinilo",nombre:"Vinilo",color:"#22305A",catalogo:LOGROS,motivos:MOTIVOS_LOGROS}).then(()=>{pintaVitrina();if(!SPOT.ok())evalLogros();else cargaEscuchas()})}
   $("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
+  // Barra lateral: solo si la franja segura de la derecha deja sitio para los botones (44 px)
+  (()=>{const r=$("rail"),pr=document.createElement("div");pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
+    const ver=()=>r.classList.toggle("si",pr.offsetWidth>=44);ver();addEventListener("resize",ver);
+    r.onclick=e=>{const b=e.target.closest("[data-ir]");if(!b)return;const d=b.dataset.ir;
+      if(d==="vitrina"){if(window.CiccLogros&&sb)CiccLogros.vitrina();else $("mis").scrollIntoView({behavior:"smooth"});return}
+      if(d==="arriba")scrollTo({top:0,behavior:"smooth"});else $(d).scrollIntoView({behavior:"smooth",block:"start"})};
+    // marca la zona que se está viendo
+    const zonas=["groups","ia","mis"].map(id=>$(id)),marca=()=>{const y=innerHeight*.35;let act="arriba";zonas.forEach(z=>{if(z.getBoundingClientRect().top<y)act=z.id});
+      r.querySelectorAll("[data-ir]").forEach(b=>b.classList.toggle("on",b.dataset.ir===act))};
+    addEventListener("scroll",marca,{passive:true});marca()})();
 
   /* ===== Spotify (PKCE, sin secreto). Solo funciona para las cuentas dadas de alta en el panel de Spotify ===== */
   const SPOTIFY_ID="f8fc9ff49eef41ee836095a25cda4445";   // Client ID de la app «Vinilo» en developer.spotify.com
