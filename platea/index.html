@@ -15,6 +15,7 @@
 <link rel="apple-touch-icon" href="../iconos/platea-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/platea-192.png?v=6">
 <link rel="stylesheet" href="../compartido/ciccapps.css?v=21">
+<link rel="stylesheet" href="../compartido/logros.css?v=5">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
 :root{
@@ -210,6 +211,34 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
 .cart-row .btn{padding:8px 12px;font-size:13px;white-space:nowrap}
 .cart-ok{font-size:13px;font-weight:700;color:var(--ok);white-space:nowrap}
 
+/* Sesiones en tus Cinesa (Sensacine) */
+.cart-seg{margin-top:2px}
+.ses-donde{display:block;font-size:12.5px;color:var(--muted);line-height:1.35;margin-top:2px}
+.ses-donde .badge{margin-left:2px;vertical-align:1px}
+.ses-tog{border:0;background:none;padding:6px 0 0;font:700 13px var(--f-body);color:var(--red);cursor:pointer;display:inline-flex;gap:4px;align-items:center}
+.ses-tog::after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 2px 2px 0;transform:translateY(-2px) rotate(45deg);transition:transform .2s}
+.ses-tog[aria-expanded="true"]::after{transform:translateY(1px) rotate(-135deg)}
+.ses-p{grid-column:1/-1;display:flex;flex-direction:column;gap:12px;padding:2px 0 6px}
+.ses-cine{display:flex;flex-direction:column;gap:6px}
+.ses-cine>b{font-size:13px;font-weight:700}
+/* Horas en rejilla equilibrada: nunca queda una sola en la última fila */
+.ses-hs{display:grid;grid-template-columns:repeat(var(--c,4),68px);gap:6px}
+.ses-h{font:600 14px/1.15 var(--f-mono);font-variant-numeric:tabular-nums;min-height:44px;padding:5px 4px;border-radius:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;white-space:nowrap}
+.ses-h small{font:800 9px var(--f-body);letter-spacing:.08em}
+.ses-h.vo{background:var(--red);border-color:var(--red);color:var(--card)}
+.ses-nota{margin:0;font-size:12px;color:var(--muted)}
+.ses-aviso{padding:10px 0;border-top:1px solid var(--line)}
+.ses-otros{padding-top:12px;border-top:1px solid var(--line)}
+.ses-otros a{color:var(--red);font-weight:700;text-decoration:none}
+.tc-list{display:flex;flex-direction:column;gap:10px}
+
+/* Logros: la vitrina común con los colores y letras de Platea */
+:root{--cl-fondo:var(--card);--cl-tinta:var(--ink);--cl-suave:var(--muted);--cl-linea:var(--line);--cl-oro:var(--bulb);--cl-vacio:var(--stub);--cl-relieve:color-mix(in srgb,var(--muted) 70%,var(--stub));
+  --cl-titulo:var(--f-display);--cl-serif:var(--f-body);--cl-sans:var(--f-body)}
+.cl-cuenta b{font-family:var(--f-body);font-weight:800}
+.vit-card .vit-med{display:block;width:40px;flex:none}
+.vit-card .cart-txt{flex:1}
+
 /* Contador de Cinesa Unlimited */
 .cin{display:flex;flex-direction:column;gap:12px;padding:14px;border-radius:10px;border:1px solid var(--line);background:var(--bg)}
 .cin-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -263,7 +292,7 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
     <div class="pie-acc"><button class="chip" id="expDiary">Exportar diario</button><button class="chip" id="expWatch">Exportar watchlist</button></div>
     <span id="sync" style="text-align:center">Archivos CSV para importar en Letterboxd · sincronizado en todos tus dispositivos.</span>
     <div class="pie-links"><button class="salir" id="perfilBtn" type="button">Tu perfil</button><span aria-hidden="true">·</span><button class="salir" id="salir">Cerrar sesión</button></div>
-    <span class="tmdb">Fichas y cartelera: <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>. Este producto usa la API de TMDB, pero no está respaldado ni certificado por TMDB.</span>
+    <span class="tmdb">Fichas y cartelera: <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>. Sesiones de tus cines: <a href="https://www.sensacine.com/" target="_blank" rel="noopener">Sensacine</a>. Este producto usa la API de TMDB, pero no está respaldado ni certificado por TMDB.</span>
   </footer>
 </div>
 <div id="sheetRoot"></div>
@@ -271,6 +300,7 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
 
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
+<script src="../compartido/logros.js?v=5"></script>
 <script>
 const MOODS={risa:"Reírme",tension:"Tensión",pensar:"Pensar",llorar:"Emocionarme",accion:"Acción",epico:"Épica",ligera:"Ligera",clasico:"Clásico pendiente"};
 const WHERE={cine:"Cine",streaming:"Streaming",casa:"En casa"};
@@ -281,8 +311,8 @@ let items={};let tab="diario";let mood=null;let sb=null;let listo=false;
 const LS="sala-miguel-v1";
 try{const t=localStorage.getItem(LS+"-tab");if(t)tab=t}catch(e){}
 /* filas de la base de datos <-> entradas */
-const deFila=r=>({tipo:r.tipo,estado:r.estado,titulo:r.titulo,anio:r.anio?String(r.anio):"",donde:r.donde||"",plataforma:r.plataforma||"",fecha:r.fecha||"",nota:+r.nota||0,resena:r.resena||"",rewatch:r.rewatch,moods:r.moods||[],prio:r.prio,temp:r.temporada||"",cap:r.capitulo||"",temps:r.temporadas||"",creado:r.creado,poster:r.poster||"",tmdb_id:r.tmdb_id||null});
-const aFila=x=>({tipo:x.tipo,estado:x.estado,titulo:x.titulo,anio:parseInt(x.anio,10)||null,donde:x.donde||null,plataforma:x.plataforma||null,fecha:x.fecha||null,nota:x.nota||null,resena:x.resena||null,rewatch:!!x.rewatch,moods:x.moods||[],prio:!!x.prio,temporada:+x.temp||null,capitulo:+x.cap||null,temporadas:+x.temps||null,poster:x.poster||null,tmdb_id:x.tmdb_id||null});
+const deFila=r=>({tipo:r.tipo,estado:r.estado,titulo:r.titulo,anio:r.anio?String(r.anio):"",donde:r.donde||"",plataforma:r.plataforma||"",fecha:r.fecha||"",nota:+r.nota||0,resena:r.resena||"",rewatch:r.rewatch,moods:r.moods||[],prio:r.prio,temp:r.temporada||"",cap:r.capitulo||"",temps:r.temporadas||"",creado:r.creado,poster:r.poster||"",tmdb_id:r.tmdb_id||null,vose:!!r.vose});
+const aFila=x=>({tipo:x.tipo,estado:x.estado,titulo:x.titulo,anio:parseInt(x.anio,10)||null,donde:x.donde||null,plataforma:x.plataforma||null,fecha:x.fecha||null,nota:x.nota||null,resena:x.resena||null,rewatch:!!x.rewatch,moods:x.moods||[],prio:!!x.prio,temporada:+x.temp||null,capitulo:+x.cap||null,temporadas:+x.temps||null,poster:x.poster||null,tmdb_id:x.tmdb_id||null,vose:!!x.vose});
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const today=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
 const stars=n=>n?"★".repeat(Math.floor(n))+(n%1?"½":""):"";
@@ -312,7 +342,7 @@ const dondeDe=(a,prev)=>a.includes("Cine")?"cine":a.some(p=>PLATS.includes(p))?"
 const enCartelera=x=>!!(CART&&CART.lista.some(f=>(f.tmdb_id&&x.tmdb_id&&+f.tmdb_id===+x.tmdb_id)||(normT(f.titulo)===normT(x.titulo)&&(!f.anio||!x.anio||Math.abs(+f.anio-+x.anio)<=1))));
 
 function render(){
-  if(!listo)return;
+  if(!listo)return;evalLogros();
   const L=all();const y=today().slice(0,4),m=today().slice(0,7);
   const seen=L.filter(x=>x.tipo==="peli"&&x.estado==="vista");
   document.getElementById("stYear").textContent=seen.filter(x=>(x.fecha||"").startsWith(y)).length;
@@ -323,16 +353,17 @@ function render(){
   const v=document.getElementById("view");
   if(tab==="diario"){
     const d=L.filter(x=>x.estado==="vista").sort((a,b)=>(b.fecha||"").localeCompare(a.fecha||""));
-    if(!d.length){v.innerHTML=empty("Aún no hay sesiones","Cada película o serie que termines queda aquí como una entrada, con nota y reseña. Empieza por la última que viste en Cinesa.","vista");return}
+    if(!d.length){v.innerHTML=empty("Aún no hay sesiones","Cada película o serie que termines queda aquí como una entrada, con nota y reseña. Empieza por la última que viste en Cinesa.","vista")+vitCard();return}
     let html="",cur=null;
     d.forEach(x=>{const k=(x.fecha||"").slice(0,7);if(k!==cur){if(cur!==null)html+=`</div>`;cur=k;html+=`<div class="month">${k?MESL[+k.slice(5)-1]+" "+k.slice(0,4):"Sin fecha"}</div><div class="tickets">`}html+=ticket(x)});
     if(cur!==null)html+=`</div>`;
-    v.innerHTML=`<div class="dia">${html}</div>`;
+    v.innerHTML=`${vitCard()}<div class="dia">${html}</div>`;
   }else if(tab==="porver"){
     const chips=`<div class="chips" role="group" aria-label="Mood"><button class="chip" id="mood-all" data-mood="" aria-pressed="${!mood}">Cualquiera</button>${Object.entries(MOODS).map(([k,l])=>`<button class="chip" id="mood-${k}" data-mood="${k}" aria-pressed="${mood===k}">${l}</button>`).join("")}</div>`;
-    let w=q.filter(x=>!mood||(x.moods||[]).includes(mood)).sort((a,b)=>(b.prio?1:0)-(a.prio?1:0)||(b.creado||"").localeCompare(a.creado||""));
+    const pesa=x=>{const t=x.tipo!=="serie"&&enTusCines(x);return t?(t.v&&priVOSE()?3:2):x.prio?1:0};
+    let w=q.filter(x=>!mood||(x.moods||[]).includes(mood)).sort((a,b)=>pesa(b)-pesa(a)||(b.creado||"").localeCompare(a.creado||""));
     if(!q.length){v.innerHTML=cartCard()+empty("La lista está vacía","Apunta aquí lo que quieras ver: estrenos para gastar el Unlimited, recomendaciones o clásicos pendientes. Etiquétalos por mood para elegir rápido.","porver")+viewIA();return}
-    v.innerHTML=`${cartCard()}<p class="hint">¿Qué te apetece? Filtra por mood. Las marcadas como «En cartelera» van primero.</p>${chips}<div class="tickets">${w.length?w.map(ticket).join(""):`<p class="hint">Nada con ese mood en tu lista.</p>`}</div>${viewIA()}`;
+    v.innerHTML=`${cartCard()}<p class="hint">¿Qué te apetece? Filtra por mood. ${misCines().length?`Las que echan hoy en tus Cinesa${priVOSE()?", con la VOSE delante,":""} van primero.`:"Las marcadas como «En cartelera» van primero."}</p>${chips}<div class="tickets">${w.length?w.map(ticket).join(""):`<p class="hint">Nada con ese mood en tu lista.</p>`}</div>${viewIA()}`;
   }else{
     const s=L.filter(x=>x.tipo==="serie"&&x.estado!=="vista"&&x.estado!=="porver");
     const done=L.filter(x=>x.tipo==="serie"&&x.estado==="vista");
@@ -346,8 +377,8 @@ function stubHtml(x){
   return x.estado==="vista"&&d?`<b>${d.getDate()}</b><span>${MES[d.getMonth()]}</span>`:x.tipo==="serie"?`<b>${x.temp?"T"+x.temp:"—"}</b><span>${x.cap?"cap "+x.cap:"serie"}</span>`:`<b>${x.prio?"!":"·"}</b><span>${x.prio?"cartel":"por ver"}</span>`;
 }
 function ticket(x){
-  const stub=stubHtml(x);
-  const meta=[x.anio?`<span class="mono">${esc(x.anio)}</span>`:"",x.tipo==="serie"?`<span class="badge alt">Serie</span>`:"",x.donde?`<span class="badge ${x.donde==="cine"?"":"alt"}">${WHERE[x.donde]}</span>`:"",x.plataforma?`<span>${esc(platTexto(leePlats(x.plataforma)).replace(/, /g," · "))}</span>`:"",x.rewatch?`<span class="badge alt">Revisionado</span>`:"",x.nota?`<span class="stars">${stars(x.nota)}</span>`:"",x.estado==="porver"&&x.prio?`<span class="badge">En cartelera</span>`:""].filter(Boolean).join("");
+  const stub=stubHtml(x);const tc=x.estado==="porver"&&x.tipo!=="serie"?enTusCines(x):null;
+  const meta=[x.anio?`<span class="mono">${esc(x.anio)}</span>`:"",x.tipo==="serie"?`<span class="badge alt">Serie</span>`:"",x.donde?`<span class="badge ${x.donde==="cine"?"":"alt"}">${WHERE[x.donde]}</span>`:"",x.plataforma?`<span>${esc(platTexto(leePlats(x.plataforma)).replace(/, /g," · "))}</span>`:"",x.estado==="vista"&&x.vose?`<span class="badge alt">VOSE</span>`:"",x.rewatch?`<span class="badge alt">Revisionado</span>`:"",x.nota?`<span class="stars">${stars(x.nota)}</span>`:"",x.estado==="porver"&&tc?`<span class="badge">${tc.v?"VOSE hoy en tus Cinesa":"Hoy en tus Cinesa"}</span>`:"",x.estado==="porver"&&x.prio&&!tc?`<span class="badge">En cartelera</span>`:""].filter(Boolean).join("");
   const prog=x.tipo==="serie"&&x.temps&&x.temp&&x.estado==="viendo"?`<div class="prog"><i style="width:${Math.min(100,Math.round((x.temp-1)/x.temps*100+(1/x.temps)*50))}%"></i></div>`:"";
   return `<button class="ticket${x.poster?" con-poster":""}" data-open="${x.id}"><span class="stub">${stub}</span><span class="body"><h3>${esc(x.titulo)}</h3><span class="meta">${meta}</span>${x.resena?`<p class="rev">${esc(x.resena)}</p>`:""}${prog}</span>${x.poster?`<img class="poster" src="${esc(x.poster)}" alt="" loading="lazy">`:""}</button>`;
 }
@@ -372,6 +403,7 @@ function openSheet(id,kind){
       <div class="field"><label for="fR">Nota (como en Letterboxd)</label><div class="rate"><input type="range" id="fR" min="0" max="10" step="1" value="${Math.round((draft.nota||0)*2)}"><output id="fRo">${stars(draft.nota)||"Sin nota"}</output></div></div>
       <div class="field"><label for="fRv">Reseña o apuntes</label><textarea id="fRv">${esc(draft.resena)}</textarea></div>
       <label class="toggle"><input type="checkbox" id="fRw" ${draft.rewatch?"checked":""}> Ya la había visto antes</label>
+      <label class="toggle" id="fVoW"><input type="checkbox" id="fVo" ${draft.vose?"checked":""}> La vi en VOSE</label>
     </div>
     <div class="field"><span class="lbl" id="fPlL">Dónde verla</span><div class="chips" id="fPl" role="group" aria-labelledby="fPlL"></div></div>
     <div id="secPorver" style="display:flex;flex-direction:column;gap:10px">
@@ -390,12 +422,14 @@ function openSheet(id,kind){
     document.getElementById("secVista").hidden=draft.estado!=="vista";
     document.getElementById("secPorver").hidden=draft.estado!=="porver";
     document.getElementById("fPrW").hidden=draft.tipo==="serie";if(draft.tipo==="serie")document.getElementById("fPr").checked=false;
+    pintaVo();
   };
+  const pintaVo=()=>{const w=document.getElementById("fVoW");if(w)w.hidden=draft.tipo==="serie"||!(draft.plats||[]).includes("Cine")};
   draft.plats=id?platsDe(draft):kind==="vista"?["Cine"]:[];
   const pl=document.getElementById("fPl");
   pintaPl=()=>{const extra=draft.plats.filter(p=>p!=="Cine"&&!PLATS.includes(p));
     pl.innerHTML=["Cine",...PLATS,...extra].map(p=>`<button type="button" class="chip" data-pl="${esc(p)}" aria-pressed="${draft.plats.includes(p)}">${esc(p)}</button>`).join("")};
-  pl.onclick=e=>{const b=e.target.closest("[data-pl]");if(!b)return;const k=b.dataset.pl;draft.plats=draft.plats.includes(k)?draft.plats.filter(z=>z!==k):[...draft.plats,k];b.setAttribute("aria-pressed",draft.plats.includes(k))};
+  pl.onclick=e=>{const b=e.target.closest("[data-pl]");if(!b)return;const k=b.dataset.pl;draft.plats=draft.plats.includes(k)?draft.plats.filter(z=>z!==k):[...draft.plats,k];b.setAttribute("aria-pressed",draft.plats.includes(k));pintaVo()};
   pintaPl();
   syncSheet=sync;
   r.querySelectorAll("[data-ty]").forEach(b=>b.onclick=()=>{draft.tipo=b.dataset.ty;sync()});
@@ -409,7 +443,7 @@ function openSheet(id,kind){
     const t=document.getElementById("fT").value.trim();if(!t){document.getElementById("fT").focus();toast("Ponle un título");return}
     const v=k=>document.getElementById(k).value;
     const x={tipo:draft.tipo,estado:draft.estado,titulo:t,anio:v("fY").trim(),plataforma:platTexto(draft.plats),donde:dondeDe(draft.plats,draft.donde),moods:draft.moods||[],creado:draft.creado||today(),poster:draft.poster||null,tmdb_id:draft.tmdb_id||null};
-    if(draft.estado==="vista"){Object.assign(x,{fecha:v("fD"),nota:+v("fR")/2,resena:v("fRv").trim(),rewatch:document.getElementById("fRw").checked})}
+    if(draft.estado==="vista"){Object.assign(x,{fecha:v("fD"),nota:+v("fR")/2,resena:v("fRv").trim(),rewatch:document.getElementById("fRw").checked,vose:draft.tipo!=="serie"&&draft.plats.includes("Cine")&&document.getElementById("fVo").checked})}
     x.prio=draft.estado==="porver"&&draft.tipo!=="serie"&&document.getElementById("fPr").checked;
     if(draft.tipo==="serie"){x.temp=+v("fTp")||"";x.cap=+v("fCp")||"";x.temps=+v("fTs")||""}
     const prev=editId&&items[editId]?Object.assign({},items[editId]):null;
@@ -522,16 +556,22 @@ function perfil(volver){
       <div class="cin-form"><div class="field"><label for="cinC">Cuota mensual</label><div class="eur"><input type="number" id="cinC" inputmode="decimal" step="0.01" min="0" placeholder="Cuota al mes" value="${c.cuota>0?c.cuota.toFixed(2):""}"><span>€</span></div></div>
       <div class="field"><label for="cinE">Entrada sin la suscripción</label><div class="eur"><input type="number" id="cinE" inputmode="decimal" step="0.01" min="0" placeholder="Precio de una entrada" value="${c.entrada>0?c.entrada.toFixed(2):""}"><span>€</span></div></div></div>
       <p class="hint">Con el abono activo, en “Tu mes” verás cuánto te ahorras.</p></section>
+    <section class="cin" aria-labelledby="tcH"><span class="eyebrow" id="tcH">Tus cines</span>
+      <p class="hint">Marca los Cinesa a los que sueles ir (hasta ${MAX_CINES}) y en la cartelera verás sus sesiones de hoy.</p>
+      <div class="tc-list" role="group" aria-labelledby="tcH">${Object.entries(CINESA).sort((a,b)=>a[1].localeCompare(b[1],"es")).map(([k,n])=>`<label class="toggle"><input type="checkbox" data-cine="${k}" ${misCines().includes(k)?"checked":""}> ${esc(n)}</label>`).join("")}</div>
+      <label class="toggle"><input type="checkbox" id="tcVo" ${priVOSE()?"checked":""}> Priorizar las sesiones en VOSE</label></section>
     <div class="actions"><span></span><span style="display:flex;gap:10px"><button class="btn" id="pfX" type="button">Cerrar</button><button class="btn primary" id="cinG" type="button">Guardar</button></span></div></div></div>`;
   document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")cerrar()};document.getElementById("pfX").onclick=cerrar;
   document.getElementById("cinG").onclick=async()=>{
     const num=id=>{const v=parseFloat(String(document.getElementById(id).value).replace(",","."));return v>0?Math.round(v*100)/100:null};
     const on=document.getElementById("cinOn").checked,cu=num("cinC"),en=num("cinE");
     if(on&&(!cu||!en)){toast("Pon la cuota y el precio de una entrada");(cu?document.getElementById("cinE"):document.getElementById("cinC")).focus();return}
-    AJ=Object.assign({},AJ,{cinesa:{activa:on,cuota:cu,entrada:en}});
+    const ids=[...document.querySelectorAll("[data-cine]:checked")].map(b=>b.dataset.cine);
+    if(ids.length>MAX_CINES){toast(`Elige como mucho ${MAX_CINES} cines`);return}
+    AJ=Object.assign({},AJ,{cinesa:{activa:on,cuota:cu,entrada:en},cines:{ids,vose:document.getElementById("tcVo").checked}});
     const x=await sb.from("ajustes").upsert({app:"platea",datos:AJ,actualizado:new Date().toISOString()},{onConflict:"user_id,app"});
     if(x&&x.error){toast("No se pudo guardar");return}
-    toast("Guardado");render();cerrar()};
+    toast("Guardado");render();cerrar();cargaSesiones()};
   if(!USUARIO||!USUARIO.email)(async()=>{try{const g=await sb.auth.getUser();if(g&&g.data&&g.data.user)USUARIO=g.data.user}catch(_){}
     const m=document.getElementById("pfMail");if(m)m.textContent=USUARIO&&USUARIO.email||"Sin correo"})();
 }
@@ -585,36 +625,104 @@ function salaHTML(V){
     <p class="sala-cap" id="salaCap" aria-live="polite">Toca una butaca para ver qué título es.</p></div>`;
 }
 
-/* Cartelera de esta semana (TMDB, en cines de España) */
-let CART=null,cartCargando=false;
-function cartCard(){return `<button class="cart-card" id="cartBtn" type="button"><span class="cart-txt"><span class="eyebrow">En cines de España</span><b>Cartelera de esta semana</b></span><span class="cart-go" aria-hidden="true">→</span></button>`}
+/* Cartelera de esta semana: «Tus Cinesa» (sesiones de Sensacine) y «Toda España» (TMDB) */
+let CART=null,cartCargando=false,cartModo="cines";
+function cartCard(){const c=misCines().length;return `<button class="cart-card" id="cartBtn" type="button"><span class="cart-txt"><span class="eyebrow">${c?"En tus Cinesa y en toda España":"En cines de España"}</span><b>Cartelera de esta semana</b></span><span class="cart-go" aria-hidden="true">→</span></button>`}
 const normT=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"");
 function enLista(f){return all().find(x=>(f.tmdb_id&&x.tmdb_id&&+x.tmdb_id===+f.tmdb_id)||(normT(x.titulo)===normT(f.titulo)&&(!x.anio||!f.anio||Math.abs(+x.anio-f.anio)<=1)))}
 async function cartelera(){
-  const r=document.getElementById("sheetRoot");
+  const r=document.getElementById("sheetRoot");const hay=misCines().length>0;if(!hay)cartModo="espana";
   r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="caH">
-    <span class="eyebrow">En cines de España</span><h2 id="caH">Cartelera</h2>
-    <p class="hint">Lo que está en salas esta semana. Apunta lo que quieras ver con el Unlimited.</p>
+    <span class="eyebrow" id="caE"></span><h2 id="caH">Cartelera</h2>
+    ${hay?`<div class="seg cart-seg" role="group" aria-label="Qué cartelera"><button type="button" data-cm="cines">Tus Cinesa</button><button type="button" data-cm="espana">Toda España</button></div>`:""}
+    <p class="hint" id="caHint"></p>
     <div id="cartL" class="cart-list"></div>
     <div class="sheet-actions"><button class="add" id="anClose">Cerrar</button></div></div></div>`;
   document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")r.innerHTML=""};document.getElementById("anClose").onclick=()=>r.innerHTML="";
-  document.getElementById("cartL").onclick=e=>{const b=e.target.closest("[data-ca]");if(b)quieroVer(+b.dataset.ca,b)};
+  r.querySelectorAll("[data-cm]").forEach(b=>b.onclick=()=>{cartModo=b.dataset.cm;SESUI.abierta=null;pintaCart()});
+  document.getElementById("cartL").onclick=e=>{let b;
+    if(b=e.target.closest("[data-ca]")){quieroVer(CART&&CART.lista[+b.dataset.ca],b);return}
+    if(b=e.target.closest("[data-cs]")){const f=SESL[+b.dataset.cs];quieroVer(f&&fichaSes(f),b);return}
+    if(b=e.target.closest("[data-st]")){const i=+b.dataset.st;SESUI.abierta=SESUI.abierta===i?null:i;pintaCart()}};
   pintaCart();
+  if(hay)cargaSesiones();
   if(!CART&&!cartCargando){cartCargando=true;
     try{const x=await sb.functions.invoke("ficha",{body:{modo:"cartelera"}});const d=x&&x.data||{};CART={lista:(d.resultados||[]).filter(f=>f&&f.titulo),sin:!!d.sin_clave}}catch(_){CART={lista:[],sin:false,fallo:true}}
     cartCargando=false;if(CART.fallo)setTimeout(()=>{if(CART&&CART.fallo)CART=null},0);pintaCart()}
 }
 function pintaCart(){
   const L=document.getElementById("cartL");if(!L)return;
+  document.querySelectorAll("[data-cm]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cm===cartModo));
+  const E=document.getElementById("caE"),H=document.getElementById("caHint");
+  if(cartModo==="cines"){
+    E.textContent="Hoy en tus Cinesa";
+    H.textContent=`Sesiones de hoy en ${Object.values(misCinesN()).join(", ").replace(/, ([^,]*)$/," y $1")}${priVOSE()?", con la VOSE primero":""}. Cada hora abre la compra en la web de Cinesa.`;
+    if(!SES){L.innerHTML=`<p class="hint">${SESFALLO?"Ahora no se pueden consultar las sesiones de tus cines. El resto de Platea funciona igual; prueba más tarde.":"Buscando las sesiones de tus cines…"}</p>${SESFALLO?otrosDias().replace("Para otros días, abre","Mientras, puedes abrir"):""}`;return}
+    SESL=SES.lista.map(f=>Object.assign({f},sesDe(f))).filter(z=>z.n).sort((a,b)=>(priVOSE()?(b.v?1:0)-(a.v?1:0):0)||b.n-a.n);
+    const aviso=sesAviso();
+    if(!SESL.length){L.innerHTML=`<p class="hint">${aviso||"Hoy ya no quedan sesiones en tus cines."}</p>${otrosDias()}`;return}
+    L.innerHTML=(aviso?`<p class="hint ses-aviso">${aviso}</p>`:"")+SESL.map((z,i)=>{const f=fichaSes(z.f),ya=enLista(f);const abierta=SESUI.abierta===i;
+      const donde=Object.keys(z.cines).map(c=>CINESA[c]).join(" · ");
+      return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3><span class="ses-donde">${esc(donde)}${z.v?` <span class="badge">VOSE</span>`:""}</span><button class="ses-tog" type="button" data-st="${i}" aria-expanded="${abierta}">${abierta?"Ocultar sesiones":"Ver sesiones"}</button></div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-cs="${i}">La quiero ver</button>`}${abierta?panelSes(z):""}</div>`}).join("")+otrosDias();
+    return;
+  }
+  E.textContent="En cines de España";H.textContent=`Lo que está en salas esta semana. Apunta lo que quieras ver con el Unlimited.`;
   if(!CART){L.innerHTML=`<p class="hint">Buscando la cartelera…</p>`;return}
   if(!CART.lista.length){L.innerHTML=`<p class="hint">${CART.fallo?"Ahora no se puede consultar la cartelera. Prueba en un rato.":"La cartelera necesita la conexión con TMDB."}</p>`;return}
-  L.innerHTML=CART.lista.map((f,i)=>{const ya=enLista(f);
-    return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3>${f.anio?`<span class="mono">${esc(f.anio)}</span>`:""}</div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-ca="${i}">La quiero ver</button>`}</div>`}).join("");
+  L.innerHTML=CART.lista.map((f,i)=>{const ya=enLista(f);const tc=enTusCines(f);
+    return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3>${f.anio?`<span class="mono">${esc(f.anio)}</span>`:""}${tc?`<span class="ses-donde">Hoy en tus Cinesa${tc.v?` <span class="badge">VOSE</span>`:""}</span>`:""}</div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-ca="${i}">La quiero ver</button>`}</div>`}).join("");
 }
-async function quieroVer(i,b){const f=CART&&CART.lista[i];if(!f||enLista(f))return;b.disabled=true;
+async function quieroVer(f,b){if(!f||enLista(f))return;b.disabled=true;
   const x={poster:f.poster||null,tmdb_id:f.tmdb_id||null,tipo:"peli",estado:"porver",titulo:f.titulo,anio:f.anio||"",donde:"cine",plataforma:platTexto(leePlats(f.plataforma)),fecha:null,nota:0,resena:"",rewatch:false,moods:[],prio:true};
   const r=await sb.from("titulos").insert(aFila(x)).select().single();if(r.error){b.disabled=false;toast("No se pudo añadir");return}
   items[r.data.id]=deFila(r.data);toast("Añadida a Por ver");pintaCart();render()}
+
+/* Sesiones en tus Cinesa: salen de Sensacine a través de la función «sesiones»; las horas enlazan con la compra en la web de Cinesa */
+const CINESA={E0385:"Equinoccio",E0389:"Las Rozas Heron City",E0646:"Manoteras",E0401:"Príncipe Pío",E0247:"Méndez Álvaro",E0392:"La Moraleja",E0399:"Parquesur",E0406:"Xanadú",E0731:"La Gavia",E0246:"Nassica",E0394:"Plaza Loranca 2"};
+const MAX_CINES=6,SES_LS="platea-sesiones",SES_TTL=3*36e5;
+let SES=null,SESL=[],SESFALLO=false,sesCargando=false;const SESUI={abierta:null};
+const misCines=()=>(AJ.cines&&Array.isArray(AJ.cines.ids)?AJ.cines.ids:[]).filter(c=>CINESA[c]).slice(0,MAX_CINES);
+const misCinesN=()=>Object.fromEntries(misCines().map(c=>[c,CINESA[c]]));
+const priVOSE=()=>!AJ.cines||AJ.cines.vose!==false;
+const ahoraLocal=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,16)};
+const fichaSes=f=>({titulo:f.titulo_tmdb||f.titulo,anio:f.anio_tmdb||f.anio||"",tmdb_id:f.tmdb_id||null,poster:f.poster||null,plataforma:""});
+/* Solo las sesiones que aún no han empezado */
+function sesDe(f){const now=ahoraLocal(),o={};let n=0,v=0;
+  for(const [c,ss] of Object.entries(f.cines||{})){if(!CINESA[c])continue;const l=ss.filter(s=>s.f+"T"+s.h>=now);if(l.length){o[c]=l;n+=l.length;v+=l.filter(s=>s.v==="VOSE").length}}
+  return {cines:o,n,v}}
+function enTusCines(x){if(!SES||!x)return null;const a=+x.anio||0;
+  const f=SES.lista.find(f=>(f.tmdb_id&&x.tmdb_id&&+f.tmdb_id===+x.tmdb_id)||([f.titulo_tmdb,f.titulo,f.original].some(t=>t&&normT(t)===normT(x.titulo))&&(!a||!(f.anio_tmdb||f.anio)||Math.abs(a-(f.anio_tmdb||f.anio))<=1)));
+  if(!f)return null;const s=sesDe(f);return s.n?Object.assign({f},s):null}
+function panelSes(z){
+  const porFila=Math.max(3,Math.floor((Math.min(innerWidth,560)-36+6)/74));
+  const cines=Object.entries(z.cines).map(([c,l])=>{const fil=Math.ceil(l.length/porFila),col=Math.ceil(l.length/fil);
+    return `<div class="ses-cine"><b>${esc(CINESA[c])}</b><div class="ses-hs" style="--c:${col}">${l.map(s=>{const tg=[s.v,s.x].filter(Boolean).length?`<small>${esc([s.v,s.x].filter(Boolean).join(" · "))}</small>`:"";const lbl=`${s.h}${s.v?" "+s.v:""}${s.x?" "+s.x:""}`;
+      return s.url?`<a class="ses-h${s.v==="VOSE"?" vo":""}" href="${esc(s.url)}" target="_blank" rel="noopener" aria-label="${esc(lbl)}, comprar en Cinesa">${esc(s.h)}${tg}</a>`:`<span class="ses-h${s.v==="VOSE"?" vo":""}">${esc(s.h)}${tg}</span>`}).join("")}</div></div>`}).join("");
+  return `<div class="ses-p">${cines}<p class="ses-nota">${z.v?"En color, las sesiones en VOSE. ":""}Se compran en la web de Cinesa.</p></div>`;
+}
+/* Otros días: la página de cada cine en Sensacine (la app solo lee las sesiones de hoy) */
+function otrosDias(){const c=misCines();if(!c.length)return "";
+  return `<p class="hint ses-otros">Para otros días, abre tu cine: ${c.map(k=>`<a href="https://www.sensacine.com/cines/cine/${k}/" target="_blank" rel="noopener">${esc(CINESA[k])}</a>`).join(" · ")}.</p>`}
+/* Aviso si Sensacine no ha respondido: datos de antes (con su hora) o cines sin datos */
+function sesAviso(){if(!SES||!SES.por_cine)return "";const hh=t=>{const d=new Date(t);return d.toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"})};
+  const viejos=Object.entries(SES.por_cine).filter(([,e])=>e.estado==="antiguo"),sin=Object.entries(SES.por_cine).filter(([,e])=>e.estado==="fallo");
+  const t=[];if(viejos.length)t.push(`${viejos.map(([c])=>CINESA[c]).join(" y ")}: datos de las ${hh(viejos[0][1].desde)}`);
+  if(sin.length)t.push(`${sin.map(([c])=>CINESA[c]).join(" y ")}: ahora no se pueden consultar`);
+  return t.length?t.join(". ")+".":""}
+async function cargaSesiones(){
+  const ids=misCines(),clave=ids.join(","),dia=today();
+  if(!ids.length){SES=null;return}
+  const vale=x=>x&&x.ids===clave&&x.hoy===dia&&Array.isArray(x.lista);
+  if(vale(SES)&&Date.now()-SES.t<SES_TTL)return;
+  if(!vale(SES)){SES=null;try{const c=JSON.parse(localStorage.getItem(SES_LS)||"null");if(vale(c)){SES=c;sesPintar();if(Date.now()-c.t<SES_TTL)return}}catch(_){}}
+  if(sesCargando)return;sesCargando=true;SESFALLO=false;
+  try{const x=await sb.functions.invoke("sesiones",{body:{cines:ids}});const d=x&&x.data;
+    if(d&&Array.isArray(d.peliculas)&&d.estado!=="fallo"){SES={ids:clave,hoy:d.hoy||dia,t:Date.now(),lista:d.peliculas,por_cine:d.por_cine||{}};try{localStorage.setItem(SES_LS,JSON.stringify(SES))}catch(_){}}
+    else if(!SES)SESFALLO=true}
+  catch(_){if(!SES)SESFALLO=true}
+  sesCargando=false;sesPintar();
+}
+function sesPintar(){pintaCart();const a=document.activeElement;if(tab==="porver"&&!(a&&a.id==="iaTxt"))render()}
 
 /* Créame una watchlist (IA) */
 const IA={res:[],info:"",busy:false,txt:""};
@@ -673,6 +781,52 @@ document.getElementById("expDiary").onclick=()=>{descargar("letterboxd-diario.cs
 document.getElementById("expWatch").onclick=()=>{descargar("letterboxd-watchlist.csv",watchCSV());toast("CSV de la watchlist listo")};
 document.addEventListener("input",e=>{if(e.target.id==="iaTxt")IA.txt=e.target.value});
 document.getElementById("salir").onclick=()=>CiccCuenta.salir();
+/* Logros (sistema común de las CiccApps: compartido/logros.js) */
+const LOGROS=[
+  {clave:"primera_funcion",nombre:"Primera función",texto:"Apunta tu primera película",metrica:"peliculas",niveles:[1],motivo:"entrada"},
+  {clave:"butaca_fija",nombre:"Butaca fija",texto:"Películas vistas en el cine",metrica:"pelis_cine",niveles:[10,50,150],unidad:"películas",unidad1:"película",motivo:"butaca"},
+  {clave:"version_original",nombre:"Versión original",texto:"Películas vistas en VOSE en el cine",metrica:"vose_cine",niveles:[5,25,75],unidad:"películas",unidad1:"película",motivo:"bocadillo"},
+  {clave:"abono",nombre:"Abono amortizado",texto:"Meses con Cinesa Unlimited amortizada",metrica:"meses_amortizados",niveles:[1,6,12],unidad:"meses",unidad1:"mes",motivo:"abono"},
+  {clave:"diario_sala",nombre:"Diario de sala",texto:"Películas y series apuntadas como vistas",metrica:"vistos",niveles:[25,100,365],unidad:"títulos",unidad1:"título",motivo:"calendario"},
+  {clave:"critico_casa",nombre:"Crítico de la casa",texto:"Reseñas escritas",metrica:"resenas",niveles:[10,50,150],unidad:"reseñas",unidad1:"reseña",motivo:"pluma"},
+  {clave:"ultimo_capitulo",nombre:"Hasta el último capítulo",texto:"Series terminadas",metrica:"series_terminadas",niveles:[3,10,30],unidad:"series",unidad1:"serie",motivo:"claqueta"},
+  {clave:"clasicos",nombre:"Clásicos al día",texto:"Clásicos vistos (anteriores al 2000 o con mood clásico)",metrica:"clasicos",niveles:[5,25,75],unidad:"clásicos",unidad1:"clásico",motivo:"estrella"},
+  {clave:"mes_estrenos",nombre:"Mes de estrenos",texto:"Películas en el cine en un mismo mes",metrica:"mejor_mes_cine",niveles:[4,8,12],unidad:"películas",unidad1:"película",motivo:"bombilla"},
+  {clave:"todos_moods",nombre:"Todos los moods",texto:"Has visto algo de cada mood",metrica:"moods_distintos",niveles:[8],motivo:"laurel"},
+  {clave:"otra_vez_sam",nombre:"Otra vez, Sam",texto:"Vuelve a ver algo que ya habías visto",metrica:"revisionadas",niveles:[1],motivo:"bobina",secreto:true},
+  {clave:"triple_sesion",nombre:"Triple sesión",texto:"Tres películas en el cine el mismo día",metrica:"triple_sesion",niveles:[1],motivo:"corona",secreto:true},
+  {clave:"amor_odio",nombre:"Amor y odio",texto:"Un cinco estrellas y un medio estrella en el mismo mes",metrica:"amor_odio",niveles:[1],motivo:"rosa",secreto:true},
+  {clave:"viaje_tiempo",nombre:"Viaje en el tiempo",texto:"Películas vistas de siete décadas distintas",metrica:"viaje_tiempo",niveles:[1],motivo:"llave",secreto:true}
+];
+const MOTIVOS_LOGROS={
+  entrada:'<path d="M2.5 7h19v3a2 2 0 0 0 0 4v3h-19v-3a2 2 0 0 0 0-4z" fill="none" stroke-width="1.6" stroke-linejoin="round"/><path d="M15 7.5v9" fill="none" stroke-width="1.5" stroke-dasharray="1.6 1.6"/>',
+  butaca:'<path d="M6.5 3.5h11a1.5 1.5 0 0 1 1.5 1.5v6.5H5V5a1.5 1.5 0 0 1 1.5-1.5z"/><path d="M2.5 11h19v4.5h-19z"/><path d="M5 15.5v5M19 15.5v5" fill="none" stroke-width="2" stroke-linecap="round"/>',
+  bocadillo:'<path d="M4 4.5h16a1.5 1.5 0 0 1 1.5 1.5v9a1.5 1.5 0 0 1-1.5 1.5h-9l-4.5 4v-4H4A1.5 1.5 0 0 1 2.5 15V6A1.5 1.5 0 0 1 4 4.5z" fill="none" stroke-width="1.6" stroke-linejoin="round"/><path d="M6.5 9.5h11M6.5 12.5h7" fill="none" stroke-width="1.6" stroke-linecap="round"/>',
+  abono:'<rect x="2.5" y="5.5" width="19" height="13" rx="2" fill="none" stroke-width="1.6"/><path d="M2.5 9.5h19" fill="none" stroke-width="2.4"/><path d="M5.5 15h5" fill="none" stroke-width="1.6" stroke-linecap="round"/>',
+  claqueta:'<path d="M3 10h18v10.5H3z" fill="none" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 10L2.3 6.2l17.6-3.4.8 3.8z" fill="none" stroke-width="1.6" stroke-linejoin="round"/><path d="M7.2 5.4l2.3 3.3M12.3 4.4l2.3 3.3M17.3 3.4l2.2 3.2" fill="none" stroke-width="1.4"/>',
+  bombilla:'<path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.8.6 1.3 1.5 1.3 2.5h5c0-1 .5-1.9 1.3-2.5A6.5 6.5 0 0 0 12 2.5z"/><path d="M9.5 19h5M10.5 21.5h3" fill="none" stroke-width="1.6" stroke-linecap="round"/>',
+  bobina:'<circle cx="12" cy="12" r="9.5" fill="none" stroke-width="1.6"/><circle cx="12" cy="7" r="2"/><circle cx="12" cy="17" r="2"/><circle cx="7" cy="12" r="2"/><circle cx="17" cy="12" r="2"/><circle cx="12" cy="12" r="1"/>'
+};
+function metricas(){
+  const V=all().filter(x=>x.estado==="vista"),P=V.filter(x=>x.tipo==="peli"),C=P.filter(x=>x.donde==="cine");
+  const porMes={};C.forEach(x=>{const m=String(x.fecha||"").slice(0,7);if(m)porMes[m]=(porMes[m]||0)+1});
+  const c=AJ.cinesa||{};const amort=c.activa&&c.cuota>0&&c.entrada>0?Object.values(porMes).filter(n=>n*c.entrada>=c.cuota).length:0;
+  const moods=new Set();V.forEach(x=>(x.moods||[]).forEach(m=>{if(MOODS[m])moods.add(m)}));
+  const porDia={};C.forEach(x=>{if(x.fecha)porDia[x.fecha]=(porDia[x.fecha]||0)+1});
+  const notaMes={};P.forEach(x=>{const m=String(x.fecha||"").slice(0,7);if(!m)return;const o=notaMes[m]||(notaMes[m]={});if(x.nota>=5)o.alta=1;if(x.nota>0&&x.nota<=.5)o.baja=1});
+  const decadas=new Set(P.map(x=>+x.anio).filter(y=>y>1880).map(y=>Math.floor(y/10)));
+  return {peliculas:P.length,pelis_cine:C.length,vose_cine:C.filter(x=>x.vose).length,meses_amortizados:amort,vistos:V.length,
+    resenas:V.filter(x=>(x.resena||"").trim()).length,series_terminadas:V.filter(x=>x.tipo==="serie").length,
+    clasicos:P.filter(x=>(+x.anio&&+x.anio<2000)||(x.moods||[]).includes("clasico")).length,
+    mejor_mes_cine:Math.max(0,...Object.values(porMes)),moods_distintos:moods.size,revisionadas:V.filter(x=>x.rewatch).length,
+    triple_sesion:Object.values(porDia).some(n=>n>=3)?1:0,amor_odio:Object.values(notaMes).some(o=>o.alta&&o.baja)?1:0,viaje_tiempo:decadas.size>=7?1:0};
+}
+let LOGROS_OK=false,tLogros=null;
+function vitCard(){if(!LOGROS_OK)return "";const n=CiccLogros.total();
+  return `<button class="cart-card vit-card" id="vitBtn" type="button">${CiccLogros.medalla({nivel:n?3:0,motivo:"butaca"}).replace('class="cl-medalla"','class="cl-medalla vit-med"')}<span class="cart-txt"><span class="eyebrow">${n?`Vitrina · ${n} ${n===1?"medalla":"medallas"}`:"Vitrina de medallas"}</span><b>Tus logros</b></span><span class="cart-go" aria-hidden="true">→</span></button>`}
+function pintarVitrina(){const b=document.getElementById("vitBtn");if(b)b.outerHTML=vitCard();else if(tab==="diario")render()}
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#vitBtn"))CiccLogros.vitrina()});
+function evalLogros(){if(!LOGROS_OK||!sb)return;clearTimeout(tLogros);tLogros=setTimeout(()=>CiccLogros.evaluar(metricas()).then(n=>{if(n&&n.length)pintarVitrina()}),400)}
 async function cargar(){
   const [r,a]=await Promise.all([sb.from("titulos").select("*"),sb.from("ajustes").select("datos").eq("app","platea").maybeSingle().then(z=>z,()=>null)]);
   if(a&&!a.error&&a.data&&a.data.datos&&typeof a.data.datos==="object")AJ=a.data.datos;
@@ -682,8 +836,9 @@ async function cargar(){
 const TEMA_ACCESO={claro:{fondo:"#F3EFE4","fondo-alto":"#FFFFFF",hundido:"#EDE5D6",linea:"#E0D7C6","linea-fuerte":"#9C8F92",tinta:"#24161A","tinta-suave":"#6C6266",oro:"#6E1E2B",primario:"#6E1E2B","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"},
   oscuro:{fondo:"#150D10","fondo-alto":"#1F1518",hundido:"#2A1C20",linea:"#3A2A2F","linea-fuerte":"#6B5A5F",tinta:"#F1E9E4","tinta-suave":"#A7999E",oro:"#D9B878",primario:"#B8475A","sobre-primario":"#FFF6EE","display-app":'"Limelight",Georgia,serif',"display-tracking":".02em"}};
 CiccCuenta.iniciar({app:"Platea",icono:"../iconos/platea-192.png?v=6",lema:"¿Qué veo ahora?",tema:TEMA_ACCESO}).then(async r=>{
-  sb=r.sb;USUARIO=r.usuario||null;CiccCuenta.firma("Platea",document.getElementById("pie"));await cargar();marcarMesNuevo();
-  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!editId)cargar()});
+  sb=r.sb;USUARIO=r.usuario||null;CiccCuenta.firma("Platea",document.getElementById("pie"));await cargar();marcarMesNuevo();cargaSesiones();
+  if(window.CiccLogros)CiccLogros.iniciar({sb,app:"platea",color:"#5E1A26",catalogo:LOGROS,motivos:MOTIVOS_LOGROS,nombre:"Platea"}).then(()=>{LOGROS_OK=true;pintarVitrina();evalLogros()});
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!editId){cargar();cargaSesiones()}});
 });
 </script>
 <script src="../compartido/actualizar.js?v=3"></script>
