@@ -1,4 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}*{touch-action:manipulation}
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}*{touch-action:manipulation}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 /* móvil: pasos en una fila de cuatro, el contador encima y el resto en una fila que se reparte por igual */
 @media (max-width: 760px) {
   .bar { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -408,6 +408,26 @@ td.wy { color: var(--pink); }
 @media screen and (max-width: 760px) and (min-height: 600px) {
   html:has(#panel[hidden]), html:has(#panel[hidden]) body { overflow: hidden; overscroll-behavior: none; }
 }
+/* táctil: una franja del color de la página bajo la barra de estado, para que al desplazar «Datos» no se vea el
+   contenido emborronado por debajo de la hora */
+@media screen and (max-width: 760px), screen and (pointer: coarse) and (max-width: 1199px) and (min-height: 600px) {
+  body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--page); z-index: 40; pointer-events: none; }
+}
+/* pantalla con franja lateral libre (iPhone Duo cerrado, en vertical): los botones, en columna y solo con iconos, pasan
+   a esa franja y la tarjeta gana todo el alto. La clase «lateral» la pone el script al medir la zona segura derecha. */
+@media screen and (max-width: 760px) {
+  html.lateral body { padding-bottom: max(var(--m), env(safe-area-inset-bottom, 0px)); }
+  html.lateral .stage { height: max(440px, calc(100dvh - env(safe-area-inset-top, 0px) - var(--m) - max(var(--m), env(safe-area-inset-bottom, 0px)))); }
+  html.lateral .wrap:not(:fullscreen) .bar { left: auto; top: auto; right: 0; bottom: max(var(--m), env(safe-area-inset-bottom, 0px));
+    width: env(safe-area-inset-right, 0px); flex-direction: column; flex-wrap: nowrap; align-items: center; gap: 8px; padding: 0;
+    background: none; -webkit-backdrop-filter: none; backdrop-filter: none; border: 0; }
+  html.lateral .wrap:not(:fullscreen) .bar .nav { display: flex; flex-direction: column; flex: none; align-items: center; gap: 8px; order: 5; margin-top: 8px; }
+  html.lateral .bar button, html.lateral .bar > button, html.lateral .bar:has(> #full:not([hidden])) > button { flex: none; width: 52px; height: 44px; min-height: 44px; padding: 0; justify-content: center; }
+  html.lateral .bar .nlbl, html.lateral .bar .lbl, html.lateral .bar .nav #prev .nlbl, html.lateral .bar .nav #next .nlbl { display: none !important; }
+  html.lateral .bar .nav #prev .ic, html.lateral .bar .nav #next .ic, html.lateral .bar #pdf.busy .ic { display: block; }
+  html.lateral .bar > button::after { content: none !important; }
+  html.lateral .bar .nav .stepinfo { width: 46px; white-space: normal; text-align: center; font-size: 11px; line-height: 1.25; padding: 0; }
+}
 /* pantallas bajas (plegable cerrado, vista dividida): todo un poco más compacto para que la tarjeta quepa entera */
 @media screen and (max-width: 760px) and (max-height: 720px) {
   .slide { padding: 10px 12px 8px; gap: 6px; }
@@ -440,6 +460,32 @@ td.wy { color: var(--pink); }
 }
 /* en pantallas táctiles, la pista de móvil (sin teclas ni ratón) */
 @media screen and (pointer: coarse) and (min-width: 761px) and (max-width: 1199px) { .hint-pc { display: none; } .hint-movil { display: block; } }
+/* táctil ancho (plegable abierto, tableta): todos los controles en una fila y la diapositiva lo más grande posible, sin
+   desplazar la página; el mismo espaciado de 16 px alrededor y 8 px entre botones (no en un iPhone en horizontal, que es bajo) */
+@media screen and (pointer: coarse) and (min-width: 761px) and (max-width: 1199px) and (min-height: 600px) {
+  :root { --m: 16px; }
+  body { padding: var(--m) max(var(--m), env(safe-area-inset-right, 0px)) var(--m) max(var(--m), env(safe-area-inset-left, 0px)); }
+  .wrap:not(:fullscreen) { gap: var(--m); align-content: center;
+    min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 2 * var(--m));
+    max-width: min(1240px, calc((100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 3 * var(--m) - 44px) * 16 / 9)); }
+  .hint { display: none !important; }
+  .panel[hidden] ~ .copy { display: none; }
+  html:has(#panel[hidden]), html:has(#panel[hidden]) body { overflow: hidden; overscroll-behavior: none; }
+  .wrap:not(:fullscreen) .bar { flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .wrap:not(:fullscreen) .bar .nav { flex: none; flex-wrap: nowrap; gap: 8px; }
+  .wrap:not(:fullscreen) .bar .grow { display: block; flex: 0 0 8px; }
+  .wrap:not(:fullscreen) .bar > button { margin-left: 0; }
+  .bar #restart .nlbl, .bar #all .nlbl { display: none; }
+  .bar > button .lbl { display: none; }
+  #toggleData::after { content: "Datos"; } #pdf::after { content: "PDF"; } #reset::after { content: "Reiniciar"; }   /* «Ampliar», solo el icono */
+  #pdf.busy::after { content: "Generando…"; } #pdf.busy .ic { display: none; }
+  .wrap:fullscreen .bar > button::after { content: none; }
+}
+/* táctil ancho en vertical: no cabe en una fila, así que los pasos van arriba y las herramientas debajo (nada queda solo) */
+@media screen and (pointer: coarse) and (min-width: 761px) and (max-width: 899px) and (min-height: 600px) {
+  .wrap:not(:fullscreen) .bar .nav { flex: 1 1 100%; justify-content: center; }
+  .wrap:not(:fullscreen) .bar .grow { display: none; }
+}
 
 /* ---------- respaldo sin conexión (diálogo de impresión): la diapositiva sola, en una hoja 16:9 sin márgenes ---------- */
 @media print {
@@ -920,7 +966,16 @@ td.wy { color: var(--pink); }
     txt.append(...penSegs.flatMap((t, i) => { const e = document.createElement('span'); e.className = 'seg'; e.textContent = t; return i ? [' · ', e] : [e]; }));
     el.replaceChildren(txt);
   }
-  window.addEventListener('resize', () => fit());
+  // franja lateral libre (iPhone Duo cerrado): si la zona segura derecha es ancha y la pantalla está en vertical
+  const probe = document.createElement('div');
+  probe.style.cssText = 'position:fixed;visibility:hidden;pointer-events:none;padding-right:env(safe-area-inset-right,0px)';
+  document.body.appendChild(probe);
+  function lateral() {
+    const r = parseFloat(getComputedStyle(probe).paddingRight) || 0;
+    document.documentElement.classList.toggle('lateral', r >= 56 && innerHeight > innerWidth && window.matchMedia('(max-width: 760px)').matches);
+  }
+  lateral();
+  window.addEventListener('resize', () => { lateral(); fit(); });
   window.matchMedia('(max-width: 760px)').addEventListener('change', paintPen);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fit());
 
@@ -1036,9 +1091,9 @@ td.wy { color: var(--pink); }
     if (on) poke();
     setTimeout(fit, 60);
   });
-  // móvil: la tarjeta llena la pantalla, así que al abrir «Datos» se baja hasta el panel (y al cerrarlo, se vuelve arriba)
+  // móvil y táctil ancho: la tarjeta llena la pantalla, así que al abrir «Datos» se baja hasta el panel (y al cerrarlo, se vuelve arriba)
   $('toggleData').addEventListener('click', () => {
-    if (!window.matchMedia('(max-width: 760px)').matches || document.fullscreenElement) return;
+    if (!window.matchMedia('(max-width: 760px), (pointer: coarse) and (max-width: 1199px) and (min-height: 600px)').matches || document.fullscreenElement) return;
     requestAnimationFrame(() => { if (!$('panel').hidden) $('panel').scrollIntoView({ behavior: 'smooth', block: 'start' }); else window.scrollTo({ top: 0, behavior: 'smooth' }); });
   });
   $('toggleData').addEventListener('click', () => {
