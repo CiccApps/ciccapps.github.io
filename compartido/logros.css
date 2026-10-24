@@ -46,8 +46,10 @@ html.cl-abierta { overflow: hidden; }
 }
 .cl-vitrina.cl-dentro { background: rgba(10, 14, 12, .45); }
 .cl-hoja {
-  /* la hoja empieza por debajo de la cámara: con la franja lateral del Duo plegado (inset derecho), baja lo que mide esa franja */
-  box-sizing: border-box; width: 100%; max-height: calc(100% - env(safe-area-inset-top, 0px) - max(24px, env(safe-area-inset-right, 0px))); overflow-y: auto; overscroll-behavior: contain;
+  /* --cl-duo vale 12px solo con la franja lateral del Duo plegado (inset derecho de 44px o más) y 0 en el resto:
+     ahí la hoja flota con 12px a los lados y un poco más de aire arriba, para que se vea el velo y libre la cámara */
+  --cl-duo: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 12px);
+  box-sizing: border-box; width: calc(100% - 2 * var(--cl-duo)); max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px - 2 * var(--cl-duo)); overflow-y: auto; overscroll-behavior: contain;
   /* en vertical el contenido usa todo el ancho (la franja solo estorba arriba, donde ya no llega la hoja); en horizontal respeta los bordes */
   padding: 6px 20px calc(env(safe-area-inset-bottom, 0px) + 20px);
   background: var(--cl-fondo); color: var(--cl-tinta); font-family: var(--cl-sans);
