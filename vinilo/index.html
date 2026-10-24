@@ -313,6 +313,11 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0
 .rail.si{display:flex}
 /* Con la franja lateral (pantalla exterior del Duo) iOS difumina el borde de arriba: los saltos dejan un margen corto para que el título no quede debajo */
 html.con-rail{scroll-padding-top:14px}
+html.con-rail #groups{margin-top:24px;scroll-margin-top:28px}
+/* La portada tiene que caber entera en la pantalla exterior */
+html.con-rail .dial-wrap{margin:12px 0 4px}
+html.con-rail .dial{--d:min(calc(100% - 64px),270px,calc(100svh - 470px))}
+html.con-rail .dial-pie{margin-top:16px}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--accent);border-color:var(--accent)}
 .rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
