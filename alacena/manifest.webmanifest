@@ -1,0 +1,17 @@
+{
+  "name": "Alacena",
+  "short_name": "Alacena",
+  "description": "Tu dieta, tus recetas y tu compra, a medida.",
+  "lang": "es",
+  "start_url": "/alacena/",
+  "scope": "/alacena/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3EFE4",
+  "theme_color": "#4A2442",
+  "icons": [
+    { "src": "/iconos/alacena-192.png?v=1", "sizes": "192x192", "type": "image/png" },
+    { "src": "/iconos/alacena-512.png?v=1", "sizes": "512x512", "type": "image/png" },
+    { "src": "/iconos/alacena-512.png?v=1", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
