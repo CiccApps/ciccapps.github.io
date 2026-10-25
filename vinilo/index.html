@@ -213,9 +213,13 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0
 @media (prefers-color-scheme: light){:root{--cl-vacio:#ECE4D3;--cl-relieve:#A9A08C}}
 .mis>div:first-child,.sel-h{display:grid;gap:6px}
 .mis h2{margin:0}
-.sp-con{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:14px 16px;border:1px dashed var(--line);border-radius:12px}
-.sp-con p{margin:0;flex:1 1 220px;color:var(--muted);font-size:14.5px}
-.sp-btn{appearance:none;border:0;border-radius:999px;background:#1DB954;color:#0b1a10;font:700 14px var(--body);padding:10px 16px;cursor:pointer;white-space:nowrap}
+.sp-con{display:flex;align-items:center;gap:14px;padding:12px 12px 12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.sp-con>svg{flex:none;width:26px;height:26px;color:#1DB954}
+.sp-con p{margin:0;flex:1 1 0;min-width:0;color:var(--muted);font-size:14px;line-height:1.4}
+.sp-con p b{display:block;color:var(--ink);font-weight:700;font-size:14.5px}
+.sp-btn{appearance:none;border:0;border-radius:999px;background:#1DB954;color:#0b1a10;font:700 14px var(--body);padding:10px 16px;cursor:pointer;white-space:nowrap;flex:none}
+/* Ya conectado: discreto y al final de la biblioteca */
+.sp-con.ok{order:9;background:none;border-style:dashed;padding-block:10px}
 .sp-out{appearance:none;border:0;background:none;color:var(--muted);font:600 13px var(--body);cursor:pointer;padding:4px}
 .sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .sp-pl{display:grid;gap:6px;align-content:start;text-decoration:none;color:var(--ink)}
@@ -311,13 +315,28 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0
 /* Barra lateral: en pantallas con una franja segura ancha a un lado (la exterior del iPhone Duo), botones para ir por zonas */
 .rail{z-index:40;display:none}
 .rail.si{display:flex}
-/* Con la franja lateral (pantalla exterior del Duo) iOS difumina el borde de arriba: los saltos dejan un margen corto para que el título no quede debajo */
-html.con-rail{scroll-padding-top:14px}
-html.con-rail #groups{margin-top:24px;scroll-margin-top:28px}
-/* La portada tiene que caber entera en la pantalla exterior */
-html.con-rail .dial-wrap{margin:12px 0 4px}
-html.con-rail .dial{--d:min(calc(100% - 64px),270px,calc(100svh - 470px))}
-html.con-rail .dial-pie{margin-top:16px}
+/* Con la franja lateral (pantalla exterior del Duo) iOS difumina el borde de arriba. Al bajar, una franja del color del fondo
+   tapa esa zona (como las pestañas fijas de Bitácora), así que no se ve nada difuminado; los saltos dejan el título justo debajo */
+html.con-rail{scroll-padding-top:44px}
+html.con-rail #groups{scroll-margin-top:28px}
+html.con-rail body::before{content:"";position:fixed;inset:0 0 auto;height:52px;z-index:35;pointer-events:none;background:linear-gradient(var(--bg) 0 40px,transparent);opacity:0;transition:opacity .2s}
+html.con-rail.bajado body::before{opacity:1}
+/* La portada llena la pantalla exterior con el mismo margen arriba y abajo */
+@media (orientation:portrait){
+  html.con-rail .dial-wrap{margin:12px 0 4px}
+  html.con-rail .dial{--d:min(calc(100% - 64px),300px,calc(100svh - 400px))}
+  html.con-rail .dial-pie{margin-top:16px}
+}
+/* Móvil en horizontal (pantalla exterior girada): nombre y lo que suena a la izquierda, el disco a la derecha */
+@media (max-width:759px) and (orientation:landscape) and (max-height:540px){
+  .plato{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 24px;padding:22px 26px}
+  .plato-txt{display:grid;gap:4px;justify-items:center;align-content:center}
+  .plato h1{margin-top:2px}
+  .suena{margin-top:14px}
+  .dial-wrap{margin:0;width:auto}
+  .dial,html.con-rail .dial{--d:min(calc(100svh - 150px),280px)}
+  .dial-pie{margin-top:14px}
+}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--accent);border-color:var(--accent)}
 .rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -780,6 +799,7 @@ TAGS.forEach(([key, label]) => {
   // Barra lateral: solo si la franja segura de la derecha deja sitio para los botones (44 px)
   (()=>{const r=$("rail"),pr=document.createElement("div");pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
     const ver=()=>document.documentElement.classList.toggle("con-rail",r.classList.toggle("si",pr.offsetWidth>=44));ver();addEventListener("resize",ver);
+    const baja=()=>document.documentElement.classList.toggle("bajado",scrollY>8);baja();addEventListener("scroll",baja,{passive:true});
     r.onclick=e=>{const b=e.target.closest("[data-ir]");if(!b)return;const d=b.dataset.ir;
       if(d==="vitrina"){if(window.CiccLogros&&sb)CiccLogros.vitrina();else $("mis").scrollIntoView({behavior:"smooth"});return}
       if(d==="arriba")scrollTo({top:0,behavior:"smooth"});else $(d).scrollIntoView({behavior:"smooth",block:"start"})};
@@ -823,9 +843,12 @@ TAGS.forEach(([key, label]) => {
   function pintaCon(msg){
     const c=$("spCon");if(!SPOTIFY_ID){c.hidden=true;return}c.hidden=false;
     const sc=SPOT.ok()?SPOT.t.scope||"":"";
-    if(SPOT.ok()&&!msg&&!["user-modify-playback-state","user-read-recently-played"].every(x=>sc.includes(x))){c.innerHTML=`<p>Vuelve a conectar Spotify una vez para que Vinilo ordene tus listas por las que más escuchas.</p><button class="sp-btn" id="spIn" type="button">Reconectar</button>`;$("spIn").onclick=conectar;return}
-    c.innerHTML=SPOT.ok()?`<p>${msg||"Spotify conectado. Tus listas, tu mes y el botón «Guardar en Spotify» ya funcionan."}</p><button class="sp-out" id="spOut" type="button">Desconectar</button>`
-      :`<p>${msg||"Conecta tu cuenta de Spotify para ver tus listas, tu resumen del mes y guardar ahí las playlists de la IA."}</p><button class="sp-btn" id="spIn" type="button">Conectar con Spotify</button>`;
+    const ico='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 1.5a10.5 10.5 0 1 0 0 21 10.5 10.5 0 0 0 0-21zm4.8 15.1a.65.65 0 0 1-.9.22c-2.47-1.5-5.57-1.85-9.23-1.01a.65.65 0 1 1-.29-1.27c4-.92 7.44-.52 10.2 1.17.31.19.41.59.22.89zm1.28-2.85a.82.82 0 0 1-1.12.27c-2.83-1.74-7.14-2.24-10.48-1.23a.82.82 0 0 1-.47-1.56c3.82-1.16 8.57-.6 11.81 1.4.38.23.5.74.26 1.12zm.11-2.97C14.8 8.76 9.2 8.57 5.95 9.56a.98.98 0 1 1-.57-1.88c3.73-1.13 9.93-.91 13.84 1.41a.98.98 0 0 1-1.03 1.69z"/></svg>';
+    c.classList.remove("ok");
+    if(SPOT.ok()&&!msg&&!["user-modify-playback-state","user-read-recently-played"].every(x=>sc.includes(x))){c.innerHTML=`${ico}<p><b>Reconecta Spotify</b>Una vez, para ordenar tus listas por las que más escuchas.</p><button class="sp-btn" id="spIn" type="button">Reconectar</button>`;$("spIn").onclick=conectar;return}
+    if(SPOT.ok()&&!msg)c.classList.add("ok");
+    c.innerHTML=SPOT.ok()?`${ico}<p>${msg||"Spotify conectado: tus listas, tu mes y «Guardar en Spotify»."}</p><button class="sp-out" id="spOut" type="button">Desconectar</button>`
+      :`${ico}<p>${msg||"<b>Conecta Spotify</b>Para ver tus listas, tu resumen del mes y guardar ahí las playlists de la IA."}</p><button class="sp-btn" id="spIn" type="button">Conectar</button>`;
     if($("spIn"))$("spIn").onclick=conectar;
     if($("spOut"))$("spOut").onclick=()=>{SPOT.guarda(null);misSp=[];$("spGrid").hidden=$("spH").hidden=true;$("mesSp").hidden=true;pintaCon();pintaCuenta();pinta()};
   }
