@@ -965,7 +965,7 @@ function formLibro(id){
   const MS=Object.keys(MOODS).filter(k=>k!=="corto");
   sheetId="__form";
   const def=b?b.stage.id:((STAGES.find(x=>!x.extra)||STAGES[0]||{}).id);
-  const root=abrirHoja("fT",`<span class="eyebrow">${b?"Editar libro":"Nuevo libro"}</span><h2 id="fT">${b?esc(b.t):"Añadir a la bitácora"}</h2>`,`
+  const root=abrirHoja("fT",`<span class="eyebrow">${b?"Editar libro":"Plan de lectura"}</span><h2 id="fT">${b?esc(b.t):"Nuevo libro"}</h2>`,`
     <div class="field lookup"><label for="lQ">${b?"Busca tu edición o escanea su código":"Busca el libro o escanea su código"}</label><div class="row2"><input type="text" id="lQ" placeholder="Título, autor o ISBN" autocomplete="off" enterkeyhint="search"><button type="button" class="btn" id="lScan">Escanear</button></div>
       <div class="sug" id="lSug" hidden></div><div class="cover-prev" id="lCov" ${b&&b.cov?"":"hidden"}>${b&&b.cov?`<img src="${esc(b.cov)}" alt="">`:""}<span class="hint" style="margin:0">Portada y datos de tu edición</span></div></div>
     <div class="field"><label for="lT">Título</label><input type="text" id="lT" value="${b?esc(b.t):""}" autocomplete="off"></div>
