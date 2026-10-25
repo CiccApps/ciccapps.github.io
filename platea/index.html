@@ -92,10 +92,14 @@ button{font:inherit;color:inherit}
 .empty h2{font-family:var(--f-display);font-weight:400;font-size:32px;margin:0;letter-spacing:.03em}
 .empty p{margin:0;color:var(--muted);max-width:44ch}
 
-.sheet-bg{position:fixed;inset:0;background:rgba(10,6,8,.55);display:flex;align-items:flex-end;justify-content:center;z-index:20;padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
-.sheet{background:var(--card);width:100%;max-width:560px;border-radius:12px 12px 0 0;max-height:92%;overflow:auto;border-top:5px solid var(--red);
-  padding:18px max(18px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px}
-.sheet h2{font-family:var(--f-display);font-weight:400;font-size:34px;margin:0;letter-spacing:.03em;line-height:1}
+/* Ventanas: la pieza común (.cc-velo > .cc-hoja > .cc-cab, en ciccapps.css) pone márgenes, difuminado, la muesca del Duo y la X; aquí, los colores */
+.cc-hoja{background:var(--card);color:var(--ink);box-shadow:0 -10px 34px rgba(0,0,0,.28)}
+.sheet{display:flex;flex-direction:column;gap:14px}
+.sheet .cc-cab{flex:none}
+.cc-cab h2{font-family:var(--f-display);font-weight:400;font-size:34px;letter-spacing:.03em;line-height:1}
+.cc-cab h2 .eyebrow{display:block;margin-bottom:6px;font-family:var(--f-body);line-height:1.3}
+.cc-cab:has(.eyebrow){margin-bottom:max(0px,var(--cc-muesca-h) - 84px)}
+.cc-cerrar{color:var(--muted)}
 .field{display:flex;flex-direction:column;gap:4px;min-width:0}
 .field label,.lbl{font-size:12px;color:var(--muted);font-weight:600}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -118,7 +122,6 @@ textarea{min-height:80px;resize:vertical}
 .links a{color:var(--red);font-weight:700;font-size:14px;text-decoration:none}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;z-index:30;white-space:nowrap}
 footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px;color:var(--muted)}
-@media (min-width:760px){.sheet-bg{align-items:center;padding:24px}.sheet{border-radius:12px;max-height:86vh}}
 
 .look{position:relative}
 .sug{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
@@ -130,7 +133,6 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 .ticket.con-poster{grid-template-columns:64px 1fr 58px}
 .ticket .poster{width:58px;height:100%;min-height:84px;object-fit:cover;display:block;border-left:1px solid var(--line)}
 .anio-btn{align-self:flex-start;border:1px solid rgba(255,246,238,.5);background:transparent;color:#FFF6EE;border-radius:999px;padding:6px 14px;font:700 13px var(--f-body);cursor:pointer;margin-top:4px}
-.anio h2{font-size:56px}
 .res-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}.res-btns .anio-btn{margin-top:0}
 .anio-btn.nuevo{background:#FFF6EE;color:var(--red);border-color:#FFF6EE}
 .mes-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--line)}.mes-row .mono{color:var(--muted);font-size:13px;width:20px;flex:none}.mes-row img{width:30px;height:45px;object-fit:cover;border-radius:3px;flex:none}.mes-row b{flex:1;min-width:0;font-weight:600}.mes-row .stars{flex:none;white-space:nowrap}
@@ -185,9 +187,9 @@ html.con-rail{scroll-padding-top:calc(var(--bar-h,60px) + 14px)}
 .ticket-roto span{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
 
 /* Tu sala: una butaca por título visto este año */
-.sala{display:flex;flex-direction:column;gap:10px}
+.sala{display:flex;flex-direction:column;gap:10px;container-type:inline-size}
 .sala-head{display:flex;flex-direction:column;gap:2px}
-.sala-room{--b:clamp(20px,6.2vw,26px);display:grid;justify-content:center;gap:12px;padding:16px 8px 14px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
+.sala-room{--b:clamp(14px,(100cqw - 90px)/10,26px);display:grid;justify-content:center;gap:12px;padding:16px 8px 14px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
 .pantalla{display:flex;flex-direction:column;align-items:center;gap:2px}
 .pantalla svg{display:block;width:100%;height:22px;overflow:visible}
 .pantalla span{font:600 10px var(--f-mono);letter-spacing:.32em;color:var(--muted);padding-left:.32em}
@@ -401,12 +403,21 @@ function ticket(x){
 
 /* Hoja de alta / edición */
 let editId=null,draft=null,pintaPl=()=>{};
+/* Ventanas: la pieza común de las CiccApps, como la vitrina */
+const CAB=(t,id,pre="")=>`<div class="cc-cab"><h2 id="${id}">${pre}${t}</h2><button class="cc-cerrar" type="button" aria-label="Cerrar">×</button></div>`;
+const VELO=(id,cl="")=>`<div class="cc-velo${document.querySelector("#sheetRoot > .cc-velo.cc-dentro")?" cc-dentro":""}" id="bg"><div class="cc-hoja sheet${cl?" "+cl:""}" role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="${id}">`;
+function entraHoja(cerrar){const v=document.querySelector("#sheetRoot > .cc-velo");if(!v)return;
+  document.documentElement.classList.add("cc-abierta");
+  if(!v.classList.contains("cc-dentro")){void v.offsetWidth;v.classList.add("cc-dentro")}
+  v.onclick=e=>{if(e.target===v)cerrar()};v.querySelector(".cc-cerrar").onclick=cerrar;
+  v.querySelector(".cc-hoja").focus({preventScroll:true})}
+function cierraHoja(){const v=document.querySelector("#sheetRoot > .cc-velo");if(!v)return;
+  v.classList.remove("cc-dentro");v.removeAttribute("id");document.documentElement.classList.remove("cc-abierta");setTimeout(()=>v.remove(),300)}
 function openSheet(id,kind){
   editId=id;
   draft=id?Object.assign({},items[id]):{tipo:kind==="serie"?"serie":"peli",estado:kind==="vista"?"vista":kind==="serie"?"viendo":"porver",titulo:"",anio:"",donde:"cine",plataforma:"",fecha:today(),nota:0,resena:"",rewatch:false,moods:[],prio:false,temp:"",cap:"",temps:""};
   const r=document.getElementById("sheetRoot");
-  r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shH">
-    <h2 id="shH">${id?"Editar":"Nueva entrada"}</h2>
+  r.innerHTML=`${VELO("shH")}${CAB(id?"Editar":"Nueva entrada","shH")}
     <div class="field look"><label for="fQ">Busca la película o serie</label><input type="text" id="fQ" placeholder="Escribe el título y elige" autocomplete="off" enterkeyhint="search"><div class="sug" id="fSug" hidden></div>
       <div class="pv" id="fPv" ${draft.poster?"":"hidden"}>${draft.poster?`<img src="${esc(draft.poster)}" alt="">`:""}<span class="hint">Póster y datos rellenados</span></div></div>
     <div class="seg" role="group" aria-label="Tipo"><button id="ty-peli" data-ty="peli">Película</button><button id="ty-serie" data-ty="serie">Serie</button></div>
@@ -427,7 +438,7 @@ function openSheet(id,kind){
       <label class="toggle" id="fPrW"><input type="checkbox" id="fPr" ${draft.prio?"checked":""}> En cartelera ahora</label>
     </div>
     ${id?`<div class="links"><a href="${lb(draft)}" target="_blank" rel="noopener">Letterboxd ↗</a><a href="${jw(draft)}" target="_blank" rel="noopener">Dónde verla (JustWatch) ↗</a></div>`:""}
-    <div class="actions">${id?`<button class="btn danger" id="del">Eliminar</button>`:"<span></span>"}<span style="display:flex;gap:10px"><button class="btn" id="cancel">Cerrar</button><button class="btn primary" id="save">Guardar</button></span></div>
+    <div class="actions">${id?`<button class="btn danger" id="del">Eliminar</button>`:"<span></span>"}<button class="btn primary" id="save">Guardar</button></div>
   </div></div>`;
   const sync=()=>{
     r.querySelectorAll("[data-ty]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.ty===draft.tipo));
@@ -452,8 +463,7 @@ function openSheet(id,kind){
   r.querySelectorAll("[data-es]").forEach(b=>b.onclick=()=>{draft.estado=b.dataset.es;if(draft.estado==="vista"){const fd=document.getElementById("fD");if(fd&&!fd.value)fd.value=today()}sync()});
   r.querySelectorAll("[data-mo]").forEach(b=>b.onclick=()=>{const k=b.dataset.mo;draft.moods=(draft.moods||[]).includes(k)?draft.moods.filter(z=>z!==k):[...(draft.moods||[]),k];b.setAttribute("aria-pressed",draft.moods.includes(k))});
   document.getElementById("fR").oninput=e=>{document.getElementById("fRo").textContent=stars(e.target.value/2)||"Sin nota"};
-  document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")close()};
-  document.getElementById("cancel").onclick=close;
+  entraHoja(close);
   if(id){let armed=false;document.getElementById("del").onclick=e=>{if(!armed){armed=true;e.target.textContent="Toca otra vez para eliminar";return}remove(id);close()}}
   document.getElementById("save").onclick=()=>{
     const t=document.getElementById("fT").value.trim();if(!t){document.getElementById("fT").focus();toast("Ponle un título");return}
@@ -472,7 +482,7 @@ function openSheet(id,kind){
   conectarFicha();
   sync();if(!id)document.getElementById("fQ").focus({preventScroll:true});
 }
-function close(){document.getElementById("sheetRoot").innerHTML="";editId=null}
+function close(){cierraHoja();editId=null}
 document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
 
 async function save(id,x){
@@ -528,16 +538,14 @@ function tuMes(){
   const dif=V.length-nA;const cmp=nA||V.length?(dif>0?`${dif} más que en ${MESL[ant.getMonth()].toLowerCase()}`:dif<0?`${-dif} menos que en ${MESL[ant.getMonth()].toLowerCase()}`:`Igual que en ${MESL[ant.getMonth()].toLowerCase()}`):"";
   const lista=[...V].sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha)));
   const r=document.getElementById("sheetRoot");
-  r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet anio" role="dialog" aria-modal="true" aria-labelledby="anH">
-    <span class="eyebrow">${cerrado?"Tu resumen del mes":"Tu mes hasta hoy"}</span><h2 id="anH">${MESL[m]}</h2>
+  r.innerHTML=`${VELO("anH","anio")}${CAB(MESL[m],"anH",`<span class="eyebrow">${cerrado?"Tu resumen del mes":"Tu mes hasta hoy"}</span>`)}
     ${V.length?`<div class="an-grid"><div><b>${pelis}</b><span>películas</span></div><div><b>${series}</b><span>series</span></div><div><b>${cine}</b><span>en el cine</span></div><div><b>${media?media.toFixed(1):"—"}</b><span>nota media</span></div></div>
     ${cmp?`<p class="an-cmp">${cmp}.</p>`:""}
     <p class="an-frase">${mejor?`Lo mejor del mes: <b>${esc(mejor.titulo)}</b> <span class="stars">${stars(mejor.nota)}</span>`:"Aún no has puntuado nada este mes"}${topP?`. Donde más viste: <b>${esc(topP[0])}</b>`:""}.</p>
     <div id="cinBox"></div>
     <div class="an-top"><span class="eyebrow">Lo que viste</span>${lista.map(x=>`<div class="mes-row"><span class="mono">${x.fecha.slice(8,10)}</span>${x.poster?`<img src="${esc(x.poster)}" alt="">`:""}<b>${esc(x.titulo)}</b>${x.nota?`<span class="stars">${stars(x.nota)}</span>`:""}</div>`).join("")}</div>`
-    :`<p class="hint">${cerrado?"No apuntaste nada ese mes.":"Aún no has apuntado nada este mes."} Cuando lo hagas, aquí verás tu resumen.</p><div id="cinBox"></div>`}
-    <div class="sheet-actions"><button class="add" id="anClose">Cerrar</button></div></div></div>`;
-  document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")r.innerHTML=""};document.getElementById("anClose").onclick=()=>r.innerHTML="";
+    :`<p class="hint">${cerrado?"No apuntaste nada ese mes.":"Aún no has apuntado nada este mes."} Cuando lo hagas, aquí verás tu resumen.</p><div id="cinBox"></div>`}</div></div>`;
+  entraHoja(cierraHoja);
   pintaCinesa(pre);
   try{localStorage.setItem("platea-mes-visto",pre)}catch(_){}document.getElementById("mesBtn").classList.remove("nuevo");
 }
@@ -563,9 +571,8 @@ function pintaCinesa(pre){
 let USUARIO=null;
 function perfil(volver){
   const r=document.getElementById("sheetRoot");const c=AJ.cinesa||{};
-  const cerrar=()=>{if(typeof volver==="function")volver();else r.innerHTML=""};
-  r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="pfH">
-    <h2 id="pfH">Tu perfil</h2>
+  const cerrar=()=>{if(typeof volver==="function")volver();else cierraHoja()};
+  r.innerHTML=`${VELO("pfH")}${CAB("Tu perfil","pfH")}
     <div class="pf-cuenta"><span class="lbl">Tu cuenta</span><span class="pf-mail" id="pfMail">${esc(USUARIO&&USUARIO.email||"Cargando…")}</span></div>
     <section class="cin" aria-labelledby="cinH"><span class="eyebrow" id="cinH">Cinesa Unlimited</span>
       <label class="toggle"><input type="checkbox" id="cinOn" ${c.activa?"checked":""}> Tengo Cinesa Unlimited</label>
@@ -576,8 +583,8 @@ function perfil(volver){
       <p class="hint">Marca los Cinesa a los que sueles ir (hasta ${MAX_CINES}) y en la cartelera verás sus sesiones de hoy.</p>
       <div class="tc-list" role="group" aria-labelledby="tcH">${Object.entries(CINESA).sort((a,b)=>a[1].localeCompare(b[1],"es")).map(([k,n])=>`<label class="toggle"><input type="checkbox" data-cine="${k}" ${misCines().includes(k)?"checked":""}> ${esc(n)}</label>`).join("")}</div>
       <label class="toggle"><input type="checkbox" id="tcVo" ${priVOSE()?"checked":""}> Priorizar las sesiones en VOSE</label></section>
-    <div class="actions"><span></span><span style="display:flex;gap:10px"><button class="btn" id="pfX" type="button">Cerrar</button><button class="btn primary" id="cinG" type="button">Guardar</button></span></div></div></div>`;
-  document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")cerrar()};document.getElementById("pfX").onclick=cerrar;
+    <div class="actions"><span></span><button class="btn primary" id="cinG" type="button">Guardar</button></div></div></div>`;
+  entraHoja(cerrar);
   document.getElementById("cinG").onclick=async()=>{
     const num=id=>{const v=parseFloat(String(document.getElementById(id).value).replace(",","."));return v>0?Math.round(v*100)/100:null};
     const on=document.getElementById("cinOn").checked,cu=num("cinC"),en=num("cinE");
@@ -608,16 +615,14 @@ function anioEnCine(){
   const moods={};V.forEach(x=>(x.moods||[]).forEach(m=>moods[m]=(moods[m]||0)+1));const topM=Object.entries(moods).sort((a,b)=>b[1]-a[1])[0];
   const top=[...notas].sort((a,b)=>b.nota-a.nota).slice(0,5);
   const r=document.getElementById("sheetRoot");
-  r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet anio" role="dialog" aria-modal="true" aria-labelledby="anH">
-    <span class="eyebrow">Tu año en cine</span><h2 id="anH">${y}</h2>
+  r.innerHTML=`${VELO("anH","anio")}${CAB(y,"anH",`<span class="eyebrow">Tu año en cine</span>`)}
     ${V.length?`<div class="an-grid"><div><b>${pelis.length}</b><span>películas</span></div><div><b>${series.length}</b><span>series</span></div><div><b>${cine}</b><span>en el cine</span></div><div><b>${media?media.toFixed(1):"—"}</b><span>nota media</span></div></div>
     <div class="an-mes" aria-label="Por meses">${porMes.map((n,i)=>`<div title="${MESL[i]}: ${n}"><i style="height:${n/max*100}%"></i><span>${MES[i].slice(0,1)}</span></div>`).join("")}</div>
     <p class="an-frase">Tu mes más cinéfilo fue <b>${MESL[mejorMes].toLowerCase()}</b>${topP.length?`, y donde más viste fue <b>${esc(topP[0][0])}</b>`:""}${topM?`. Tu mood del año: <b>${esc(MOODS[topM[0]]||topM[0])}</b>`:""}.</p>
     ${salaHTML(V)}
     ${top.length?`<div class="an-top"><span class="eyebrow">Tus mejor valoradas</span>${top.map((x,i)=>`<div class="an-row"><span class="mono">${i+1}</span>${x.poster?`<img src="${esc(x.poster)}" alt="">`:""}<b>${esc(x.titulo)}</b><span class="stars">${stars(x.nota)}</span></div>`).join("")}</div>`:""}`
-    :`<p class="hint">Aún no hay nada visto este año. Cuando apuntes tus primeras entradas, aquí verás tu resumen.</p>`}
-    <div class="sheet-actions"><button class="add" id="anClose">Cerrar</button></div></div></div>`;
-  document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")r.innerHTML=""};document.getElementById("anClose").onclick=()=>r.innerHTML="";
+    :`<p class="hint">Aún no hay nada visto este año. Cuando apuntes tus primeras entradas, aquí verás tu resumen.</p>`}</div></div>`;
+  entraHoja(cierraHoja);
   const g=document.getElementById("salaG");
   if(g)g.onclick=e=>{const b=e.target.closest("[data-b]");if(!b)return;const x=SALA[+b.dataset.b];if(!x)return;
     g.querySelectorAll("[aria-pressed]").forEach(z=>z.setAttribute("aria-pressed","false"));b.setAttribute("aria-pressed","true");
@@ -648,13 +653,11 @@ const normT=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"
 function enLista(f){return all().find(x=>(f.tmdb_id&&x.tmdb_id&&+x.tmdb_id===+f.tmdb_id)||(normT(x.titulo)===normT(f.titulo)&&(!x.anio||!f.anio||Math.abs(+x.anio-f.anio)<=1)))}
 async function cartelera(){
   const r=document.getElementById("sheetRoot");const hay=misCines().length>0;if(!hay)cartModo="espana";
-  r.innerHTML=`<div class="sheet-bg" id="bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="caH">
-    <span class="eyebrow" id="caE"></span><h2 id="caH">Cartelera</h2>
+  r.innerHTML=`${VELO("caH")}${CAB("Cartelera","caH",`<span class="eyebrow" id="caE"></span>`)}
     ${hay?`<div class="seg cart-seg" role="group" aria-label="Qué cartelera"><button type="button" data-cm="cines">Tus Cinesa</button><button type="button" data-cm="espana">Toda España</button></div>`:""}
     <p class="hint" id="caHint"></p>
-    <div id="cartL" class="cart-list"></div>
-    <div class="sheet-actions"><button class="add" id="anClose">Cerrar</button></div></div></div>`;
-  document.getElementById("bg").onclick=e=>{if(e.target.id==="bg")r.innerHTML=""};document.getElementById("anClose").onclick=()=>r.innerHTML="";
+    <div id="cartL" class="cart-list"></div></div></div>`;
+  entraHoja(cierraHoja);
   r.querySelectorAll("[data-cm]").forEach(b=>b.onclick=()=>{cartModo=b.dataset.cm;SESUI.abierta=null;pintaCart()});
   document.getElementById("cartL").onclick=e=>{let b;
     if(b=e.target.closest("[data-ca]")){quieroVer(CART&&CART.lista[+b.dataset.ca],b);return}
