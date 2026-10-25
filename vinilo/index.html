@@ -803,6 +803,7 @@ TAGS.forEach(([key, label]) => {
       const b=pl.getBoundingClientRect(),sobra=b.bottom+scrollY+b.left-innerHeight;if(sobra>0)dl.style.setProperty("--d",Math.max(180,dl.offsetWidth-sobra)+"px")};
     encaja();addEventListener("resize",encaja);document.fonts&&document.fonts.ready.then(encaja);new MutationObserver(encaja).observe($("ahora"),{childList:true,subtree:true,characterData:true});
     r.onclick=e=>{const b=e.target.closest("[data-ir]");if(!b)return;const d=b.dataset.ir;
+      scrollTo(scrollX,scrollY); // corta la inercia del dedo, que en iOS se come el salto
       if(d==="vitrina"){if(window.CiccLogros&&sb)CiccLogros.vitrina();else $("mis").scrollIntoView({behavior:"smooth"});return}
       if(d==="arriba")scrollTo({top:0,behavior:"smooth"});else $(d).scrollIntoView({behavior:"smooth",block:"start"})};
     // marca la zona que se está viendo

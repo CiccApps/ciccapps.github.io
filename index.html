@@ -224,6 +224,7 @@ html.con-rail { scroll-padding-top: 22px; }
   const ver = () => document.documentElement.classList.toggle("con-rail", r.classList.toggle("si", pr.offsetWidth >= 44)); ver(); addEventListener("resize", ver);
   const fam = id => document.getElementById(id).closest("section");
   r.onclick = e => { const b = e.target.closest("[data-ir]"); if (!b) return; const d = b.dataset.ir;
+    scrollTo(scrollX, scrollY); // corta la inercia del dedo, que en iOS se come el salto
     if (d === "arriba") scrollTo({ top: 0, behavior: "smooth" }); else fam(d).scrollIntoView({ behavior: "smooth", block: "start" }); };
   // marca la familia que se está viendo
   const ids = ["fCos", "fAfi", "fDes"], marca = () => { const y = innerHeight * .35; let act = "arriba";
