@@ -97,6 +97,20 @@
 .rail { position: fixed; top: 248px; right: 6px; width: env(safe-area-inset-right, 0px); box-sizing: border-box;
   flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
 .rail > * { pointer-events: auto; }
+/* Dónde va en cada pantalla lo decide compartido/rail.js (clases r-…).
+   Duo exterior girado: la franja de la cámara pasa a un lado y la barra va en ella, lejos de la cámara. */
+.rail.r-der { top: max(env(safe-area-inset-top, 0px), 20px); right: 0; gap: 8px; }
+.rail.r-izq { top: auto; bottom: max(env(safe-area-inset-bottom, 0px), 20px); right: auto; left: 0; width: env(safe-area-inset-left, 0px); gap: 8px; }
+/* Pantallas anchas: en el margen derecho, junto al contenido (el JS calcula --rail-x) y centrada en alto */
+.rail.r-ancha { top: 50%; right: var(--rail-x, 24px); width: 44px; transform: translateY(-50%); }
+/* iPhone y pantallas sin sitio en el margen: un botón abajo a la derecha que la despliega hacia arriba */
+.rail .rail-abrir { display: none; }
+.rail.r-boton { top: auto; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); width: 44px; }
+.rail.r-boton > :not(.rail-abrir) { display: none; }
+.rail.r-boton.abierta > * { display: grid; }
+.rail.r-boton .rail-abrir { display: grid; }
+.rail .rail-abrir .x, .rail.abierta .rail-abrir .l { display: none; }
+.rail.abierta .rail-abrir .x { display: block; }
 
 /* Ventanas emergentes (comunes: la vitrina de medallas y cualquier hoja de las apps, con .cc-velo > .cc-hoja > .cc-cab).
    En el móvil, hoja desde abajo; en el ordenador, ventana centrada. Con la franja lateral del iPhone Duo (inset derecho de 44px o más)

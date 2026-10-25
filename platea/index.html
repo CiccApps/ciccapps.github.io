@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/platea-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/platea-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=30">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=31">
 <link rel="stylesheet" href="../compartido/logros.css?v=12">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
@@ -330,6 +330,7 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
 <script src="../compartido/logros.js?v=8"></script>
+<script src="../compartido/rail.js?v=1"></script>
 <script>
 const MOODS={risa:"Reírme",tension:"Tensión",pensar:"Pensar",llorar:"Emocionarme",accion:"Acción",epico:"Épica",ligera:"Ligera",clasico:"Clásico pendiente"};
 const WHERE={cine:"Cine",streaming:"Streaming",casa:"En casa"};
@@ -859,10 +860,10 @@ function vitCard(){if(!LOGROS_OK)return "";const n=CiccLogros.total();
 function pintarVitrina(){const b=document.getElementById("vitBtn");if(b)b.outerHTML=vitCard();else if(tab==="diario")render()}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#vitBtn"))CiccLogros.vitrina()});
 function evalLogros(){if(!LOGROS_OK||!sb)return;clearTimeout(tLogros);tLogros=setTimeout(()=>CiccLogros.evaluar(metricas()).then(n=>{if(n&&n.length)pintarVitrina()}),400)}
-/* Barra lateral: solo si la franja segura de la derecha deja sitio para los botones (44 px) */
-(()=>{const r=document.getElementById("rail"),pr=document.createElement("div");pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
+/* Barra lateral: dónde va en cada pantalla lo decide compartido/rail.js */
+(()=>{const r=document.getElementById("rail");ccRail(r,{junto:()=>document.querySelector(".wrap")});
   const bar=document.querySelector(".bar");
-  const ver=()=>{document.documentElement.classList.toggle("con-rail",r.classList.toggle("si",pr.offsetWidth>=44));document.documentElement.style.setProperty("--bar-h",bar.offsetHeight+"px")};ver();addEventListener("resize",ver);
+  const ver=()=>document.documentElement.style.setProperty("--bar-h",bar.offsetHeight+"px");ver();addEventListener("resize",ver);
   r.onclick=e=>{const b=e.target.closest("[data-ir]");if(!b)return;const d=b.dataset.ir;
     if(d==="arriba"){scrollTo({top:0,behavior:"smooth"});return}
     if(d==="cartelera"){cartelera();return}
