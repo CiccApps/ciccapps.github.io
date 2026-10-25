@@ -201,7 +201,10 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 #vitrinaMed{display:block;width:24px;flex:none}
 /* Con barra lateral, al saltar a una zona se deja un poco de aire arriba */
 html.con-rail{scroll-padding-top:14px}
-html.con-rail .stage{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 48px)}
+/* En la pantalla exterior del Duo la zona segura de arriba es 0: las pestañas fijas y la franja que tapa lo que pasa por detrás dejan 14 px */
+html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),14px)}
+html.con-rail body::before{height:max(env(safe-area-inset-top,0px),14px)}
+html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),14px) + 48px)}
 .rail{z-index:15;display:none}
 .rail.si{display:flex}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
