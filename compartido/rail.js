@@ -22,6 +22,18 @@ window.ccLuego = f => { const g = () => { f(); setTimeout(f, 250); setTimeout(f,
   };
   if (document.body) mira(); else addEventListener("DOMContentLoaded", mira);
   ccLuego(mira);
+  // Lo fijo (el velo) no llega a esa franja de arriba: solo se ve ahí lo que va con la página. Con una ventana abierta,
+  // una tira oscura del mismo tono que el velo, puesta en la página justo encima de lo visible, la tapa.
+  let tira = null;
+  const tapa = () => {
+    const si = html.classList.contains("cc-tope") && (html.classList.contains("cc-abierta") || html.classList.contains("cl-abierta"));
+    if (!si) { if (tira) { tira.remove(); tira = null; } return; }
+    const t = parseFloat(html.style.getPropertyValue("--cc-tope")) || 0;
+    if (!tira) { tira = document.createElement("div"); tira.setAttribute("aria-hidden", "true");
+      tira.style.cssText = "position:absolute;left:0;right:0;z-index:1002;pointer-events:none;background:rgba(10,14,12,.62)"; html.appendChild(tira); }
+    tira.style.top = (scrollY - t) + "px"; tira.style.height = t + "px";
+  };
+  new MutationObserver(tapa).observe(html, { attributes: true, attributeFilter: ["class", "style"] });
 })();
 
 /* Barra lateral común (<nav class="rail">): decide dónde va según la pantalla y la coloca (Miguel, 25/10/2026).

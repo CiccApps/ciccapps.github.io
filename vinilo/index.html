@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/vinilo-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/vinilo-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=36">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=37">
 <link rel="stylesheet" href="../compartido/logros.css?v=12">
 </head><body>
 
@@ -327,12 +327,11 @@ html.con-rail .etapas { top: 14px; } /* los botones quedan a 22 px, como las pes
 /* Con la franja lateral (pantalla exterior del Duo): como en Platea, lo que se ve tras cada salto queda a 20 px de arriba,
    el mismo margen que a los lados. El difuminado de iOS se deja tal cual */
 html.con-rail{scroll-padding-top:22px}
-/* Si iOS deja la ventana más abajo (html.cc-tope), el hueco de arriba sale difuminado: los saltos quedan 22 px por debajo de ese hueco,
-   a la altura de los botones de etapas, para que no se corte nada (Miguel, 25/10/2026) */
-:root.cc-tope.con-rail{scroll-padding-top:22px}
 /* La portada llena la pantalla exterior con el mismo margen arriba, abajo y a los lados */
 @media (orientation:portrait){
   html.con-rail .wrap{padding-top:22px!important}
+  /* Si iOS deja la ventana más abajo (html.cc-tope), ese hueco de arriba sale difuminado: la portada empieza 22 px por debajo, sin nada borroso */
+  html.cc-tope.con-rail .wrap{padding-top:calc(22px + var(--cc-tope))!important}
   html.con-rail .dial-wrap{margin:12px 0 4px}
   html.con-rail .dial{--d:min(calc(100% - 64px),300px)} /* el JS lo encoge si la portada no cabe entera */
   html.con-rail .dial-pie{margin-top:16px}
@@ -609,7 +608,7 @@ TAGS.forEach(([key, label]) => {
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
 <script src="../compartido/logros.js?v=8"></script>
-<script src="../compartido/rail.js?v=4"></script>
+<script src="../compartido/rail.js?v=5"></script>
 <script>
 (function(){
   const DISP='"DM Serif Display",Georgia,serif';
@@ -826,9 +825,14 @@ TAGS.forEach(([key, label]) => {
   (()=>{const r=$("rail");ccRail(r,{junto:()=>document.querySelector(".wrap")});
     // En la pantalla exterior la portada cabe entera, con el mismo margen arriba y abajo que a los lados: el disco se encoge lo que sobre
     const pl=document.querySelector(".plato"),dl=$("dial");
-    const encaja=()=>{dl.style.removeProperty("--d");if(!document.documentElement.classList.contains("con-rail")||innerWidth>innerHeight)return;
-      const b=pl.getBoundingClientRect(),sobra=b.bottom+scrollY+b.left-innerHeight;if(sobra>0)dl.style.setProperty("--d",Math.max(180,dl.offsetWidth-sobra)+"px")};
-    encaja();addEventListener("resize",encaja);document.fonts&&document.fonts.ready.then(encaja);new MutationObserver(encaja).observe($("ahora"),{childList:true,subtree:true,characterData:true});
+    // y si sobra sitio (lo que suena ocupa poco), la portada se alarga hasta abajo con el contenido centrado
+    const encaja=()=>{dl.style.removeProperty("--d");pl.style.removeProperty("min-height");pl.style.removeProperty("justify-content");
+      if(!document.documentElement.classList.contains("con-rail")||innerWidth>innerHeight)return;
+      const b=pl.getBoundingClientRect(),sobra=b.bottom+scrollY+b.left-innerHeight;
+      if(sobra>0)dl.style.setProperty("--d",Math.max(180,dl.offsetWidth-sobra)+"px");
+      else if(sobra<0){pl.style.minHeight=Math.round(b.height-sobra)+"px";pl.style.justifyContent="center"}};
+    encaja();addEventListener("resize",encaja);ccLuego(encaja);document.fonts&&document.fonts.ready.then(encaja);new MutationObserver(encaja).observe($("ahora"),{childList:true,subtree:true,characterData:true});
+    new MutationObserver(encaja).observe(document.documentElement,{attributes:true,attributeFilter:["class","style"]}); // al entrar o salir del hueco de iOS (cc-tope), la portada se vuelve a ajustar
     r.onclick=e=>{const b=e.target.closest("[data-ir]");if(!b)return;const d=b.dataset.ir;
       scrollTo(scrollX,scrollY); // corta la inercia del dedo, que en iOS se come el salto
       if(d==="vitrina"){if(window.CiccLogros&&sb)CiccLogros.vitrina();else $("mis").scrollIntoView({behavior:"smooth"});return}
