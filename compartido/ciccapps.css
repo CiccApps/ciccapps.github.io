@@ -91,15 +91,15 @@
 
 
 /* Barra lateral del iPhone Duo (común a todas las apps; cada app pone sus colores y cuándo se ve, con .rail.si).
-   Va en la franja segura de la derecha, con su eje alineado con la hora y la batería de iOS (6px a la izquierda del centro de la franja)
-   y siempre por debajo de ellas: la columna se centra en el hueco que queda bajo los indicadores. */
-.rail { position: fixed; top: 0; bottom: 0; right: 6px; width: env(safe-area-inset-right, 0px); box-sizing: border-box;
-  padding: 176px 0 max(24px, env(safe-area-inset-bottom, 0px)); flex-direction: column; align-items: center; justify-content: center; gap: 10px; pointer-events: none; }
+   Va en la franja segura de la derecha, con su eje alineado con la hora y la batería de iOS (6px a la izquierda del centro de la franja),
+   y empieza justo debajo de ellas, anclada arriba: no depende del alto de la pantalla, que iOS cambia al desplazar, así que no se mueve. */
+.rail { position: fixed; top: 176px; right: 6px; width: env(safe-area-inset-right, 0px); box-sizing: border-box;
+  flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
 .rail > * { pointer-events: auto; }
 
 /* Ventanas emergentes (comunes: la vitrina de medallas y cualquier hoja de las apps, con .cc-velo > .cc-hoja > .cc-cab).
    En el móvil, hoja desde abajo; en el ordenador, ventana centrada. Con la franja lateral del iPhone Duo (inset derecho de 44px o más)
-   flota con 20px de margen a los lados, abajo y bajo la zona segura de arriba, sobre el fondo difuminado, con forma de D como la pantalla
+   flota con el mismo margen de 20px arriba, abajo y a los lados, sobre el fondo difuminado, con forma de D como la pantalla
    exterior: a la derecha, la curva de la pantalla (--cc-curva); a la izquierda, la bisagra, esquinas casi rectas. Arriba a la derecha no se recorta: iOS pone ahí la hora, la batería o la burbuja de la música,
    así que es una zona reservada sin datos de --cc-muesca-w × --cc-muesca-h (medida desde la esquina de la hoja), que la X y lo que va
    a la derecha esquivan. Fuera del Duo, las variables valen 0. */
@@ -107,7 +107,9 @@
   --cc-duo: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 20px);
   --cc-curva: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 40px);
   --cc-muesca-w: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, env(safe-area-inset-right, 0px) - 20px);
-  --cc-muesca-h: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 140px - env(safe-area-inset-top, 0px));
+  --cc-muesca-h: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 140px);
+  /* hueco sobre la hoja: bajo la zona segura en el iPhone; en el Duo, el mismo margen que a los lados */
+  --cc-arriba: max(env(safe-area-inset-top, 0px) + 24px - var(--cc-duo) * 100, var(--cc-duo));
 }
 html.cc-abierta, html.cl-abierta { overflow: hidden; }
 .cc-velo, .cl-vitrina {
@@ -119,9 +121,9 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
 .cc-velo.cc-dentro, .cl-vitrina.cl-dentro { box-shadow: inset 0 0 0 calc(var(--cc-duo) * 100) rgba(10, 14, 12, .3); }
 .cc-hoja, .cl-hoja {
   box-sizing: border-box; width: calc(100% - 2 * var(--cc-duo)); margin-bottom: var(--cc-duo);
-  max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px - .8 * var(--cc-duo)); overflow-y: auto; overscroll-behavior: contain;
+  max-height: calc(100% - var(--cc-arriba) - var(--cc-duo)); overflow-y: auto; overscroll-behavior: contain;
   /* en el Duo todas las ventanas abren a la altura entera, como la vitrina, aunque tengan poco contenido */
-  min-height: min(var(--cc-duo) * 100, 100% - env(safe-area-inset-top, 0px) - 24px - .8 * var(--cc-duo));
+  min-height: min(var(--cc-duo) * 100, 100% - var(--cc-arriba) - var(--cc-duo));
   padding: 6px 20px calc(max(0px, env(safe-area-inset-bottom, 0px) - var(--cc-duo)) + 20px);
   border-radius: calc(20px - .6 * var(--cc-duo)) max(20px, var(--cc-curva)) var(--cc-curva) calc(.4 * var(--cc-duo));
   transform: translateY(calc(100% + var(--cc-duo))); transition: transform .3s cubic-bezier(.2, .8, .3, 1);
