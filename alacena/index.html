@@ -219,7 +219,10 @@ body.con-pestanas{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 .rail{z-index:9;display:none}
 body.con-pestanas .rail.si{display:flex}
 /* el Duo plegado difumina el borde de arriba aunque la franja segura sea 0: se baja el contenido */
-html.con-rail{scroll-padding-top:14px}
+/* Con la franja lateral (pantalla exterior del Duo) iOS difumina el borde de arriba: al bajar, una franja del color del fondo tapa esa zona, como en Vinilo y la portada */
+html.con-rail{scroll-padding-top:44px}
+html.con-rail body::before{height:52px;pointer-events:none;background:linear-gradient(var(--fondo) 0 40px,transparent);opacity:0;transition:opacity .2s}
+html.con-rail.bajado body::before{opacity:1}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--linea);background:var(--alto);color:var(--suave);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--app-t);border-color:var(--app-t)}
 .rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -319,7 +322,8 @@ function pintaPestanas(){
   r.querySelectorAll("[data-ir]").forEach(b=>b.onclick=()=>b.dataset.ir==="arriba"?scrollTo({top:0,behavior:"smooth"}):ir(b.dataset.ir));
 }
 (()=>{const pr=document.createElement("div");pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
-  const ver=()=>document.documentElement.classList.toggle("con-rail",$("rail").classList.toggle("si",pr.offsetWidth>=44));ver();addEventListener("resize",ver)})();
+  const ver=()=>document.documentElement.classList.toggle("con-rail",$("rail").classList.toggle("si",pr.offsetWidth>=44));ver();addEventListener("resize",ver);
+  const baja=()=>document.documentElement.classList.toggle("bajado",scrollY>8);baja();addEventListener("scroll",baja,{passive:true})})();
 function ir(v){VISTA=v;pinta();window.scrollTo(0,0)}
 function pinta(){
   const app=$("app");
@@ -466,8 +470,8 @@ function inicioHTML(){
 <img src="../iconos/alacena-192.png?v=1" alt="" width="76" height="76" style="border-radius:17px;box-shadow:0 8px 14px rgba(0,0,0,.28)">
 <h1 class="marca" style="margin:0;font-size:52px;line-height:56px;color:var(--app-t)">Alacena</h1><p class="p" style="font-family:var(--f-tit);font-style:italic;font-size:22px;line-height:28px;color:var(--oro-t)">¿Qué comemos hoy?</p></div>
 <p class="p suave" style="text-align:center;text-wrap:balance">Vamos a preparar tu plan de comidas. Elige cómo empezar.</p>
-<div class="pila"><button class="eleccion oro" data-acc="crear"><b>Crear mi dieta desde cero</b><span>Con la IA, a partir de unas preguntas sobre ti, tus gustos y tu cocina. Unos 5 minutos.</span></button>
-<button class="eleccion" data-acc="importar"><b>Importar la de mi nutricionista</b><span>Subes el PDF o una foto y la IA la convierte en tu plan. Tú lo revisas antes de guardarlo.</span></button></div>
+<div class="pila"><button class="eleccion oro" data-acc="crear"><b>Crear mi dieta desde cero</b><span>Con la IA, a partir de unas preguntas sobre ti, tus gustos y tu cocina. Unos&nbsp;5&nbsp;minutos.</span></button>
+<button class="eleccion" data-acc="importar"><b>Importar la de mi nutricionista</b><span>Subes el PDF o una foto y la IA la convierte en tu plan. Tú lo revisas antes de&nbsp;guardarlo.</span></button></div>
 <div class="aviso-nutri"><strong>Alacena no sustituye a un nutricionista.</strong> Si tienes alguna condición de salud (diabetes, hipertensión, enfermedad renal, embarazo o un trastorno de la conducta alimentaria), lo mejor es importar la dieta de uno.</div>
 <div id="firma"></div><button class="enlace" data-acc="salir" style="align-self:center">Cerrar sesión</button></div>`;
 }
