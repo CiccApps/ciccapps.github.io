@@ -686,7 +686,7 @@ function pintaCart(){
   const E=document.getElementById("caE"),H=document.getElementById("caHint");
   if(cartModo==="cines"){
     E.textContent="Hoy en tus Cinesa";
-    H.textContent=`Sesiones de hoy en ${Object.values(misCinesN()).join(", ").replace(/, ([^,]*)$/," y $1")}${priVOSE()?", con la VOSE primero":""}.`;
+    H.textContent=`${Object.values(misCinesN()).join(", ").replace(/, ([^,]*)$/," y $1")}${priVOSE()?", con la VOSE primero":""}.`;
     if(!SES){L.innerHTML=`<p class="hint">${SESFALLO?"Ahora no se pueden consultar las sesiones de tus cines. El resto de Platea funciona igual; prueba más tarde.":"Buscando las sesiones de tus cines…"}</p>${SESFALLO?otrosDias().replace("Para otros días, abre","Mientras, puedes abrir"):""}`;return}
     SESL=SES.lista.map(f=>Object.assign({f},sesDe(f))).filter(z=>z.n).sort((a,b)=>(priVOSE()?(b.v?1:0)-(a.v?1:0):0)||b.n-a.n);
     const aviso=sesAviso();
@@ -696,7 +696,7 @@ function pintaCart(){
       return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3><span class="ses-donde">${esc(donde)}${z.v?` <span class="badge">VOSE</span>`:""}</span><button class="ses-tog" type="button" data-st="${i}" aria-expanded="${abierta}">${abierta?"Ocultar sesiones":"Ver sesiones"}</button></div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-cs="${i}">La quiero ver</button>`}${abierta?panelSes(z):""}</div>`}).join("")+otrosDias();
     return;
   }
-  E.textContent="En cines de España";H.textContent=`Lo que está en salas esta semana. Apunta lo que quieras ver con el Unlimited.`;
+  E.textContent="En cines de España";H.textContent=`Toda la semana. Apunta lo que quieras ver con el Unlimited.`;
   if(!CART){L.innerHTML=`<p class="hint">Buscando la cartelera…</p>`;return}
   if(!CART.lista.length){L.innerHTML=`<p class="hint">${CART.fallo?"Ahora no se puede consultar la cartelera. Prueba en un rato.":"La cartelera necesita la conexión con TMDB."}</p>`;return}
   L.innerHTML=CART.lista.map((f,i)=>{const ya=enLista(f);const tc=enTusCines(f);
