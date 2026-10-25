@@ -542,7 +542,7 @@ async function copiaLista(){
 /* ---------- hojas ---------- */
 function hoja(cab,html){
   const raiz=$("hojas");
-  raiz.innerHTML=`<div class="cc-velo" id="hojaFondo"><div class="cc-hoja" role="dialog" aria-modal="true" tabindex="-1">${cab}<div class="hoja-cuerpo">${html}</div></div></div>`;
+  raiz.innerHTML=`<div class="cc-velo" id="hojaFondo"><div class="cc-hoja" role="dialog" aria-modal="true" tabindex="-1">${cab}<div class="cc-cuerpo hoja-cuerpo">${html}</div></div></div>`;
   const fondo=$("hojaFondo"),h=fondo.querySelector(".cc-hoja");
   void fondo.offsetHeight;fondo.classList.add("cc-dentro");document.documentElement.classList.add("cc-abierta");
   const cerrar=()=>{document.removeEventListener("keydown",tecla);fondo.classList.remove("cc-dentro");document.documentElement.classList.remove("cc-abierta");setTimeout(()=>fondo.remove(),300)};
