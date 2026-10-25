@@ -206,6 +206,8 @@ html.con-rail{scroll-padding-top:22px}
 html.con-rail body::before{height:env(safe-area-inset-top,0px)}
 /* …salvo cuando las pestañas ya están pegadas arriba: entonces lo que pasa por encima de ellas se tapa con el fondo (Miguel) */
 html.con-rail.pegada body::before{height:max(env(safe-area-inset-top,0px),22px)}
+/* con las pestañas pegadas, un margen opaco de 8 px alrededor (como la barra de Platea): no asoma nada por las esquinas ni justo debajo */
+html.con-rail.pegada .tabs{box-shadow:0 0 0 8px var(--paper)}
 html.con-rail .wrap{padding-top:22px!important}
 html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),22px)}
 html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),22px) + 42px)}
