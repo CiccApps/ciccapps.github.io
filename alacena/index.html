@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/alacena-180.png?v=1">
 <link rel="icon" type="image/png" href="../iconos/alacena-192.png?v=1">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=30">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=31">
 <style>
 /* Alacena: una carta de restaurante clásica. Mantel de vichy berenjena, plato de porcelana con filete de oro y cubertería de plata.
    La cabecera va dentro del mantel, con el plato: una sola pieza. Debajo, la carta del día; en el ordenador, en dos columnas. */
@@ -236,6 +236,7 @@ html.con-rail{scroll-padding-top:20px}
 
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
+<script src="../compartido/rail.js?v=1"></script>
 <script>
 "use strict";
 /* ---------- utilidades ---------- */
@@ -320,8 +321,8 @@ function pintaPestanas(){
     PESTANAS.map(([k,t,ico])=>`<button type="button" data-ir="${k}" aria-label="${t}" title="${t}"${VISTA===k?' class="on" aria-current="page"':""}><svg viewBox="0 0 24 24">${ico}</svg></button>`).join("");
   r.querySelectorAll("[data-ir]").forEach(b=>b.onclick=()=>{scrollTo(scrollX,scrollY);b.dataset.ir==="arriba"?scrollTo({top:0,behavior:"smooth"}):ir(b.dataset.ir)});
 }
-(()=>{const pr=document.createElement("div");pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
-  const ver=()=>document.documentElement.classList.toggle("con-rail",$("rail").classList.toggle("si",pr.offsetWidth>=44));ver();addEventListener("resize",ver)})();
+// dónde va la barra lo decide compartido/rail.js; sin botón en el iPhone, que ya tiene abajo las pestañas con las mismas secciones
+ccRail($("rail"),{junto:()=>document.querySelector(".wrap"),boton:false});
 function ir(v){VISTA=v;pinta();window.scrollTo(0,0)}
 function pinta(){
   const app=$("app");

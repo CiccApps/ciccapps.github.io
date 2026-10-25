@@ -8,7 +8,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/vinilo-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/vinilo-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=30">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=31">
 <link rel="stylesheet" href="../compartido/logros.css?v=12">
 </head><body>
 
@@ -583,6 +583,7 @@ TAGS.forEach(([key, label]) => {
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
 <script src="../compartido/logros.js?v=8"></script>
+<script src="../compartido/rail.js?v=1"></script>
 <script>
 (function(){
   const DISP='"DM Serif Display",Georgia,serif';
@@ -795,9 +796,8 @@ TAGS.forEach(([key, label]) => {
   function iniciaLogros(){if(!window.CiccLogros||!sb)return;
     CiccLogros.iniciar({sb,app:"vinilo",nombre:"Vinilo",color:"#22305A",catalogo:LOGROS,motivos:MOTIVOS_LOGROS}).then(()=>{pintaVitrina();if(!SPOT.ok())evalLogros();else cargaEscuchas()})}
   $("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
-  // Barra lateral: solo si la franja segura de la derecha deja sitio para los botones (44 px)
-  (()=>{const r=$("rail"),pr=document.createElement("div");pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
-    const ver=()=>document.documentElement.classList.toggle("con-rail",r.classList.toggle("si",pr.offsetWidth>=44));ver();addEventListener("resize",ver);
+  // Barra lateral: dónde va en cada pantalla lo decide compartido/rail.js
+  (()=>{const r=$("rail");ccRail(r,{junto:()=>document.querySelector(".wrap")});
     // En la pantalla exterior la portada cabe entera, con el mismo margen arriba y abajo que a los lados: el disco se encoge lo que sobre
     const pl=document.querySelector(".plato"),dl=$("dial");
     const encaja=()=>{dl.style.removeProperty("--d");if(!document.documentElement.classList.contains("con-rail")||innerWidth>innerHeight)return;

@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=30">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=31">
 <link rel="stylesheet" href="../compartido/logros.css?v=12">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
@@ -403,6 +403,7 @@ h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:4
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
 <script src="../compartido/logros.js?v=8"></script>
+<script src="../compartido/rail.js?v=1"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
@@ -1056,10 +1057,9 @@ function pintarVitrina(){const n=CiccLogros.total();
   const m=document.getElementById("vitrinaMed");if(!m.firstChild)m.innerHTML=CiccLogros.medalla({nivel:3,motivo:"rosa",color:"#4B2E19"})}
 document.getElementById("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
 
-/* Barra lateral: solo si la franja segura de la derecha deja sitio para los botones (44 px), como en el iPhone Duo plegado */
-(()=>{const r=document.getElementById("rail"),tabs=document.querySelector(".tabs"),pr=document.createElement("div");
-  pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
-  const ver=()=>document.documentElement.classList.toggle("con-rail",r.classList.toggle("si",pr.offsetWidth>=44&&!document.body.classList.contains("nuevo")));
+/* Barra lateral: dónde va en cada pantalla lo decide compartido/rail.js; al empezar (body.nuevo) no sale */
+(()=>{const r=document.getElementById("rail"),tabs=document.querySelector(".tabs");
+  const ver=ccRail(r,{puede:()=>!document.body.classList.contains("nuevo"),junto:()=>document.querySelector(".wrap")});
   const suave=()=>matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
   const marca=()=>{document.documentElement.classList.toggle("pegada",scrollY>0&&tabs.getBoundingClientRect().top<=parseFloat(getComputedStyle(tabs).top)+1);
     const act=tabs.getBoundingClientRect().top>innerHeight*.35?"arriba":tab;r.querySelectorAll("[data-ir]").forEach(b=>b.classList.toggle("on",b.dataset.ir===act))};
@@ -1071,7 +1071,7 @@ document.getElementById("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
     const nat=()=>{const p=tabs.style.position;tabs.style.position="static";const y=scrollY+tabs.getBoundingClientRect().top;tabs.style.position=p;return y};
     scrollTo(scrollX,scrollY); // corta la inercia del dedo, que en iOS se come el salto
     scrollTo({top:Math.max(0,nat()-parseFloat(getComputedStyle(tabs).top||0)),behavior:suave()});marca()};
-  addEventListener("resize",ver);addEventListener("scroll",marca,{passive:true});
+  addEventListener("scroll",marca,{passive:true});
   new MutationObserver(()=>{ver();marca()}).observe(document.body,{attributes:true,attributeFilter:["class"]});
   document.addEventListener("click",e=>{if(e.target.closest("[data-tab]"))setTimeout(marca)});ver();marca()})();
 
