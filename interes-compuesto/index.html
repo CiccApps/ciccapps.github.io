@@ -433,16 +433,34 @@ td.wy { color: var(--pink); }
   .bar .nlbl, .bar .lbl { display: none !important; }
   .in, .wgrid .in { font-size: 16px; }   /* el iPhone no amplía al tocar una casilla */
 }
+/* iPhone Duo cerrado en horizontal (más alto que un iPhone girado): los botones, redondos y en una fila bajo la
+   diapositiva, que así ocupa todo el ancho; los pasos a la izquierda y «Reiniciar» en el otro extremo, lejos de «Siguiente» */
+@media screen and (max-width: 760px) and (orientation: landscape) and (min-height: 430px) and (max-height: 600px) and (pointer: coarse) {
+  body { padding: var(--m) max(var(--m), env(safe-area-inset-right, 0px)) max(var(--m), env(safe-area-inset-bottom, 0px)) max(var(--m), env(safe-area-inset-left, 0px)); }
+  .wrap:not(:fullscreen) { gap: 12px;
+    max-width: calc((100dvh - env(safe-area-inset-top, 0px) - var(--m) - max(var(--m), env(safe-area-inset-bottom, 0px)) - 58px) * 16 / 9); }
+  .wrap:not(:fullscreen) .bar { position: static; width: auto; flex-direction: row; justify-content: flex-start; gap: 8px; }
+  .wrap:not(:fullscreen) .bar .nav { order: 0; flex-direction: row; align-items: center; gap: 8px; margin-top: 0; }
+  .wrap:not(:fullscreen) .bar .grow { display: block !important; order: 1; flex: 1 1 0; }
+  .wrap:not(:fullscreen) .bar .stepinfo { display: block !important; min-width: 0; padding: 0 4px; white-space: nowrap; font-size: 12.5px; }
+  .wrap:not(:fullscreen) .bar > #toggleData { order: 2; } .wrap:not(:fullscreen) .bar > #pdf { order: 3; }
+  .wrap:not(:fullscreen) .bar > #reset { order: 4; margin-left: 12px; }
+  .wrap:not(:fullscreen) .bar button, .wrap:not(:fullscreen) .bar #reset { width: 46px; height: 46px; min-height: 46px; border-radius: 50%; }
+}
 /* pantalla con franja lateral libre (iPhone Duo cerrado, en vertical): los botones, en columna y solo con iconos, pasan
    a esa franja y la tarjeta gana todo el alto. La clase «lateral» la pone el script al medir la zona segura derecha. */
 @media screen and (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) {
-  html.lateral body { padding-bottom: max(var(--m), env(safe-area-inset-bottom, 0px)); }
-  html.lateral .stage { height: max(440px, calc(100dvh - env(safe-area-inset-top, 0px) - var(--m) - max(var(--m), env(safe-area-inset-bottom, 0px)))); }
-  html.lateral .wrap:not(:fullscreen) .bar { left: auto; top: auto; right: 0; bottom: max(var(--m), env(safe-area-inset-bottom, 0px));
-    width: env(safe-area-inset-right, 0px); flex-direction: column; flex-wrap: nowrap; align-items: center; gap: 8px; padding: 0;
+  /* la tarjeta, con 20 px arriba, abajo y a la izquierda; los botones, redondos y centrados bajo la hora y la batería
+     (que van 6,5 px a la izquierda del centro de la franja); «Reiniciar», arriba del todo y apartado del resto */
+  html.lateral body { padding-top: 20px; padding-bottom: 20px; }
+  html.lateral .stage { height: max(440px, calc(100dvh - env(safe-area-inset-top, 0px) - 40px)); }
+  html.lateral .slide { padding: 18px 16px 14px; gap: 12px; }
+  html.lateral .wrap:not(:fullscreen) .bar { left: auto; top: auto; right: 0; bottom: 20px; box-sizing: border-box;
+    width: env(safe-area-inset-right, 0px); flex-direction: column; flex-wrap: nowrap; align-items: center; gap: 8px; padding: 0 13px 0 0;
     background: none; -webkit-backdrop-filter: none; backdrop-filter: none; border: 0; }
   html.lateral .wrap:not(:fullscreen) .bar .nav { display: flex; flex-direction: column; flex: none; align-items: center; gap: 8px; order: 5; margin-top: 8px; }
-  html.lateral .bar button, html.lateral .bar > button, html.lateral .bar:has(> #full:not([hidden])) > button { flex: none; width: 52px; height: 44px; min-height: 44px; padding: 0; justify-content: center; }
+  html.lateral .bar button, html.lateral .bar > button, html.lateral .bar:has(> #full:not([hidden])) > button { flex: none; width: 46px; height: 46px; min-height: 46px; padding: 0; justify-content: center; border-radius: 50%; margin: 0; }
+  html.lateral .wrap:not(:fullscreen) .bar > #reset { margin-bottom: 10px; }
   html.lateral .bar .nlbl, html.lateral .bar .lbl, html.lateral .bar .nav #prev .nlbl, html.lateral .bar .nav #next .nlbl { display: none !important; }
   html.lateral .bar .nav #prev .ic, html.lateral .bar .nav #next .ic, html.lateral .bar #pdf.busy .ic { display: block; }
   html.lateral .bar > button::after { content: none !important; }
@@ -500,6 +518,28 @@ td.wy { color: var(--pink); }
   #toggleData::after { content: "Datos"; } #pdf::after { content: "PDF"; } #reset::after { content: "Reiniciar"; }   /* «Ampliar», solo el icono */
   #pdf.busy::after { content: "Generando…"; } #pdf.busy .ic { display: none; }
   .wrap:fullscreen .bar > button::after { content: none; }
+}
+/* plegable abierto con franja lateral libre (iPhone Duo: la hora y la batería van a un lado): los botones, redondos y
+   en columna, pasan a esa franja bajo la hora; la diapositiva gana todo el alto (las filas de la tabla crecen, no la
+   letra). La clase «franja» la pone el script al medir la zona segura; «franja-i» si la franja queda a la izquierda */
+@media screen and (pointer: coarse) and (min-width: 761px) and (max-width: 1199px) and (min-height: 600px) {
+  html.franja .wrap:not(:fullscreen) { max-width: none; min-height: 0; }
+  html.franja .stage { aspect-ratio: auto; height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 2 * var(--m)); }
+  html.franja #tbl td { font-size: calc(min(var(--rowh, 2.85), 2.85) * .53cqw); }
+  html.franja #tbl.dense td { font-size: calc(min(var(--rowh, 2.85), 2.85) * .86 * .53cqw); }
+  html.franja #tbl.xdense td { font-size: calc(min(var(--rowh, 2.85), 2.85) * .74 * .53cqw); }
+  html.franja .wrap:not(:fullscreen) .bar { position: fixed; z-index: 20; top: auto; left: auto; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + var(--m));
+    box-sizing: border-box; width: env(safe-area-inset-right, 0px); padding: 0 11px 0 0; flex-direction: column; flex-wrap: nowrap; align-items: center; gap: 8px; }
+  html.franja-i .wrap:not(:fullscreen) .bar { right: auto; left: 0; width: env(safe-area-inset-left, 0px); padding: 0; }
+  html.franja .wrap:not(:fullscreen) .bar .nav { flex: none; flex-direction: column; align-items: center; gap: 8px; order: 5; margin-top: 8px; }
+  html.franja .wrap:not(:fullscreen) .bar .grow { display: none; }
+  html.franja .wrap:not(:fullscreen) .bar button { flex: none; width: 46px; height: 46px; min-height: 46px; padding: 0; justify-content: center; border-radius: 50%; margin: 0; }
+  html.franja .wrap:not(:fullscreen) .bar > #reset { order: 1; margin: 0 0 10px; } html.franja .wrap:not(:fullscreen) .bar > #toggleData { order: 2; }
+  html.franja .wrap:not(:fullscreen) .bar > #full { order: 3; } html.franja .wrap:not(:fullscreen) .bar > #pdf { order: 4; }
+  html.franja .bar .nlbl { display: none !important; }
+  html.franja .bar .nav #prev .ic, html.franja .bar .nav #next .ic, html.franja .bar #pdf.busy .ic { display: block; }
+  html.franja .bar > button::after { content: none !important; }
+  html.franja .bar .nav .stepinfo { width: 46px; min-width: 0; white-space: normal; text-align: center; font-size: 11px; line-height: 1.25; padding: 0; }
 }
 /* táctil ancho en vertical: no cabe en una fila, así que los pasos van arriba y las herramientas debajo (nada queda solo) */
 @media screen and (pointer: coarse) and (min-width: 761px) and (max-width: 899px) and (min-height: 600px) {
@@ -910,7 +950,7 @@ td.wy { color: var(--pink); }
     const padB = parseFloat(getComputedStyle(slide).paddingBottom) || 0;
     const noteH = note.getBoundingClientRect().height;
     const room = sBot - padB - noteH - gap - top - head;
-    const rh = Math.max(1.6, Math.min(2.85, room / maxRows / cq));
+    const rh = Math.max(1.6, Math.min(document.documentElement.classList.contains('franja') ? 4.3 : 2.85, room / maxRows / cq));
     note.style.top = (top - sTop + head + maxRows * rh * cq + gap) + 'px';
     note.style.bottom = 'auto';
     tbl.style.setProperty('--rowh', rh.toFixed(3));
@@ -988,13 +1028,18 @@ td.wy { color: var(--pink); }
     txt.append(...penSegs.flatMap((t, i) => { const e = document.createElement('span'); e.className = 'seg'; e.textContent = t; return i ? [' · ', e] : [e]; }));
     el.replaceChildren(txt);
   }
-  // franja lateral libre (iPhone Duo cerrado): si la zona segura derecha es ancha y la pantalla está en vertical
+  // franja lateral libre (iPhone Duo): cerrado, si la zona segura derecha es ancha y la pantalla está en vertical;
+  // abierto (táctil ancho), si la zona segura de un lado es ancha
   const probe = document.createElement('div');
-  probe.style.cssText = 'position:fixed;visibility:hidden;pointer-events:none;padding-right:env(safe-area-inset-right,0px)';
+  probe.style.cssText = 'position:fixed;visibility:hidden;pointer-events:none;padding:0 env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px)';
   document.body.appendChild(probe);
+  const WIDE = '(pointer: coarse) and (min-width: 761px) and (max-width: 1199px) and (min-height: 600px)';
   function lateral() {
-    const r = parseFloat(getComputedStyle(probe).paddingRight) || 0;
-    document.documentElement.classList.toggle('lateral', r >= 56 && innerHeight > innerWidth && window.matchMedia(PHONE).matches);
+    const cs = getComputedStyle(probe), r = parseFloat(cs.paddingRight) || 0, l = parseFloat(cs.paddingLeft) || 0;
+    const h = document.documentElement.classList, wide = window.matchMedia(WIDE).matches;
+    h.toggle('lateral', r >= 56 && innerHeight > innerWidth && window.matchMedia(PHONE).matches);
+    h.toggle('franja', wide && Math.max(l, r) >= 56);
+    h.toggle('franja-i', wide && l >= 56 && l > r);
   }
   lateral();
   window.addEventListener('resize', () => { lateral(); fit(); });
