@@ -285,6 +285,7 @@ html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),22p
 .cc-cerrar{color:var(--muted)}
 .cc-cerrar:focus-visible{outline-color:var(--gold)}
 .sheet{display:flex;flex-direction:column;gap:16px}
+.sheet>.cc-cuerpo{display:flex;flex-direction:column;gap:16px} /* solo el cuerpo se desplaza, bajo la cabecera fija */
 .sheet .by{color:var(--muted);margin-top:4px}
 .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--paper);padding:4px;border-radius:8px}
 .seg.two{grid-template-columns:1fr 1fr}
@@ -743,7 +744,7 @@ let hoja=null;
 function abrirHoja(tid,cab,cuerpo,cerrar){
   const root=document.getElementById("sheetRoot");root.replaceChildren();
   const v=document.createElement("div");v.className="cc-velo";
-  v.innerHTML=`<div class="cc-hoja sheet" role="dialog" aria-modal="true" aria-labelledby="${tid}" tabindex="-1"><div class="cc-cab"><div>${cab}</div><button type="button" class="cc-cerrar" aria-label="Cerrar">×</button></div>${cuerpo}</div>`;
+  v.innerHTML=`<div class="cc-hoja sheet" role="dialog" aria-modal="true" aria-labelledby="${tid}" tabindex="-1"><div class="cc-cab"><div>${cab}</div><button type="button" class="cc-cerrar" aria-label="Cerrar">×</button></div><div class="cc-cuerpo">${cuerpo}</div></div>`;
   root.appendChild(v);v.offsetWidth;v.classList.add("cc-dentro");document.documentElement.classList.add("cc-abierta");
   v.addEventListener("click",e=>{if(e.target===v)cerrar()});v.querySelector(".cc-cerrar").onclick=cerrar;
   hoja={v,cerrar};v.querySelector(".cc-hoja").focus({preventScroll:true});return v;
