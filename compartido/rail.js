@@ -34,6 +34,30 @@ window.ccLuego = f => { const g = () => { f(); setTimeout(f, 250); setTimeout(f,
     tira.style.top = (scrollY - t) + "px"; tira.style.height = t + "px";
   };
   new MutationObserver(tapa).observe(html, { attributes: true, attributeFilter: ["class", "style"] });
+  // En el Duo, la franja de arriba (unos 20 px) la pinta iOS con el color de fondo de la página o el theme-color, no con
+  // el velo, y se ve como una línea clara encima de la ventana. Mientras hay una ventana abierta se oscurecen como el velo
+  // y se pone arriba una tira fija opaca de ese mismo tono, que es la que iOS toma para esa franja.
+  const vel = [10, 14, 12], osc = c => { const m = String(c).match(/\d+(\.\d+)?/g); if (!m || m.length < 3 || (m.length > 3 && +m[3] === 0)) return "";
+    return "rgb(" + m.slice(0, 3).map((x, k) => Math.round(+x * .385 + vel[k] * .615)).join(",") + ")"; };
+  let antes = null;
+  const fondo = () => {
+    const cs = getComputedStyle(pr), duo = (parseFloat(cs.paddingRight) || 0) >= 44 || (parseFloat(cs.paddingLeft) || 0) >= 44;
+    const si = duo && (html.classList.contains("cc-abierta") || html.classList.contains("cl-abierta"));
+    if (si && !antes && document.body) {
+      const metas = [...document.querySelectorAll('meta[name="theme-color"]')];
+      const b = osc(getComputedStyle(document.body).backgroundColor) || osc(getComputedStyle(html).backgroundColor) || "rgb(10,14,12)";
+      const f = document.createElement("div"); f.setAttribute("aria-hidden", "true");
+      f.style.cssText = "position:fixed;top:0;left:0;right:0;height:20px;z-index:1002;pointer-events:none;background:" + b;
+      html.appendChild(f);
+      antes = { h: html.style.backgroundColor, f, metas: metas.map(m => [m, m.content]) };
+      html.style.backgroundColor = b;
+      metas.forEach(m => { const h = m.content.match(/^#([0-9a-f]{6})$/i); if (h) { const n = parseInt(h[1], 16);
+        m.content = "#" + [n >> 16, n >> 8 & 255, n & 255].map((x, k) => Math.round(x * .385 + vel[k] * .615).toString(16).padStart(2, "0")).join(""); } });
+    } else if (!si && antes) {
+      html.style.backgroundColor = antes.h; antes.f.remove(); antes.metas.forEach(([m, c]) => { m.content = c; }); antes = null;
+    }
+  };
+  new MutationObserver(fondo).observe(html, { attributes: true, attributeFilter: ["class"] });
 })();
 
 /* Barra lateral común (<nav class="rail">): decide dónde va según la pantalla y la coloca (Miguel, 25/10/2026).
