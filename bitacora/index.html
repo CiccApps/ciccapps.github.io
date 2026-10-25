@@ -1061,7 +1061,10 @@ document.getElementById("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
     if(d==="vitrina"){CiccLogros.vitrina();return}
     if(d==="arriba"){scrollTo({top:0,behavior:suave()});return}
     if(tab!==d){tab=d;try{localStorage.setItem(LS+"-tab",tab)}catch(err){}renderView()}
-    scrollTo({top:scrollY+tabs.getBoundingClientRect().top-parseFloat(getComputedStyle(tabs).top||0),behavior:suave()});marca()};
+    // las pestañas son fijas (sticky): si ya se ha bajado, su posición en pantalla no dice dónde empiezan; se mide su sitio natural un instante
+    const nat=()=>{const p=tabs.style.position;tabs.style.position="static";const y=scrollY+tabs.getBoundingClientRect().top;tabs.style.position=p;return y};
+    scrollTo(scrollX,scrollY); // corta la inercia del dedo, que en iOS se come el salto
+    scrollTo({top:Math.max(0,nat()-parseFloat(getComputedStyle(tabs).top||0)),behavior:suave()});marca()};
   addEventListener("resize",ver);addEventListener("scroll",marca,{passive:true});
   new MutationObserver(()=>{ver();marca()}).observe(document.body,{attributes:true,attributeFilter:["class"]});
   document.addEventListener("click",e=>{if(e.target.closest("[data-tab]"))setTimeout(marca)});ver();marca()})();

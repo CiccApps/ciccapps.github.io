@@ -317,7 +317,7 @@ function pintaPestanas(){
   const r=$("rail");
   r.innerHTML=`<button type="button" data-ir="arriba" aria-label="Arriba" title="Arriba"><svg viewBox="0 0 24 24"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button>`+
     PESTANAS.map(([k,t,ico])=>`<button type="button" data-ir="${k}" aria-label="${t}" title="${t}"${VISTA===k?' class="on" aria-current="page"':""}><svg viewBox="0 0 24 24">${ico}</svg></button>`).join("");
-  r.querySelectorAll("[data-ir]").forEach(b=>b.onclick=()=>b.dataset.ir==="arriba"?scrollTo({top:0,behavior:"smooth"}):ir(b.dataset.ir));
+  r.querySelectorAll("[data-ir]").forEach(b=>b.onclick=()=>{scrollTo(scrollX,scrollY);b.dataset.ir==="arriba"?scrollTo({top:0,behavior:"smooth"}):ir(b.dataset.ir)});
 }
 (()=>{const pr=document.createElement("div");pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
   const ver=()=>document.documentElement.classList.toggle("con-rail",$("rail").classList.toggle("si",pr.offsetWidth>=44));ver();addEventListener("resize",ver)})();
