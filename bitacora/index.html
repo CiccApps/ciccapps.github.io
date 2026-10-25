@@ -200,15 +200,13 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:max(env(safe-area-i
 .cl-cuenta b{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums tabular-nums}
 .vit-txt{display:flex;align-items:center;gap:10px;min-width:0}
 #vitrinaMed{display:block;width:24px;flex:none}
-/* En la exterior del Duo iOS difumina unos 40 px arriba al bajar. Como en Vinilo: arriba del todo, 20 px de aire con la franja fija;
-   al bajar, una franja del color del fondo tapa esa zona y las pestañas fijas quedan justo debajo, legibles */
-html.con-rail{scroll-padding-top:44px}
-html.con-rail body::before{height:max(env(safe-area-inset-top,0px),20px)}
-html.con-rail body::after{content:"";position:fixed;inset:0 0 auto;height:52px;z-index:10;pointer-events:none;background:linear-gradient(var(--paper) 0 40px,transparent);opacity:0;transition:opacity .2s}
-html.con-rail.bajado body::after{opacity:1}
-html.con-rail .wrap{padding-top:20px!important}
-html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),44px)}
-html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),44px) + 18px)}
+/* En la exterior del Duo (zona segura de arriba 0): 22 px de aire arriba, como Platea. La página empieza ahí,
+   las pestañas fijas se quedan ahí al bajar y los saltos de la barra lateral también; el difuminado de iOS se deja tal cual */
+html.con-rail{scroll-padding-top:22px}
+html.con-rail body::before{height:max(env(safe-area-inset-top,0px),22px)}
+html.con-rail .wrap{padding-top:22px!important}
+html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),22px)}
+html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),22px) + 42px)}
 .rail{z-index:15;display:none}
 .rail.si{display:flex}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
@@ -1065,8 +1063,7 @@ document.getElementById("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
     if(d==="arriba"){scrollTo({top:0,behavior:suave()});return}
     if(tab!==d){tab=d;try{localStorage.setItem(LS+"-tab",tab)}catch(err){}renderView()}
     scrollTo({top:scrollY+tabs.getBoundingClientRect().top-parseFloat(getComputedStyle(tabs).top||0),behavior:suave()});marca()};
-  const baja=()=>document.documentElement.classList.toggle("bajado",scrollY>8);baja();
-  addEventListener("resize",ver);addEventListener("scroll",()=>{marca();baja()},{passive:true});
+  addEventListener("resize",ver);addEventListener("scroll",marca,{passive:true});
   new MutationObserver(()=>{ver();marca()}).observe(document.body,{attributes:true,attributeFilter:["class"]});
   document.addEventListener("click",e=>{if(e.target.closest("[data-tab]"))setTimeout(marca)});ver();marca()})();
 
