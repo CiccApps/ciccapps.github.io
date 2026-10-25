@@ -550,7 +550,7 @@ function tuMes(){
   const dif=V.length-nA;const cmp=nA||V.length?(dif>0?`${dif} más que en ${MESL[ant.getMonth()].toLowerCase()}`:dif<0?`${-dif} menos que en ${MESL[ant.getMonth()].toLowerCase()}`:`Igual que en ${MESL[ant.getMonth()].toLowerCase()}`):"";
   const lista=[...V].sort((a,b)=>String(a.fecha).localeCompare(String(b.fecha)));
   const r=document.getElementById("sheetRoot");
-  r.innerHTML=`${VELO("anH","anio")}${CAB(MESL[m],"anH",`<span class="eyebrow">${cerrado?"Tu resumen del mes":"Tu mes hasta hoy"}</span>`)}
+  r.innerHTML=`${VELO("anH","anio")}${CAB(MESL[m],"anH",`<span class="eyebrow">${cerrado?"Mes cerrado":"Mes en curso"}</span>`)}
     ${V.length?`<div class="an-grid"><div><b>${pelis}</b><span>películas</span></div><div><b>${series}</b><span>series</span></div><div><b>${cine}</b><span>en el cine</span></div><div><b>${media?media.toFixed(1):"—"}</b><span>nota media</span></div></div>
     ${cmp?`<p class="an-cmp">${cmp}.</p>`:""}
     <p class="an-frase">${mejor?`Lo mejor del mes: <b>${esc(mejor.titulo)}</b> <span class="stars">${stars(mejor.nota)}</span>`:"Aún no has puntuado nada este mes"}${topP?`. Donde más viste: <b>${esc(topP[0])}</b>`:""}.</p>
@@ -627,7 +627,7 @@ function anioEnCine(){
   const moods={};V.forEach(x=>(x.moods||[]).forEach(m=>moods[m]=(moods[m]||0)+1));const topM=Object.entries(moods).sort((a,b)=>b[1]-a[1])[0];
   const top=[...notas].sort((a,b)=>b.nota-a.nota).slice(0,5);
   const r=document.getElementById("sheetRoot");
-  r.innerHTML=`${VELO("anH","anio")}${CAB(y,"anH",`<span class="eyebrow">Tu año en cine</span>`)}
+  r.innerHTML=`${VELO("anH","anio")}${CAB(y,"anH",`<span class="eyebrow">Tu año</span>`)}
     ${V.length?`<div class="an-grid"><div><b>${pelis.length}</b><span>películas</span></div><div><b>${series.length}</b><span>series</span></div><div><b>${cine}</b><span>en el cine</span></div><div><b>${media?media.toFixed(1):"—"}</b><span>nota media</span></div></div>
     <div class="an-mes" aria-label="Por meses">${porMes.map((n,i)=>`<div title="${MESL[i]}: ${n}"><i style="height:${n/max*100}%"></i><span>${MES[i].slice(0,1)}</span></div>`).join("")}</div>
     <p class="an-frase">Tu mes más cinéfilo fue <b>${MESL[mejorMes].toLowerCase()}</b>${topP.length?`, y donde más viste fue <b>${esc(topP[0][0])}</b>`:""}${topM?`. Tu mood del año: <b>${esc(MOODS[topM[0]]||topM[0])}</b>`:""}.</p>
@@ -660,7 +660,7 @@ function salaHTML(V){
 
 /* Cartelera de esta semana: «Tus Cinesa» (sesiones de Sensacine) y «Toda España» (TMDB) */
 let CART=null,cartCargando=false,cartModo="cines";
-function cartCard(){const c=misCines().length;return `<button class="cart-card" id="cartBtn" type="button"><span class="cart-txt"><span class="eyebrow">${c?"En tus Cinesa y en toda España":"En cines de España"}</span><b>Cartelera de esta semana</b></span><span class="cart-go" aria-hidden="true">→</span></button>`}
+function cartCard(){const c=misCines().length;return `<button class="cart-card" id="cartBtn" type="button"><span class="cart-txt"><span class="eyebrow">${c?"Cinesa y España":"En cines de España"}</span><b>Cartelera de esta semana</b></span><span class="cart-go" aria-hidden="true">→</span></button>`}
 const normT=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"");
 function enLista(f){return all().find(x=>(f.tmdb_id&&x.tmdb_id&&+x.tmdb_id===+f.tmdb_id)||(normT(x.titulo)===normT(f.titulo)&&(!x.anio||!f.anio||Math.abs(+x.anio-f.anio)<=1)))}
 async function cartelera(){
@@ -685,8 +685,8 @@ function pintaCart(){
   document.querySelectorAll("[data-cm]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.cm===cartModo));
   const E=document.getElementById("caE"),H=document.getElementById("caHint");
   if(cartModo==="cines"){
-    E.textContent="Hoy en tus Cinesa";
-    H.textContent=`${Object.values(misCinesN()).join(", ").replace(/, ([^,]*)$/," y $1")}${priVOSE()?", con la VOSE primero":""}.`;
+    E.textContent="En tus Cinesa";
+    H.textContent=`Sesiones de hoy en ${Object.values(misCinesN()).join(", ").replace(/, ([^,]*)$/," y $1")}${priVOSE()?", con la VOSE primero":""}.`;
     if(!SES){L.innerHTML=`<p class="hint">${SESFALLO?"Ahora no se pueden consultar las sesiones de tus cines. El resto de Platea funciona igual; prueba más tarde.":"Buscando las sesiones de tus cines…"}</p>${SESFALLO?otrosDias().replace("Para otros días, abre","Mientras, puedes abrir"):""}`;return}
     SESL=SES.lista.map(f=>Object.assign({f},sesDe(f))).filter(z=>z.n).sort((a,b)=>(priVOSE()?(b.v?1:0)-(a.v?1:0):0)||b.n-a.n);
     const aviso=sesAviso();
