@@ -116,12 +116,12 @@
 /* Ventanas emergentes (comunes: la vitrina de medallas y cualquier hoja de las apps, con .cc-velo > .cc-hoja > .cc-cab).
    En el móvil, hoja desde abajo; en el ordenador, ventana centrada. Con la franja lateral del iPhone Duo (inset derecho de 44px o más)
    flota con el mismo margen de 20px arriba, abajo y a los lados, sobre el fondo difuminado, con forma de D como la pantalla
-   exterior: a la derecha, la curva de la pantalla (--cc-curva); a la izquierda, la bisagra, esquinas casi rectas. Arriba a la derecha no se recorta: iOS pone ahí la hora, la batería o la burbuja de la música,
+   exterior: a la derecha, la curva de la pantalla (--cc-curva, 56px desde el 25/10/2026 a petición de Miguel); a la izquierda, la bisagra, esquinas casi rectas. Arriba a la derecha no se recorta: iOS pone ahí la hora, la batería o la burbuja de la música,
    así que es una zona reservada sin datos de --cc-muesca-w × --cc-muesca-h (medida desde la esquina de la hoja), que la X y lo que va
    a la derecha esquivan. Fuera del Duo, las variables valen 0. */
 :root {
   --cc-duo: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 20px);
-  --cc-curva: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 40px);
+  --cc-curva: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 56px);
   --cc-muesca-w: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, env(safe-area-inset-right, 0px) - 20px);
   --cc-muesca-h: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 140px);
   /* hueco sobre la hoja: bajo la zona segura en el iPhone; en el Duo, el mismo margen que a los lados */
