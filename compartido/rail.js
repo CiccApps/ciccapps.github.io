@@ -1,3 +1,34 @@
+/* Pantalla exterior del iPhone Duo, común a todas las apps que cargan este archivo (aunque no lleven barra):
+   - html.cc-gira (y cc-gira-izq): girada, con la franja de la cámara a un lado. Las ventanas flotan fuera de la franja (ciccapps.css).
+   - html.cc-tope: en vertical, instalada con la barra de estado «default», iOS reserva arriba una franja que no es de la página
+     (--cc-tope px). La ventana sube ese hueco para que se vea el mismo margen arriba que a los lados, y mientras está abierta
+     el color de esa franja (theme-color) se oscurece como el velo. */
+(() => {
+  const html = document.documentElement, pr = document.createElement("div");
+  pr.style.cssText = "position:fixed;visibility:hidden;pointer-events:none;top:0;left:0;width:0;height:0;padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)";
+  const solo = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+  const mira = () => {
+    if (!pr.isConnected) document.body.appendChild(pr);
+    const cs = getComputedStyle(pr), d = parseFloat(cs.paddingRight) || 0, i = parseFloat(cs.paddingLeft) || 0, apaisada = innerWidth > innerHeight;
+    html.classList.toggle("cc-gira", apaisada && (d >= 44) !== (i >= 44));
+    html.classList.toggle("cc-gira-izq", apaisada && i >= 44 && d < 44);
+    const t = solo && !apaisada && d >= 44 ? Math.round(screen.height - innerHeight) : 0;
+    html.classList.toggle("cc-tope", t > 0 && t <= 40);
+    html.style.setProperty("--cc-tope", (t > 0 && t <= 40 ? t : 0) + "px");
+  };
+  // la franja de iOS no la cubre el velo: se oscurece su color mientras hay una ventana abierta
+  const metas = [...document.querySelectorAll('meta[name="theme-color"]')], orig = metas.map(m => m.content);
+  const oscuro = hex => { const n = parseInt(hex.slice(1), 16), c = [n >> 16, n >> 8 & 255, n & 255], v = [10, 14, 12];
+    return "#" + c.map((x, k) => Math.round(x * .385 + v[k] * .615).toString(16).padStart(2, "0")).join(""); };
+  let abierta = false;
+  const tinta = () => { const a = html.classList.contains("cc-tope") && (html.classList.contains("cc-abierta") || html.classList.contains("cl-abierta"));
+    if (a === abierta) return; abierta = a; metas.forEach((m, k) => { if (/^#[0-9a-f]{6}$/i.test(orig[k])) m.content = a ? oscuro(orig[k]) : orig[k]; }); };
+  const va = () => { mira(); tinta(); };
+  if (document.body) va(); else addEventListener("DOMContentLoaded", va);
+  addEventListener("resize", va);
+  new MutationObserver(tinta).observe(html, { attributes: true, attributeFilter: ["class"] });
+})();
+
 /* Barra lateral común (<nav class="rail">): decide dónde va según la pantalla y la coloca (Miguel, 25/10/2026).
    - Duo exterior en vertical (franja segura de 44 px o más a la derecha): en la franja, como siempre (r-duo).
    - Duo exterior girado: en la franja que deja la cámara. Con la cámara abajo a la derecha, a la derecha y desde arriba (r-der);
