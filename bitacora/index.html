@@ -14,8 +14,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=22">
-<link rel="stylesheet" href="../compartido/logros.css?v=6">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=23">
+<link rel="stylesheet" href="../compartido/logros.css?v=7">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
 :root{
@@ -206,7 +206,7 @@ body .sheet{padding-left:max(18px,env(safe-area-inset-left,0px),env(safe-area-in
 /* Con barra lateral, al saltar a una zona se deja un poco de aire arriba */
 html.con-rail{scroll-padding-top:14px}
 html.con-rail .stage{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 48px)}
-.rail{position:fixed;z-index:15;right:0;top:calc(50% + 24px);transform:translateY(-50%);width:env(safe-area-inset-right,0px);display:none;flex-direction:column;align-items:center;gap:10px}
+.rail{z-index:15;display:none}
 .rail.si{display:flex}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--gold);border-color:var(--gold)}

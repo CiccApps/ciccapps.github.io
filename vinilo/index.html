@@ -8,8 +8,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/vinilo-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/vinilo-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=22">
-<link rel="stylesheet" href="../compartido/logros.css?v=8">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=23">
+<link rel="stylesheet" href="../compartido/logros.css?v=9">
 </head><body>
 
 <style>
@@ -309,7 +309,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0
 @media (min-width:768px){.wrap{padding-top:44px!important;padding-left:max(32px,env(safe-area-inset-left,0px))!important;padding-right:max(32px,env(safe-area-inset-right,0px))!important}}
 .cc-firma{padding-top:24px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 /* Barra lateral: en pantallas con una franja segura ancha a un lado (la exterior del iPhone Duo), botones para ir por zonas */
-.rail{position:fixed;z-index:40;right:0;top:calc(50% + 24px);transform:translateY(-50%);width:env(safe-area-inset-right,0px);display:none;flex-direction:column;align-items:center;gap:10px}
+.rail{z-index:40;display:none}
 .rail.si{display:flex}
 /* Con la franja lateral (pantalla exterior del Duo) iOS difumina el borde de arriba: los saltos dejan un margen corto para que el título no quede debajo */
 html.con-rail{scroll-padding-top:14px}
