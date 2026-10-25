@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=32">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=33">
 <link rel="stylesheet" href="../compartido/logros.css?v=12">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
@@ -210,6 +210,9 @@ html.con-rail.pegada body::before{height:max(env(safe-area-inset-top,0px),22px)}
 html.con-rail.pegada .tabs{box-shadow:0 0 0 8px var(--paper)}
 html.con-rail .wrap{padding-top:22px!important}
 html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),22px)}
+/* con la página corrida por iOS (html.cc-tope, ciccapps.css), las pestañas pegadas suben lo mismo */
+html.cc-tope.con-rail .tabs{top:calc(22px - var(--cc-tope))}
+html.cc-tope.con-rail .stage{scroll-margin-top:calc(64px - var(--cc-tope))}
 html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),22px) + 42px)}
 .rail{z-index:15;display:none}
 .rail.si{display:flex}
@@ -403,7 +406,7 @@ h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:4
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
 <script src="../compartido/logros.js?v=8"></script>
-<script src="../compartido/rail.js?v=2"></script>
+<script src="../compartido/rail.js?v=3"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],

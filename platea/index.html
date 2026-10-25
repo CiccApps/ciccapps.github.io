@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/platea-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/platea-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=32">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=33">
 <link rel="stylesheet" href="../compartido/logros.css?v=12">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
@@ -104,6 +104,9 @@ button{font:inherit;color:inherit}
 .cc-cab .eyebrow{display:block;margin-bottom:6px;line-height:1.3}
 .cc-cab h2{font-family:var(--f-display);font-weight:400;font-size:34px;letter-spacing:.03em;line-height:1}
 .cc-cab .cc-sub{margin-top:6px;font-size:13px;color:var(--muted)}
+/* cabecera cerrada con una línea fija (como la barra de la vitrina): la lista pasa por debajo */
+.cc-cab.cab-linea::after{content:"";position:absolute;left:4px;right:4px;bottom:0;height:1px;background:var(--line)}
+.cc-cuerpo>.cart-list:first-child>.cart-row:first-child{border-top:0}
 .cc-cerrar{color:var(--muted)}
 .field{display:flex;flex-direction:column;gap:4px;min-width:0}
 .field label,.lbl{font-size:12px;color:var(--muted);font-weight:600}
@@ -175,6 +178,7 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 .wrap{max-width:1040px!important;margin-inline:auto!important;padding-block:28px 72px!important;padding-left:max(20px,env(safe-area-inset-left,0px))!important;padding-right:max(20px,env(safe-area-inset-right,0px))!important}
 @media (min-width:768px){.wrap{padding-top:44px!important;padding-left:max(32px,env(safe-area-inset-left,0px))!important;padding-right:max(32px,env(safe-area-inset-right,0px))!important}}
 .cc-firma{padding-top:24px}
+#pie .cc-firma{padding-inline:0} /* el pie ya va dentro de .wrap, que deja los márgenes y la franja lateral */
 /* Barra lateral (pantalla exterior del iPhone Duo): solo cuando la franja segura de la derecha deja 44 px */
 .rail{z-index:15;display:none}
 .rail.si{display:flex}
@@ -187,6 +191,9 @@ html.con-rail{scroll-padding-top:calc(var(--bar-h,60px) + 28px)}
 html.con-rail body::before{height:env(safe-area-inset-top,0px)}
 /* …salvo cuando la barra ya está pegada arriba: entonces lo que pasa por encima de ella se tapa con el fondo (Miguel) */
 html.con-rail.pegada body::before{height:max(env(safe-area-inset-top,0px),14px)}
+/* con la página corrida por iOS (html.cc-tope, ciccapps.css), la barra pegada sube lo mismo */
+html.cc-tope .bar{top:calc(14px - var(--cc-tope))}
+html.cc-tope.con-rail:root{scroll-padding-top:calc(var(--bar-h,60px) + 28px - var(--cc-tope))}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--red);border-color:var(--red)}
 .rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -333,7 +340,7 @@ button.butaca[aria-pressed="true"]{outline:2px solid var(--bulb);outline-offset:
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
 <script src="../compartido/logros.js?v=8"></script>
-<script src="../compartido/rail.js?v=2"></script>
+<script src="../compartido/rail.js?v=3"></script>
 <script>
 const MOODS={risa:"Reírme",tension:"Tensión",pensar:"Pensar",llorar:"Emocionarme",accion:"Acción",epico:"Épica",ligera:"Ligera",clasico:"Clásico pendiente"};
 const WHERE={cine:"Cine",streaming:"Streaming",casa:"En casa"};
@@ -671,7 +678,7 @@ const normT=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"
 function enLista(f){return all().find(x=>(f.tmdb_id&&x.tmdb_id&&+x.tmdb_id===+f.tmdb_id)||(normT(x.titulo)===normT(f.titulo)&&(!x.anio||!f.anio||Math.abs(+x.anio-f.anio)<=1)))}
 async function cartelera(){
   const r=document.getElementById("sheetRoot");const hay=misCines().length>0;if(!hay)cartModo="espana";
-  r.innerHTML=`${VELO("caH")}${CAB("Cartelera","caH",`<span class="eyebrow" id="caE"></span>`,`<span class="cc-sub" id="caHint"></span>`)}
+  r.innerHTML=`${VELO("caH")}${CAB("Cartelera","caH",`<span class="eyebrow" id="caE"></span>`,`<span class="cc-sub" id="caHint"></span>`).replace('class="cc-cab"','class="cc-cab cab-linea"')}
     ${hay?`<div class="seg cart-seg" role="group" aria-label="Qué cartelera"><button type="button" data-cm="cines">Tus Cinesa</button><button type="button" data-cm="espana">Toda España</button></div>`:""}
     <div id="cartL" class="cart-list"></div></div></div>`;
   entraHoja(cierraHoja);
