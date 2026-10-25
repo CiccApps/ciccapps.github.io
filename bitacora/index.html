@@ -910,7 +910,7 @@ function tuMes(){
   const diasA=[...DIAS].filter(d=>d.startsWith(preA)).length;const dif=leidos-diasA;
   const cmp=diasA||leidos?(dif>0?`${dif} días más leyendo que en ${MESES[ant.getMonth()]}`:dif<0?`${-dif} días menos que en ${MESES[ant.getMonth()]}`:`Los mismos días que en ${MESES[ant.getMonth()]}`):"";
   const off=(new Date(y,m,1).getDay()+6)%7;
-  abrirHoja("mesT",`<span class="eyebrow">${cerrado?"Tu resumen del mes":"Tu mes hasta hoy"}</span><h2 id="mesT" style="text-transform:capitalize">${MESES[m]}</h2>`,`
+  abrirHoja("mesT",`<span class="eyebrow">${cerrado?"Tu resumen":"Hasta hoy"}</span><h2 id="mesT" style="text-transform:capitalize">${MESES[m]}</h2>`,`
     <div class="mes-grid"><div><b class="mono">${leidos}</b><span>días leyendo</span></div><div><b class="mono">${pagMes}</b><span>páginas</span></div><div><b class="mono">${mejor}</b><span>mejor racha</span></div><div><b class="mono">${fin.length}</b><span>${fin.length===1?"libro terminado":"libros terminados"}</span></div></div>
     ${cmp?`<p class="hint" style="margin:0">${cmp}${empez?` · ${empez} ${empez===1?"libro empezado":"libros empezados"}`:""}.</p>`:""}
     <div class="mes-cal" aria-label="Días que leíste">${"<i class=\"vacio\"></i>".repeat(off)}${dias.map((s,i)=>`<i class="${s?"si":""}">${i+1}</i>`).join("")}</div>
@@ -1073,7 +1073,7 @@ document.getElementById("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
 /* Primera vez: empezar con el plan o con una lista vacía */
 function vistaEmpezar(){
   document.body.classList.add("nuevo");
-  document.getElementById("view").innerHTML=`<div class="empezar"><span class="eyebrow">Bienvenido</span><h2>¿Cómo quieres empezar?</h2>
+  document.getElementById("view").innerHTML=`<div class="empezar"><span class="eyebrow">Primeros pasos</span><h2>¿Cómo quieres empezar?</h2>
   <p class="hint">Puedes partir del plan de lectura CiccApps (43 libros en cinco etapas, con ediciones recomendadas) o de una lista vacía para añadir tus propios libros.</p>
   <div class="two"><button class="btn" data-plantilla="0">Lista vacía</button><button class="btn primary" data-plantilla="1">Plan CiccApps</button></div></div>`;
 }
