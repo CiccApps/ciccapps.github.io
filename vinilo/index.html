@@ -317,10 +317,10 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0
 .rail.si{display:flex}
 /* Con la franja lateral (pantalla exterior del Duo): como en Platea, lo que se ve tras cada salto queda a 20 px de arriba,
    el mismo margen que a los lados. El difuminado de iOS se deja tal cual */
-html.con-rail{scroll-padding-top:20px}
+html.con-rail{scroll-padding-top:22px}
 /* La portada llena la pantalla exterior con el mismo margen arriba, abajo y a los lados */
 @media (orientation:portrait){
-  html.con-rail .wrap{padding-top:20px!important}
+  html.con-rail .wrap{padding-top:22px!important}
   html.con-rail .dial-wrap{margin:12px 0 4px}
   html.con-rail .dial{--d:min(calc(100% - 64px),300px)} /* el JS lo encoge si la portada no cabe entera */
   html.con-rail .dial-pie{margin-top:16px}
