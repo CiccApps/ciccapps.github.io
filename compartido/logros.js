@@ -248,8 +248,8 @@
             '<b>' + (secreto ? 'Secreto' : esc(x.l.nombre)) + '</b><small>' + nota + '</small></button>';
         }).join('') + '</div>';
       }
-      hoja.innerHTML = '<div class="cl-cab"><h2 id="clTit">Vitrina</h2><button type="button" class="cl-cerrar" aria-label="Cerrar">×</button></div>' +
-        '<div class="cl-cuenta"><span><b>' + ganadas + '</b> de ' + total + ' medallas</span><span>' + esc(cfg.nombre || '') + '</span></div>' +
+      hoja.innerHTML = '<div class="cl-cab"><div>' + (cfg.nombre ? '<span class="cl-ante">' + esc(cfg.nombre) + '</span>' : '') + '<h2 id="clTit">Vitrina</h2></div><button type="button" class="cl-cerrar" aria-label="Cerrar">×</button></div>' +
+        '<div class="cl-cuenta"><span><b>' + ganadas + '</b> de ' + total + ' medallas</span></div>' +
         '<div class="cl-barra"><i style="width:' + (total ? Math.round(ganadas / total * 100) : 0) + '%"></i></div>' +
         (con.length ? '<div class="cl-grupo"><span class="cl-eti">Conseguidas</span>' + rejilla(con, 'con') + '</div>' : '<p class="cl-vacio-txt">Aún no tienes medallas. La primera llega antes de lo que crees.</p>') +
         (pend.length ? '<div class="cl-grupo"><span class="cl-eti">Pendientes</span>' + rejilla(pend, 'pend') + '</div>' : '');

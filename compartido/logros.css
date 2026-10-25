@@ -46,8 +46,9 @@
 .cl-cerrar:focus-visible, .cl-volver:focus-visible, .cl-med:focus-visible { outline: 2px solid var(--cl-oro); outline-offset: 2px; }
 .cl-cuenta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--cl-suave); padding-right: max(0px, var(--cc-muesca-w) - 12px); }
 .cl-cuenta b { font-family: var(--cl-serif); font-size: 20px; font-weight: 400; color: var(--cl-tinta); }
-.cl-cuenta span:last-child { font-family: var(--cl-serif); font-style: italic; }
-.cl-barra { height: 4px; margin: max(8px, var(--cc-muesca-h) - 84px) 0 4px; border-radius: 2px; background: var(--cl-vacio); overflow: hidden; }
+/* antetítulo con el nombre de la app, como en las demás ventanas */
+.cl-ante { display: block; margin-bottom: 2px; font-family: var(--cl-sans); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--cl-suave); }
+.cl-barra { height: 4px; margin: max(8px, var(--cc-muesca-h) - 102px) 0 4px; border-radius: 2px; background: var(--cl-vacio); overflow: hidden; }
 .cl-barra i { display: block; height: 100%; background: var(--cl-oro); border-radius: 2px; }
 .cl-grupo { margin-top: 20px; }
 .cl-grupo > .cl-eti { display: block; margin-bottom: 10px; }
