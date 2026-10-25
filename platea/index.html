@@ -21,6 +21,7 @@
 :root{
   --bg:#F3EFE4; --card:#FFFFFF; --ink:#24161A; --muted:#6C6266; --line:#E0D7C6;
   --red:#6E1E2B; --red-soft:#F1DEDC; --bulb:#B8913F; --stub:#EDE5D6; --ok:#2E6B4F;
+  --boton:linear-gradient(160deg,#8A2A3A,#5E1A26);
   --f-display:"Limelight","Bebas Neue",Georgia,serif;
   --f-body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
@@ -66,7 +67,8 @@ button{font:inherit;color:inherit}
 .tab[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
 .tab .ct{font-family:var(--f-mono);font-size:11px;color:var(--red);margin-left:4px}
 @media (max-width:400px){.addtxt{display:none}.add{padding:11px 15px;font-size:18px;line-height:1}.tab{font-size:13px}}
-.add{border:none;background:var(--ink);color:var(--bg);font-weight:700;padding:11px 14px;border-radius:8px;cursor:pointer;white-space:nowrap}
+/* Botones principales en el burdeos de la marquesina, en claro y en oscuro (Miguel) */
+.add{border:none;background:var(--boton);color:#FFF6EE;font-weight:700;padding:11px 14px;border-radius:8px;cursor:pointer;white-space:nowrap}
 
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer}
@@ -119,7 +121,8 @@ textarea{min-height:80px;resize:vertical}
 .toggle input{width:18px;height:18px;accent-color:var(--red)}
 .actions{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
 .btn{font-weight:700;font-size:14px;padding:10px 16px;border-radius:6px;border:1px solid var(--line);background:transparent;cursor:pointer}
-.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary{background:var(--boton);color:#FFF6EE;border-color:#5E1A26}
+.add:disabled,.btn.primary:disabled{opacity:.6;cursor:default}
 .btn.danger{color:var(--red);border-color:transparent;padding-left:0}
 .links{display:flex;gap:16px;flex-wrap:wrap}
 .links a{color:var(--red);font-weight:700;font-size:14px;text-decoration:none}
