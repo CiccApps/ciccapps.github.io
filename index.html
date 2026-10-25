@@ -125,11 +125,8 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 /* Barra lateral: en pantallas con una franja segura ancha a un lado (la exterior del iPhone Duo), botones para ir por familias. Igual que en Vinilo */
 .rail { z-index: 40; display: none; }
 .rail.si { display: flex; }
-/* con la barra, iOS difumina el borde de arriba aunque no haya zona segura: el contenido y los saltos bajan */
-/* Con la franja lateral iOS difumina el borde de arriba: al bajar, una franja del color del fondo tapa esa zona (como en Vinilo); los saltos dejan el título justo debajo */
-html.con-rail { scroll-padding-top: 44px; }
-html.con-rail body::before { content: ""; position: fixed; inset: 0 0 auto; height: 52px; z-index: 35; pointer-events: none; background: linear-gradient(var(--cc-fondo) 0 40px, transparent); opacity: 0; transition: opacity .2s; }
-html.con-rail.bajado body::before { opacity: 1; }
+/* Con la barra lateral, los saltos dejan el título de la familia a unos 20px de arriba, como las pestañas de Platea (iOS puede difuminar ese borde) */
+html.con-rail { scroll-padding-top: 20px; }
 .rail button { appearance: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--cc-linea); background: var(--cc-fondo-alto); color: var(--cc-tinta-suave); display: grid; place-items: center; cursor: pointer; padding: 0; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
 .rail button.on { color: var(--cc-oro); border-color: var(--cc-oro); }
 .rail svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -225,7 +222,6 @@ html.con-rail.bajado body::before { opacity: 1; }
   pr.style.cssText = "position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";
   document.body.appendChild(pr);
   const ver = () => document.documentElement.classList.toggle("con-rail", r.classList.toggle("si", pr.offsetWidth >= 44)); ver(); addEventListener("resize", ver);
-  const baja = () => document.documentElement.classList.toggle("bajado", scrollY > 8); baja(); addEventListener("scroll", baja, { passive: true });
   const fam = id => document.getElementById(id).closest("section");
   r.onclick = e => { const b = e.target.closest("[data-ir]"); if (!b) return; const d = b.dataset.ir;
     if (d === "arriba") scrollTo({ top: 0, behavior: "smooth" }); else fam(d).scrollIntoView({ behavior: "smooth", block: "start" }); };
