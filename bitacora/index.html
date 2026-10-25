@@ -648,7 +648,7 @@ function viewMood(){
   const list=ranked().slice(0,4);
   const moods=Object.entries(MOODS).map(([k,[l,d]])=>`<button class="mood" id="m-${k}" data-mood="${k}" aria-pressed="${moodSel.has(k)}"><b>${l}</b><span>${d}</span></button>`).join("");
   const picks=list.length?list.map((x,i)=>`<button class="pick ${i===0?"top":""}" data-open="${x.b.id}" style="--sc:var(${x.b.stage.c})"><span class="spine-mini" style="background:var(${x.b.stage.c})"></span>
-    <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="eyebrow">${i===0?"Mi recomendación":"También encaja"}</span><h3>${esc(x.b.t)}</h3><span class="why2">${esc(x.b.a)} · ≈${x.b.p} páginas</span>
+    <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="eyebrow">${i===0?"Te recomiendo":"También encaja"}</span><h3>${esc(x.b.t)}</h3><span class="why2">${esc(x.b.a)} · ≈${x.b.p} páginas</span>
     <span class="reasons">${x.why.map(w=>`<span>${esc(w)}</span>`).join("")}</span></span></button>`).join("")
     :`<p class="why">${onlyOwned?"Ninguno de los que tienes encaja con eso. Desmarca «Solo los que tengo» para ver opciones de compra.":"No hay pendientes que encajen. Prueba con otro mood."}</p>`;
   return `<div class="mood-intro" style="display:flex;flex-direction:column;gap:6px"><h2>¿Qué te apetece hoy?</h2><p class="hint">Elige uno o varios. Priorizo lo que encaja con tu mood, lo que ya tienes y lo que toca en tu etapa.</p></div>
@@ -1087,7 +1087,7 @@ async function empezar(conPlan){
         li.push({clave:id,etapa:x.id,grupo:g,orden:li.length,titulo:t,autor:a,paginas:p,etiqueta:tag||null,moods:m,edicion:PLANTILLA_EDS[id]||null})}))});
       r=await sb.from("libros").insert(li);if(r.error)throw r.error;
     }else{
-      const r=await sb.from("etapas").insert([{clave:"lista",nombre:"Mi lista",descripcion:"Tus próximas lecturas, en orden.",orden:0,color:"verde"},{clave:"ex",nombre:"Intercalables",descripcion:"Sin orden: para cuando te apetezca otra cosa.",orden:1,color:"taupe",intercalable:true}]);if(r.error)throw r.error;
+      const r=await sb.from("etapas").insert([{clave:"lista",nombre:"Tu lista",descripcion:"Tus próximas lecturas, en orden.",orden:0,color:"verde"},{clave:"ex",nombre:"Intercalables",descripcion:"Sin orden: para cuando te apetezca otra cosa.",orden:1,color:"taupe",intercalable:true}]);if(r.error)throw r.error;
     }
     await cargar();
   }catch(e){toast("No se pudo preparar: "+(e.message||e));vistaEmpezar()}

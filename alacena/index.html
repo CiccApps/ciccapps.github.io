@@ -307,7 +307,7 @@ const PESTANAS=[
   ["semana","Semana",'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>'],
   ["compra","Compra",'<path d="M5 8h14l-1.5 11h-11z"/><path d="M9 8a3 3 0 0 1 6 0"/>'],
   ["fuera","Fuera",'<path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>'],
-  ["plan","Mi plan",'<path d="M7 4h10v16H7z"/><path d="M10 9h4M10 13h4"/>'],
+  ["plan","Tu plan",'<path d="M7 4h10v16H7z"/><path d="M10 9h4M10 13h4"/>'],
 ];
 function pintaPestanas(){
   const n=$("pestanas");
@@ -449,7 +449,7 @@ function vistaPlan(){
   const catHTML=cat.filter(c=>c.fuente===filtro).sort((a,b)=>b.proteinas-a.proteinas).map(c=>`<div class="cat"><span class="n">${esc(c.nombre)}</span><span class="m">${c.kcal} kcal · P${Math.round(c.proteinas)} H${Math.round(c.hidratos)} G${Math.round(c.grasas)}${c.precio?' <span style="white-space:nowrap">· '+Number(c.precio).toLocaleString("es-ES",{style:"currency",currency:"EUR"})+"</span>":""}</span>${c.url?`<a class="btn" href="${esc(c.url)}" target="_blank" rel="noopener" style="min-height:36px">Pedir</a>`:""}</div>`).join("");
   const act=CAT&&CAT.length?new Date(Math.max(...CAT.map(c=>+new Date(c.visto)))):null;
   return `<div class="pila g24" style="max-width:760px;width:100%;margin:0 auto">
-<div class="pila g8"><span class="ojo">Mi plan</span><h2 class="tit">${PLAN.origen==="nutricionista"?"La dieta de tu nutricionista":"Tu dieta, hecha a medida"}</h2><p class="p suave">Desde el ${creado.getDate()} de ${MESES[creado.getMonth()]}. ${esc(o.explicacion||"")}</p></div>
+<div class="pila g8"><span class="ojo">Tu plan</span><h2 class="tit">${PLAN.origen==="nutricionista"?"La dieta de tu nutricionista":"Tu dieta, hecha a medida"}</h2><p class="p suave">Desde el ${creado.getDate()} de ${MESES[creado.getMonth()]}. ${esc(o.explicacion||"")}</p></div>
 <div class="macro"><div><b>${fmt(o.kcal)}</b><span>kcal</span></div><div><b>${fmt(o.proteinas)} g</b><span>proteína</span></div><div><b>${fmt(o.hidratos)} g</b><span>hidratos</span></div><div><b>${fmt(o.grasas)} g</b><span>grasas</span></div></div>
 ${PLAN.notas?`<div class="aviso">${esc(PLAN.notas)}</div>`:""}
 <div class="pila g8"><button class="btn prim grande" data-acc="rehacer">Rehacer mi dieta con la IA</button><button class="btn grande" data-acc="importar">Importar la de mi nutricionista</button><button class="btn grande" data-acc="respuestas">Cambiar mis respuestas</button></div>
