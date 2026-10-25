@@ -219,10 +219,8 @@ body.con-pestanas{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 .rail{z-index:9;display:none}
 body.con-pestanas .rail.si{display:flex}
 /* el Duo plegado difumina el borde de arriba aunque la franja segura sea 0: se baja el contenido */
-/* Con la franja lateral (pantalla exterior del Duo) iOS difumina el borde de arriba: al bajar, una franja del color del fondo tapa esa zona, como en Vinilo y la portada */
-html.con-rail{scroll-padding-top:44px}
-html.con-rail body::before{height:52px;pointer-events:none;background:linear-gradient(var(--fondo) 0 40px,transparent);opacity:0;transition:opacity .2s}
-html.con-rail.bajado body::before{opacity:1}
+/* Con la franja lateral (pantalla exterior del Duo): el contenido empieza a 20 px de arriba y los saltos dejan el mismo aire, como en Platea y la portada */
+html.con-rail{scroll-padding-top:20px}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--linea);background:var(--alto);color:var(--suave);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--app-t);border-color:var(--app-t)}
 .rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -322,8 +320,7 @@ function pintaPestanas(){
   r.querySelectorAll("[data-ir]").forEach(b=>b.onclick=()=>b.dataset.ir==="arriba"?scrollTo({top:0,behavior:"smooth"}):ir(b.dataset.ir));
 }
 (()=>{const pr=document.createElement("div");pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
-  const ver=()=>document.documentElement.classList.toggle("con-rail",$("rail").classList.toggle("si",pr.offsetWidth>=44));ver();addEventListener("resize",ver);
-  const baja=()=>document.documentElement.classList.toggle("bajado",scrollY>8);baja();addEventListener("scroll",baja,{passive:true})})();
+  const ver=()=>document.documentElement.classList.toggle("con-rail",$("rail").classList.toggle("si",pr.offsetWidth>=44));ver();addEventListener("resize",ver)})();
 function ir(v){VISTA=v;pinta();window.scrollTo(0,0)}
 function pinta(){
   const app=$("app");
