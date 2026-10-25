@@ -247,10 +247,11 @@ const ISO=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+Stri
 const LETRAS="DLMXJVS"; // getDay(): 0 = domingo
 const DIAS=["L","M","X","J","V","S","D"];
 const NOMBRE_DIA={L:"Lunes",M:"Martes",X:"Miércoles",J:"Jueves",V:"Viernes",S:"Sábado",D:"Domingo"};
-const DIA_COMPRA={L:"del lunes",M:"del martes",X:"del miércoles",J:"del jueves",V:"del viernes",S:"del sábado",D:"del domingo"};
+const DIA_COMPRA={L:"El lunes",M:"El martes",X:"El miércoles",J:"El jueves",V:"El viernes",S:"El sábado",D:"El domingo"};
 const MESES=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 function hoyFecha(){return new Date()}
 function lunesDe(d){const x=new Date(d);const k=(x.getDay()+6)%7;x.setDate(x.getDate()-k);x.setHours(0,0,0,0);return x}
+const ORIGEN=()=>PLAN&&PLAN.origen==="nutricionista"?"De tu nutricionista":"Con IA";
 function fechaDeLetra(l){const x=lunesDe(hoyFecha());x.setDate(x.getDate()+DIAS.indexOf(l));return x}
 const ORDEN_SECCIONES=["Fruta y verdura","Panadería","Carne","Pescado","Charcutería y quesos","Lácteos y huevos","Despensa","Bebidas","Otros","Congelados"];
 
@@ -365,14 +366,14 @@ function vistaHoy(){
 <button class="plato" data-receta="${m.plato.id}">${esc(m.plato.nombre)}</button><span class="meta">${metaPlato(m.plato)}</span></div>${acc}</div>`;
   }).join("");
   const art=listaCompra(),pend=art.items.filter(x=>!COMPRA.marcados.includes(x.k)).length;
-  const dc=PERFIL&&PERFIL.diaCompra?DIA_COMPRA[PERFIL.diaCompra]:"de la semana";
+  const dc=PERFIL&&PERFIL.diaCompra?DIA_COMPRA[PERFIL.diaCompra]:"Esta semana";
   return `<div class="dos"><div class="col"><figure class="pila" style="margin:0">${pieza}
 <div style="display:flex;flex-wrap:wrap;gap:8px"><span class="pildora">${entreno?"Día de entreno":"Día de descanso"}</span><span class="pildora tenue">${PLAN.origen==="nutricionista"?"Dieta de tu nutricionista":"Plan creado con IA"}</span></div>
 <figcaption class="leyenda">Cada marca del ala es una comida del día: dorada, hecha; con aro azafrán, la próxima; solo el contorno, pendiente.</figcaption></figure>
 <div class="cifras"><div><b>${hechas} de ${menu.length}</b><span>comidas hechas</span></div><div><b>${fmt(kcalDia(letra)||PLAN.objetivo.kcal)}</b><span>kcal de hoy</span></div><div><b>${minutos} min</b><span>de cocina hoy</span></div></div>
 ${consejo?`<section class="tarjeta"><span class="ojo oro">Consejo para hoy</span><p class="p" style="font-size:16px;line-height:24px">${esc(consejo)}</p></section>`:""}</div>
 <div class="col"><h2 class="tit">La carta de hoy</h2><div class="carta">${carta||'<div class="comida"><span></span><span class="suave">Hoy no hay comidas en tu plan.</span></div>'}</div>
-<section class="tarjeta"><div class="pila" style="gap:2px"><span class="ojo">Lista de la compra</span><span style="font-family:var(--f-tit);font-size:22px;line-height:27px">Compra ${esc(dc)}</span></div>
+<section class="tarjeta"><div class="pila" style="gap:2px"><span class="ojo">Tu lista</span><span style="font-family:var(--f-tit);font-size:22px;line-height:27px">${esc(dc)}</span></div>
 <div class="tiendas"><div><b>${pend} ${pend===1?"producto":"productos"}</b><span>por comprar</span></div><div><b>${art.secciones.length} ${art.secciones.length===1?"sección":"secciones"}</b><span>${esc((PERFIL&&PERFIL.super||[]).join(" y ")||"en tu tienda")}</span></div></div>
 <button class="btn" data-ir="compra">Ver la lista</button></section></div></div>`;
 }
@@ -388,7 +389,7 @@ function vistaSemana(){
     const lineas=menuDe(l).map(m=>`<button class="linea" data-receta="${m.plato.id}"><span class="nom">${esc(m.comida.nombre)}</span><span class="pl">${esc(m.plato.nombre)}</span></button>`).join("");
     return `<section class="dia${l===hoy?" hoy":""}"><div class="cab"><b>${NOMBRE_DIA[l]} ${f.getDate()}</b><span>${fmt(kcalDia(l))} kcal</span></div>${lineas||'<p class="p suave" style="padding:12px 16px">Sin comidas.</p>'}</section>`;
   }).join("");
-  return `<div class="pila g24"><div class="pila g8"><span class="ojo">Tu semana</span><h2 class="tit">El menú de la semana</h2><p class="p suave">Toca un plato para ver la receta. Los de tanda se cocinan una vez y salen varios días.</p></div><div class="semanas-grid">${dias}</div></div>`;
+  return `<div class="pila g24"><div class="pila g8"><span class="ojo">${ORIGEN()}</span><h2 class="tit">El menú de la semana</h2><p class="p suave">Toca un plato para ver la receta. Los de tanda se cocinan una vez y salen varios días.</p></div><div class="semanas-grid">${dias}</div></div>`;
 }
 
 /* lista de la compra: suma de los ingredientes de toda la semana, por secciones */
@@ -419,14 +420,14 @@ function cantidad(x){
 }
 function vistaCompra(){
   const L=listaCompra();
-  const dc=PERFIL&&PERFIL.diaCompra?DIA_COMPRA[PERFIL.diaCompra]:"de la semana";
+  const dc=PERFIL&&PERFIL.diaCompra?DIA_COMPRA[PERFIL.diaCompra]:"Esta semana";
   const secs=L.secciones.map(s=>{
     const its=L.items.filter(x=>x.seccion===s);
     const quedan=its.filter(x=>!COMPRA.marcados.includes(x.k)).length;
     return `<section class="seccion"><h3>${esc(s)}<span>${quedan?quedan+" por coger":"todo cogido"}</span></h3>${its.map(x=>`<label class="art${COMPRA.marcados.includes(x.k)?" ok":""}"><input type="checkbox" data-art="${esc(x.k)}"${COMPRA.marcados.includes(x.k)?" checked":""}><span class="n">${esc(x.nombre)}</span><span class="c">${x.extra?'<button class="enlace" data-quitar="'+esc(x.k)+'" style="padding:0">Quitar</button>':esc(cantidad(x))}</span></label>`).join("")}</section>`;
   }).join("");
   const pedir=L.pedir.length?`<section class="seccion"><h3>Para pedir<span>Wetaca y Knoweats</span></h3>${L.pedir.map(p=>{const c=CAT&&CAT.find(z=>z.fuente+":"+z.ref===p.ref);return `<div class="art" style="cursor:default"><span class="pto" aria-hidden="true"></span><span class="n">${esc(p.nombre)} <span class="suave">× ${p.veces}</span></span>${c&&c.url?`<a class="btn" href="${esc(c.url)}" target="_blank" rel="noopener" style="min-height:36px">Pedir</a>`:""}</div>`}).join("")}</section>`:"";
-  return `<div class="pila g24" style="max-width:760px;width:100%;margin:0 auto"><div class="pila g8"><span class="ojo">Lista de la compra</span><h2 class="tit">Compra ${esc(dc)}</h2><p class="p suave">Todo lo de la semana, sumado y por secciones en el orden de la tienda. Los congelados, al final, para que no se descongelen.</p></div>
+  return `<div class="pila g24" style="max-width:760px;width:100%;margin:0 auto"><div class="pila g8"><span class="ojo">Tu lista</span><h2 class="tit">${esc(dc)}</h2><p class="p suave">Sumado y por secciones, en el orden de la tienda. Los congelados, al final, para que no se descongelen.</p></div>
 <div class="fila2"><button class="btn" data-acc="copiar">Copiar la lista</button><button class="btn" data-acc="reiniciar">Desmarcar todo</button></div>
 <form class="anadir" id="anadir"><input class="campo" id="extra" placeholder="Añadir algo más" autocomplete="off"><button class="btn prim">Añadir</button></form>
 ${secs||'<p class="p suave">Tu plan no tiene ingredientes que comprar.</p>'}${pedir}</div>`;
@@ -436,7 +437,7 @@ function vistaFuera(){
   const f=PLAN.fuera||[];
   const sitios=(PERFIL&&PERFIL.sitios||[]).join(", ");
   const hechasFuera=Object.values(REG).filter(r=>r.estado==="fuera").length;
-  return `<div class="pila g24" style="max-width:760px;width:100%;margin:0 auto"><div class="pila g8"><span class="ojo">Comer fuera</span><h2 class="tit">Cuando no comes en casa</h2><p class="p suave">${sitios?"Para "+esc(sitios)+". ":""}Esta semana has comido fuera ${hechasFuera} ${hechasFuera===1?"vez":"veces"}.</p></div>
+  return `<div class="pila g24" style="max-width:760px;width:100%;margin:0 auto"><div class="pila g8"><span class="ojo">Comer fuera</span><h2 class="tit">Qué pedir</h2><p class="p suave">${sitios?"Para "+esc(sitios)+". ":""}${hechasFuera?`Esta semana has comido fuera ${hechasFuera} ${hechasFuera===1?"vez":"veces"}.`:"Esta semana aún no has comido fuera."}</p></div>
 ${f.length?f.map(x=>`<section class="tarjeta"><span class="ojo oro">${esc(x.sitio)}</span><p class="p" style="font-size:15.5px;line-height:23px">${esc(x.consejo)}</p></section>`).join(""):'<p class="p suave">Tu plan no trae consejos para comer fuera.</p>'}
 <div class="aviso">Si un día comes fuera, márcalo en la carta de hoy con <strong>Como fuera</strong>: cuenta como comida hecha y la lista de la compra no cambia.</div></div>`;
 }
@@ -449,10 +450,10 @@ function vistaPlan(){
   const catHTML=cat.filter(c=>c.fuente===filtro).sort((a,b)=>b.proteinas-a.proteinas).map(c=>`<div class="cat"><span class="n">${esc(c.nombre)}</span><span class="m">${c.kcal} kcal · P${Math.round(c.proteinas)} H${Math.round(c.hidratos)} G${Math.round(c.grasas)}${c.precio?' <span style="white-space:nowrap">· '+Number(c.precio).toLocaleString("es-ES",{style:"currency",currency:"EUR"})+"</span>":""}</span>${c.url?`<a class="btn" href="${esc(c.url)}" target="_blank" rel="noopener" style="min-height:36px">Pedir</a>`:""}</div>`).join("");
   const act=CAT&&CAT.length?new Date(Math.max(...CAT.map(c=>+new Date(c.visto)))):null;
   return `<div class="pila g24" style="max-width:760px;width:100%;margin:0 auto">
-<div class="pila g8"><span class="ojo">Tu plan</span><h2 class="tit">${PLAN.origen==="nutricionista"?"La dieta de tu nutricionista":"Tu dieta, hecha a medida"}</h2><p class="p suave">Desde el ${creado.getDate()} de ${MESES[creado.getMonth()]}. ${esc(o.explicacion||"")}</p></div>
+<div class="pila g8"><span class="ojo">${PLAN.origen==="nutricionista"?"Importada":"Con IA"}</span><h2 class="tit">${PLAN.origen==="nutricionista"?"La dieta de tu nutricionista":"Tu dieta, hecha a medida"}</h2><p class="p suave">Desde el ${creado.getDate()} de ${MESES[creado.getMonth()]}. ${esc(o.explicacion||"")}</p></div>
 <div class="macro"><div><b>${fmt(o.kcal)}</b><span>kcal</span></div><div><b>${fmt(o.proteinas)} g</b><span>proteína</span></div><div><b>${fmt(o.hidratos)} g</b><span>hidratos</span></div><div><b>${fmt(o.grasas)} g</b><span>grasas</span></div></div>
 ${PLAN.notas?`<div class="aviso">${esc(PLAN.notas)}</div>`:""}
-<div class="pila g8"><button class="btn prim grande" data-acc="rehacer">Rehacer mi dieta con la IA</button><button class="btn grande" data-acc="importar">Importar la de mi nutricionista</button><button class="btn grande" data-acc="respuestas">Cambiar mis respuestas</button></div>
+<div class="pila g8"><button class="btn prim grande" data-acc="rehacer">Rehacer tu dieta con la IA</button><button class="btn grande" data-acc="importar">Importar la de tu nutricionista</button><button class="btn grande" data-acc="respuestas">Cambiar tus respuestas</button></div>
 <div class="aviso-nutri"><strong>Alacena no sustituye a un nutricionista.</strong> Si tienes alguna condición de salud (diabetes, hipertensión, enfermedad renal, embarazo o un trastorno de la conducta alimentaria), lo mejor es importar la dieta de uno.</div>
 <section class="pila"><div class="pila g8"><span class="ojo">Platos preparados</span><h2 class="tit" style="font-size:24px;line-height:29px">Wetaca y Knoweats</h2><p class="p suave">Sus cartas con kilocalorías y macros por ración, para pedir cuando no te apetezca cocinar. Se actualizan solas${act?"; la última vez, el "+act.getDate()+" de "+MESES[act.getMonth()]:""}.</p></div>
 <div class="fila2"><button class="chip" data-fcat="wetaca" aria-pressed="${filtro==="wetaca"}">Wetaca</button><button class="chip" data-fcat="knoweats" aria-pressed="${filtro==="knoweats"}">Knoweats</button></div>
@@ -467,8 +468,8 @@ function inicioHTML(){
 <img src="../iconos/alacena-192.png?v=1" alt="" width="76" height="76" style="border-radius:17px;box-shadow:0 8px 14px rgba(0,0,0,.28)">
 <h1 class="marca" style="margin:0;font-size:52px;line-height:56px;color:var(--app-t)">Alacena</h1><p class="p" style="font-family:var(--f-tit);font-style:italic;font-size:22px;line-height:28px;color:var(--oro-t)">¿Qué comemos hoy?</p></div>
 <p class="p suave" style="text-align:center;text-wrap:balance">Vamos a preparar tu plan de comidas. Elige cómo empezar.</p>
-<div class="pila"><button class="eleccion oro" data-acc="crear"><b>Crear mi dieta desde cero</b><span>Con la IA, a partir de unas preguntas sobre ti, tus gustos y tu cocina. Unos&nbsp;5&nbsp;minutos.</span></button>
-<button class="eleccion" data-acc="importar"><b>Importar la de mi nutricionista</b><span>Subes el PDF o una foto y la IA la convierte en tu plan. Tú lo revisas antes de&nbsp;guardarlo.</span></button></div>
+<div class="pila"><button class="eleccion oro" data-acc="crear"><b>Crear tu dieta desde cero</b><span>Con la IA, a partir de unas preguntas sobre ti, tus gustos y tu cocina. Unos&nbsp;5&nbsp;minutos.</span></button>
+<button class="eleccion" data-acc="importar"><b>Importar la de tu nutricionista</b><span>Subes el PDF o una foto y la IA la convierte en tu plan. Tú lo revisas antes de&nbsp;guardarlo.</span></button></div>
 <div class="aviso-nutri"><strong>Alacena no sustituye a un nutricionista.</strong> Si tienes alguna condición de salud (diabetes, hipertensión, enfermedad renal, embarazo o un trastorno de la conducta alimentaria), lo mejor es importar la dieta de uno.</div>
 <div id="firma"></div><button class="enlace" data-acc="salir" style="align-self:center">Cerrar sesión</button></div>`;
 }
@@ -640,7 +641,7 @@ const PASOS=[
     {k:"modo",label:"Tu forma de comer",cols:1,ops:["Cocinarlo todo","Mezclar con platos preparados","Con comida a domicilio (Wetaca, Knoweats)"]},
     {k:"tiempo",label:"Tiempo para cocinar cada día",cols:4,ops:["15 min","30 min","45 min","1 h o más"]},
     {k:"tandas",label:"¿Cocinar por tandas un día a la semana?",cols:2,ops:["Sí, un día","No, cada día"]}]},
-  {titulo:"Comer fuera",intro:"Para darte opciones cuando no comas en casa.",preguntas:[
+  {titulo:"Comer fuera",intro:"Así sabrá qué proponerte en tus sitios de siempre.",preguntas:[
     {k:"fuera",label:"Veces por semana",cols:5,ops:["0","1","2","3","4+"]},
     {k:"sitios",label:"Dónde sueles comer",cols:2,multi:true,ops:["Menú del día","Japonés","Italiano","Asador","Hamburguesería","En la oficina"]}]},
   {titulo:"La compra",intro:"La lista saldrá sumada y por secciones de la tienda.",preguntas:[
@@ -679,7 +680,7 @@ function pintaCuestionario(){
   if(c.vista==="fin"){
     const res=PASOS.map(P=>{const v=[];for(const q of P.preguntas){if(q.tipo==="campos"){for(const f of q.campos)if(c.r[f.k])v.push(f.label+": "+c.r[f.k]+({años:" años",cm:" cm",kg:" kg"}[f.ph]||""))}else{const x=c.r[q.k];if(Array.isArray(x)?x.length:x)v.push(Array.isArray(x)?x.join(", "):x)}}return `<div><b>${esc(P.titulo)}</b><span>${esc(v.join(" · ")||"Sin responder")}</span></div>`}).join("");
     cuerpo=`<div class="pila g8"><span class="ojo">Resumen</span><h2 class="tit">Todo listo</h2><p class="p suave">La IA preparará tu semana: menú, recetas solo con tus aparatos y la lista de la compra por secciones. Podrás cambiar cualquier plato.</p></div><div class="resumen">${res}</div>${c.error?`<p class="p cue error" role="alert">${esc(c.error)}</p>`:""}`;
-    nav=`<button class="btn grande" data-cue="atras">Atrás</button><button class="btn prim grande" data-cue="crear">Crear mi dieta</button>`;
+    nav=`<button class="btn grande" data-cue="atras">Atrás</button><button class="btn prim grande" data-cue="crear">Crear tu dieta</button>`;
   }
   if(c.vista==="importar"){
     cuerpo=`<div class="pila g8"><span class="ojo">Importar</span><h2 class="tit">La dieta de tu nutricionista</h2><p class="p suave">Sube el PDF o haz una foto de cada hoja. La IA la convierte en tu plan y tú lo revisas antes de guardarlo.</p></div>
@@ -688,7 +689,7 @@ function pintaCuestionario(){
 ${c.archivos.length?`<div class="archivos">${c.archivos.map((a,i)=>`<div><span>${esc(a.nombre)}</span><button class="enlace" data-quitaf="${i}" style="padding:0">Quitar</button></div>`).join("")}</div>`:""}</div>
 <div class="pila g8"><b style="font-size:14px">Qué saca de tu dieta</b><div class="fila2"><div class="tarjeta" style="padding:12px;font-size:14px;line-height:20px">Comidas y horarios</div><div class="tarjeta" style="padding:12px;font-size:14px;line-height:20px">Cantidades de cada plato</div><div class="tarjeta" style="padding:12px;font-size:14px;line-height:20px">Alternativas e intercambios</div><div class="tarjeta" style="padding:12px;font-size:14px;line-height:20px">Indicaciones para días de entreno</div></div></div>
 <p class="p suave" style="font-size:14px">Las cantidades de tu nutricionista se respetan tal cual: la IA solo las ordena en la app, no las cambia.</p>${c.error?`<p class="p cue error" role="alert">${esc(c.error)}</p>`:""}`;
-    nav=`<button class="btn grande" data-cue="atras">Atrás</button><button class="btn prim grande" data-cue="convertir"${c.archivos.length?"":" disabled"}>Convertir en mi plan</button>`;
+    nav=`<button class="btn grande" data-cue="atras">Atrás</button><button class="btn prim grande" data-cue="convertir"${c.archivos.length?"":" disabled"}>Convertir en tu plan</button>`;
   }
   if(c.vista==="creando"){
     cuerpo=`<div class="creando"><svg width="120" height="120" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" fill="#FBF8F2" stroke="#B8954A" stroke-width="2.4"/><circle cx="60" cy="60" r="49" fill="none" stroke="#B8954A" stroke-width=".8"/><circle cx="60" cy="60" r="36" fill="none" stroke="#DED5C4" stroke-width="1.2"/>${[0,1,2,3,4].map(i=>{const a=(-90+72*i)*Math.PI/180;return `<circle cx="${(60+42.5*Math.cos(a)).toFixed(1)}" cy="${(60+42.5*Math.sin(a)).toFixed(1)}" r="2.6" fill="#B8954A" opacity="${.3+i*.17}"/>`}).join("")}</svg>
@@ -698,11 +699,11 @@ ${c.archivos.length?`<div class="archivos">${c.archivos.map((a,i)=>`<div><span>$
     const p=c.plan,o=p.objetivo||{};
     const lunes=(p.dias.find(d=>d.dia==="L")||{menu:[]}).menu.map(m=>{const pl=p.platos.find(x=>x.id===m.plato),co=p.comidas.find(x=>x.clave===m.comida);return pl&&co?`<div class="linea" style="cursor:default"><span class="nom">${esc(co.nombre)}</span><span class="pl">${esc(pl.nombre)}</span></div>`:""}).join("");
     const vacio=!p.platos.length;
-    cuerpo=`<div class="pila g8"><span class="ojo">Revísalo</span><h2 class="tit">${vacio?"No ha salido un plan":"Tu plan, listo"}</h2><p class="p suave">${esc(o.explicacion||"")}</p></div>
+    cuerpo=`<div class="pila g8"><span class="ojo">${c.origen==="nutricionista"?"De tu nutricionista":"Con IA"}</span><h2 class="tit">${vacio?"No ha salido un plan":"Tu plan, listo"}</h2><p class="p suave">${esc(o.explicacion||"")}</p></div>
 ${vacio?"":`<div class="macro"><div><b>${fmt(o.kcal)}</b><span>kcal</span></div><div><b>${fmt(o.proteinas)} g</b><span>proteína</span></div><div><b>${fmt(o.hidratos)} g</b><span>hidratos</span></div><div><b>${fmt(o.grasas)} g</b><span>grasas</span></div></div>
 <section class="dia"><div class="cab"><b>Así sería el lunes</b><span>${p.platos.length} platos en la semana</span></div>${lunes}</section>`}
 ${p.notas?`<div class="aviso">${esc(p.notas)}</div>`:""}${c.error?`<p class="p cue error" role="alert">${esc(c.error)}</p>`:""}`;
-    nav=`<button class="btn grande" data-cue="otra">${c.origen==="nutricionista"?"Volver":"Hacer otra"}</button><button class="btn prim grande" data-cue="guardar"${vacio?" disabled":""}>Guardar mi plan</button>`;
+    nav=`<button class="btn grande" data-cue="otra">${c.origen==="nutricionista"?"Volver":"Hacer otra"}</button><button class="btn prim grande" data-cue="guardar"${vacio?" disabled":""}>Guardar tu plan</button>`;
   }
   const cerrar=PLAN&&c.vista!=="creando"?`<button class="enlace" data-cue="cerrar" style="align-self:flex-end;margin-bottom:-16px">Cerrar</button>`:"";
   app.innerHTML=`<div class="cue">${cerrar}${cuerpo}</div>`+(nav?`<div class="navcue"><div>${nav}</div></div>`:"");
