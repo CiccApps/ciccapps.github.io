@@ -203,7 +203,7 @@ body.con-pestanas{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 
 /* ventanas emergentes: la pieza común de ciccapps.css (.cc-velo > .cc-hoja > .cc-cab); aquí, sus colores y el contenido */
 .cc-hoja{background:var(--fondo);color:var(--tinta);box-shadow:0 -8px 30px rgba(0,0,0,.25)}
-.cc-cab .ojo{display:block;margin-bottom:4px}
+.cc-sub{color:var(--suave);text-wrap:balance}
 .cc-cab h2{font-family:var(--f-tit);font-weight:500;font-size:24px;line-height:29px;text-wrap:balance}
 .cc-cerrar{color:var(--suave)}
 .hoja-cuerpo{display:flex;flex-direction:column;gap:16px;padding-top:10px}
@@ -553,7 +553,7 @@ function hoja(cab,html){
   h.cerrar=cerrar;h.focus({preventScroll:true});
   return h;
 }
-const cabHoja=(t,ojo)=>`<div class="cc-cab"><div>${ojo?`<span class="ojo">${esc(ojo)}</span>`:""}<h2>${esc(t)}</h2></div><button class="cc-cerrar" data-cerrar aria-label="Cerrar">×</button></div>`;
+const cabHoja=(t,sub)=>`<div class="cc-cab"><div><h2>${esc(t)}</h2>${sub?`<span class="cc-sub">${esc(sub)}</span>`:""}</div><button class="cc-cerrar" data-cerrar aria-label="Cerrar">×</button></div>`;
 
 async function hojaPlato(id){
   const p=plato(id);if(!p)return;
