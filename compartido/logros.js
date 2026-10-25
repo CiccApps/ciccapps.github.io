@@ -250,9 +250,9 @@
       }
       hoja.innerHTML = '<div class="cl-cab cl-con-barra"><div>' + (cfg.nombre ? '<span class="cl-ante">' + esc(cfg.nombre) + '</span>' : '') + '<h2 id="clTit">Vitrina</h2>' +
         '<span class="cl-cuenta"><b>' + ganadas + '</b> de ' + total + ' medallas</span></div><button type="button" class="cl-cerrar" aria-label="Cerrar">×</button>' +
-        '<div class="cl-barra"><i style="width:' + (total ? Math.round(ganadas / total * 100) : 0) + '%"></i></div></div>' +
+        '<div class="cl-barra"><i style="width:' + (total ? Math.round(ganadas / total * 100) : 0) + '%"></i></div></div><div class="cc-cuerpo">' +
         (con.length ? '<div class="cl-grupo"><span class="cl-eti">Conseguidas</span>' + rejilla(con, 'con') + '</div>' : '<p class="cl-vacio-txt">Aún no tienes medallas. La primera llega antes de lo que crees.</p>') +
-        (pend.length ? '<div class="cl-grupo"><span class="cl-eti">Pendientes</span>' + rejilla(pend, 'pend') + '</div>' : '');
+        (pend.length ? '<div class="cl-grupo"><span class="cl-eti">Pendientes</span>' + rejilla(pend, 'pend') + '</div>' : '') + '</div>';
       hoja.querySelector('.cl-cerrar').onclick = cerrar;
       hoja.querySelectorAll('.cl-med').forEach(function (b) { b.onclick = function () { detalle(b.dataset.app, b.dataset.clave); }; });
     }
@@ -264,11 +264,11 @@
         return '<li class="' + (ok ? 'cl-ok' : '') + '"><span>' + nombreNivel(l, k) + '</span><span>' + (secreto ? '?' : niv.length === 1 && u === 1 ? '' : num(u) + unidad(l, u)) + '</span><span>' + (ok ? fecha(f.fechas && f.fechas[k]) : '—') + '</span></li>';
       }).join('');
       hoja.innerHTML = '<div class="cl-cab"><button type="button" class="cl-volver">‹ Vitrina</button><button type="button" class="cl-cerrar" aria-label="Cerrar">×</button></div>' +
-        '<div class="cl-detalle">' + medalla(f.nivel ? { nivel: f.nivel, motivo: l.motivo, especial: especial(l) } : { nivel: 0, motivo: l.motivo, progreso: s ? s.parte : 0, secreto: secreto, especial: especial(l) }) +
+        '<div class="cc-cuerpo"><div class="cl-detalle">' + medalla(f.nivel ? { nivel: f.nivel, motivo: l.motivo, especial: especial(l) } : { nivel: 0, motivo: l.motivo, progreso: s ? s.parte : 0, secreto: secreto, especial: especial(l) }) +
         '<h2 id="clTit">' + (secreto ? 'Logro secreto' : esc(l.nombre)) + '</h2><p>' + (secreto ? 'Se revela al conseguirlo.' : esc(l.texto)) + '</p>' +
         (s && !secreto && niv.length > 1 ? '<p class="cl-falta">' + (s.falta === 1 ? 'Falta ' : 'Faltan ') + num(s.falta) + unidad(l, s.falta) + ' para ' + NIVEL[s.nivel].toLowerCase() + '</p>' : '') +
         (s && niv.length === 1 && niv[0] > 1 ? '<p class="cl-falta">' + (s.falta === 1 ? 'Falta ' : 'Faltan ') + num(s.falta) + unidad(l, s.falta) + '</p>' : '') +
-        '<ul class="cl-niveles">' + filas + '</ul></div>';
+        '<ul class="cl-niveles">' + filas + '</ul></div></div>';
       hoja.querySelector('.cl-cerrar').onclick = cerrar;
       hoja.querySelector('.cl-volver').onclick = function () { lista(); hoja.focus(); };
       hoja.scrollTop = 0; hoja.focus();

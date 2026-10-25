@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/bitacora-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/bitacora-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=29">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=30">
 <link rel="stylesheet" href="../compartido/logros.css?v=12">
 <style>
 /* Layout: resumen + "ahora" arriba; tres vistas (Plan con estanterías por etapa, ¿Qué leo? por mood, Compras); ficha del libro como hoja inferior */
@@ -203,7 +203,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:max(env(safe-area-i
 /* En la exterior del Duo (zona segura de arriba 0): 22 px de aire arriba, como Platea. La página empieza ahí,
    las pestañas fijas se quedan ahí al bajar y los saltos de la barra lateral también; el difuminado de iOS se deja tal cual */
 html.con-rail{scroll-padding-top:22px}
-html.con-rail body::before{height:max(env(safe-area-inset-top,0px),22px)}
+html.con-rail body::before{height:env(safe-area-inset-top,0px)}
 html.con-rail .wrap{padding-top:22px!important}
 html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),22px)}
 html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),22px) + 42px)}
@@ -397,7 +397,7 @@ h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:4
 
 <script src="../compartido/supabase.js"></script>
 <script src="../compartido/cuenta.js?v=20"></script>
-<script src="../compartido/logros.js?v=7"></script>
+<script src="../compartido/logros.js?v=8"></script>
 <script>
 const MOODS={
  engancha:["Que me enganche","No poder soltarlo"],
