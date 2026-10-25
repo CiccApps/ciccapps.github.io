@@ -99,13 +99,13 @@
 
 /* Ventanas emergentes (comunes: la vitrina de medallas y cualquier hoja de las apps, con .cc-velo > .cc-hoja > .cc-cab).
    En el móvil, hoja desde abajo; en el ordenador, ventana centrada. Con la franja lateral del iPhone Duo (inset derecho de 44px o más)
-   flota con 20px de margen a los lados, abajo y bajo la zona segura de arriba, sobre el fondo difuminado; sus esquinas de abajo siguen
-   la curva de la pantalla (--cc-curva). Arriba a la derecha no se recorta: iOS pone ahí la hora, la batería o la burbuja de la música,
+   flota con 20px de margen a los lados, abajo y bajo la zona segura de arriba, sobre el fondo difuminado, con forma de D como la pantalla
+   exterior: a la derecha, la curva de la pantalla (--cc-curva); a la izquierda, la bisagra, esquinas casi rectas. Arriba a la derecha no se recorta: iOS pone ahí la hora, la batería o la burbuja de la música,
    así que es una zona reservada sin datos de --cc-muesca-w × --cc-muesca-h (medida desde la esquina de la hoja), que la X y lo que va
    a la derecha esquivan. Fuera del Duo, las variables valen 0. */
 :root {
   --cc-duo: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 20px);
-  --cc-curva: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 34px);
+  --cc-curva: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 40px);
   --cc-muesca-w: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, env(safe-area-inset-right, 0px) - 20px);
   --cc-muesca-h: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 140px - env(safe-area-inset-top, 0px));
 }
@@ -119,7 +119,7 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
   box-sizing: border-box; width: calc(100% - 2 * var(--cc-duo)); margin-bottom: var(--cc-duo);
   max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px - .8 * var(--cc-duo)); overflow-y: auto; overscroll-behavior: contain;
   padding: 6px 20px calc(max(0px, env(safe-area-inset-bottom, 0px) - var(--cc-duo)) + 20px);
-  border-radius: 20px 20px var(--cc-curva) var(--cc-curva);
+  border-radius: calc(20px - .6 * var(--cc-duo)) max(20px, var(--cc-curva)) var(--cc-curva) calc(.4 * var(--cc-duo));
   transform: translateY(calc(100% + var(--cc-duo))); transition: transform .3s cubic-bezier(.2, .8, .3, 1);
 }
 .cc-velo.cc-dentro .cc-hoja, .cl-vitrina.cl-dentro .cl-hoja { transform: none; }
