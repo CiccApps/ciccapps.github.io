@@ -103,8 +103,9 @@ header p{margin:0;color:var(--muted);max-width:58ch}
 .now-card .bar{max-width:280px}
 .hint{font-size:13px;color:var(--muted);margin:0}
 
-.tabs{display:flex;gap:4px;background:var(--empty);padding:4px;border-radius:10px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.tabs{display:flex;gap:4px;background:var(--empty);padding:4px;border-radius:10px;position:sticky;top:max(env(safe-area-inset-top,0px),14px);z-index:5}
+/* franja opaca arriba (la zona segura o, si es 0, 14 px): tapa lo que pasa por detrás de la hora y del difuminado de iOS, y deja aire sobre las pestañas fijas */
+body::before{content:"";position:fixed;inset:0 0 auto;height:max(env(safe-area-inset-top,0px),14px);z-index:10;background:var(--paper)}
 .tab{flex:1;padding:9px 6px;border:none;border-radius:7px;background:transparent;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted)}
 .tab[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
 .tab .ct{font-family:var(--f-mono);font-size:11px;margin-left:4px;color:var(--gold)}
@@ -115,7 +116,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .shelf-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:inherit;font-size:12px;color:var(--muted);background:none;border:0;padding:4px 0;margin:-4px 0;text-align:left;cursor:pointer;width:100%}
 .shelf-head .ir{display:inline-block;margin-left:2px;color:var(--gold);transition:transform .2s}.shelf-head:hover .ir{transform:translateY(2px)}.shelf-head:hover strong{text-decoration:underline;text-underline-offset:3px}
 .shelf-head:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
-.stage{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 64px)}
+.stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),14px) + 62px)}
 .shelf-head strong{color:var(--ink);font-weight:600}
 .shelf{display:flex;flex-wrap:wrap;align-items:flex-end;gap:3px;padding:0 4px;border-bottom:5px solid var(--shelf);min-height:70px}
 .spine{border:1.5px solid var(--sc);border-bottom-width:0 !important;border-radius:2px 2px 0 0;background:transparent;cursor:pointer;padding:0;position:relative;transition:transform .2s,background .3s}
@@ -199,12 +200,11 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .cl-cuenta b{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums tabular-nums}
 .vit-txt{display:flex;align-items:center;gap:10px;min-width:0}
 #vitrinaMed{display:block;width:24px;flex:none}
-/* Con barra lateral, al saltar a una zona se deja un poco de aire arriba */
-html.con-rail{scroll-padding-top:14px}
-/* En la pantalla exterior del Duo la zona segura de arriba es 0: las pestañas fijas y la franja que tapa lo que pasa por detrás dejan 14 px */
-html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),14px)}
-html.con-rail body::before{height:max(env(safe-area-inset-top,0px),14px)}
-html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),14px) + 48px)}
+/* En la exterior del Duo iOS difumina unos 40 px arriba: la franja opaca crece a 44 px y las pestañas fijas quedan justo debajo, legibles (como Vinilo y la portada) */
+html.con-rail{scroll-padding-top:44px}
+html.con-rail body::before{height:max(env(safe-area-inset-top,0px),44px)}
+html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),44px)}
+html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),44px) + 18px)}
 .rail{z-index:15;display:none}
 .rail.si{display:flex}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
