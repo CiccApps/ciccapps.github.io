@@ -137,9 +137,13 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
     transform: translateY(16px) scale(.98); opacity: 0; transition: transform .25s, opacity .25s; }
   .cc-velo.cc-dentro .cc-hoja, .cl-vitrina.cl-dentro .cl-hoja { opacity: 1; }
 }
-/* Cabecera: título a la izquierda y la X a la derecha, fija al desplazar; en el Duo, la X y lo que va a la derecha se apartan de la muesca */
-.cc-cab, .cl-cab { position: sticky; top: -6px; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 -4px; padding: 10px 4px 6px; background: inherit; }
-.cc-cab { margin-bottom: max(0px, var(--cc-muesca-h) - 60px); }
+/* Cabecera: franja fija arriba con el título (y, si la hay, su frase .cc-sub debajo, pequeña) a la izquierda y la X a la derecha.
+   En el Duo llega siempre hasta el final de la zona de la hora y la batería (--cc-muesca-h): lo que se desplaza pasa por debajo
+   de la franja y nunca se mete ahí. La X y lo que va a la derecha se apartan de la muesca. Lo que va a todo el ancho
+   (como la barra de la vitrina) cierra la franja, debajo de esa zona. */
+.cc-cab, .cl-cab { position: sticky; top: -6px; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: space-between; column-gap: 12px;
+  box-sizing: border-box; min-height: var(--cc-muesca-h); margin: 0 -4px; padding: 10px 4px 6px; background: inherit; }
+.cc-sub { display: block; margin: 4px 0 0; font-size: 14px; line-height: 1.35; color: var(--cc-tinta-suave); }
 .cc-cab h2 { margin: 0; font-family: var(--cc-display); font-weight: 400; font-size: 26px; line-height: 1.15; }
 .cc-cerrar, .cl-cerrar { font: inherit; width: 44px; min-height: 44px; font-size: 34px; line-height: 1; color: var(--cc-tinta-suave); background: none; border: 0; border-radius: 10px; cursor: pointer; margin-left: auto; }
 .cc-cab .cc-cerrar, .cl-cab .cl-cerrar { margin-right: max(0px, var(--cc-muesca-w) - 16px); }

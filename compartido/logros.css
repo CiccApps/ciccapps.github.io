@@ -44,11 +44,14 @@
 .cl-volver { font: inherit; color: var(--cl-tinta); background: none; border: 0; cursor: pointer; border-radius: 10px; min-height: 44px; }
 .cl-volver { padding: 0 8px 0 0; font-size: 15px; color: var(--cl-oro); font-weight: 600; }
 .cl-cerrar:focus-visible, .cl-volver:focus-visible, .cl-med:focus-visible { outline: 2px solid var(--cl-oro); outline-offset: 2px; }
-.cl-cuenta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; color: var(--cl-suave); padding-right: max(0px, var(--cc-muesca-w) - 12px); }
+.cl-cuenta { display: block; margin-top: 4px; font-size: 14px; color: var(--cl-suave); }
 .cl-cuenta b { font-family: var(--cl-serif); font-size: 20px; font-weight: 400; color: var(--cl-tinta); }
 /* antetítulo con el nombre de la app, como en las demás ventanas */
 .cl-ante { display: block; margin-bottom: 2px; font-family: var(--cl-sans); font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--cl-suave); }
-.cl-barra { height: 4px; margin: max(8px, var(--cc-muesca-h) - 102px) 0 4px; border-radius: 2px; background: var(--cl-vacio); overflow: hidden; }
+/* la barra cierra la franja fija de arriba, a todo el ancho y, en el Duo, ya debajo de la hora y la batería */
+.cl-cab.cl-con-barra { min-height: calc(var(--cc-muesca-h) + 18px); }
+.cl-cab > .cl-barra { grid-column: 1 / -1; }
+.cl-barra { height: 4px; margin: 10px 0 2px; border-radius: 2px; background: var(--cl-vacio); overflow: hidden; }
 .cl-barra i { display: block; height: 100%; background: var(--cl-oro); border-radius: 2px; }
 .cl-grupo { margin-top: 20px; }
 .cl-grupo > .cl-eti { display: block; margin-bottom: 10px; }
