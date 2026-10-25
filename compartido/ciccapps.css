@@ -102,10 +102,11 @@
 .rail.r-der { top: max(env(safe-area-inset-top, 0px), 20px); right: 0; gap: 8px; }
 .rail.r-izq { top: auto; bottom: max(env(safe-area-inset-bottom, 0px), 20px); right: auto; left: 0; width: env(safe-area-inset-left, 0px); gap: 8px; }
 /* Pantallas anchas: en el margen derecho, junto al contenido (el JS calcula --rail-x) y centrada en alto */
-.rail.r-ancha { top: 50%; right: var(--rail-x, 24px); width: 44px; transform: translateY(-50%); }
+.rail.r-ancha { top: 50svh; right: var(--rail-x, 24px); width: 44px; transform: translateY(-50%); }
 /* iPhone y pantallas sin sitio en el margen: un botón abajo a la derecha que la despliega hacia arriba */
 .rail .rail-abrir { display: none; }
-.rail.r-boton { top: auto; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); width: 44px; }
+/* anclado con svh (el alto pequeño, que no cambia al desplazar) para que no se mueva con la página; crece hacia arriba */
+.rail.r-boton { top: calc(100svh - env(safe-area-inset-bottom, 0px) - 16px); right: max(16px, env(safe-area-inset-right, 0px)); width: 44px; transform: translateY(-100%); }
 .rail.r-boton > :not(.rail-abrir) { display: none; }
 .rail.r-boton.abierta > * { display: grid; }
 .rail.r-boton .rail-abrir { display: grid; }
