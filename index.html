@@ -109,13 +109,16 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 :is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) p { text-wrap: balance; }
 @media (min-width: 900px) {
   .familias { gap: 44px; }
-  /* En el ordenador todas las filas miden lo mismo: dos tarjetas, o una a lo ancho */
+  /* En la pantalla grande y en el ordenador cada fila llena el ancho: dos apps, mitad y mitad; una, la fila entera con el icono a la izquierda */
   .apps { display: flex; justify-content: center; gap: 20px; }
-  .apps > .app { flex: 0 1 calc((100% - 60px) / 4); }
+  .apps > .app { flex: 1 1 0; min-width: 0; padding: 32px 24px 22px; }
+  .app img { width: 104px; height: 104px; }
+  .app h3 { font-size: 26px; }
+  .app p { font-size: 16px; max-width: 36ch; }
   :is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) { grid-column: auto; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 28px 18px 18px; }
   :is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) .ico { margin-bottom: 4px; }
   :is(.apps:not(.al-final) > .app:first-child:nth-last-child(odd), .apps.al-final > .app:last-child:nth-child(odd)) small { align-self: center; }
-  .familia .apps > .app:first-child:only-child { flex-basis: calc((100% - 60px) / 2 + 20px); display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 22px; row-gap: 6px; align-items: center; text-align: left; padding: 24px 26px; }
+  .familia .apps > .app:first-child:only-child { display: grid; grid-template-columns: auto minmax(0, max-content); column-gap: 28px; row-gap: 6px; align-items: center; justify-content: center; text-align: left; padding: 28px 32px; }
   .familia .apps > .app:first-child:only-child .ico { grid-row: 1 / span 3; margin: 0; }
   .familia .apps > .app:first-child:only-child small { align-self: start; justify-self: start; }
 }
