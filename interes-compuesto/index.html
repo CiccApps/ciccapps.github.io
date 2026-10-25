@@ -1,6 +1,6 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}*{touch-action:manipulation}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 /* móvil: pasos en una fila de cuatro, el contador encima y el resto en una fila que se reparte por igual */
-@media (max-width: 760px) {
+@media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) {
   .bar { display: flex; flex-wrap: wrap; gap: 8px; }
   .bar .nav { flex: 1 1 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   .bar .nav .stepinfo { grid-column: 1 / -1; order: -1; text-align: center; }
@@ -8,9 +8,9 @@
   .bar button { justify-content: center; padding-inline: 6px; font-size: 13px; }
   .bar .grow { display: none; }
 }
-@media (max-width: 760px) { .note, .note * { white-space: normal !important; } .note .seg { white-space: nowrap !important; } .bar > button .lbl { display: none; } #toggleData::after { content: "Datos"; } #full::after { content: "Ampliar"; } #reset::after { content: "Reiniciar"; } .hint-pc { display: none; } .tablewrap { -webkit-overflow-scrolling: touch; } }
+@media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { .note, .note * { white-space: normal !important; } .note .seg { white-space: nowrap !important; } .bar > button .lbl { display: none; } #toggleData::after { content: "Datos"; } #full::after { content: "Ampliar"; } #reset::after { content: "Reiniciar"; } .hint-pc { display: none; } .tablewrap { -webkit-overflow-scrolling: touch; } }
 @media (max-width: 430px) { .bar .nav .nlbl { display: none; } }
-.hint-movil { display: none; } @media (max-width: 760px) { .hint-movil { display: block; } }
+.hint-movil { display: none; } @media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { .hint-movil { display: block; } }
 </style><title>Interés compuesto</title>
 <meta name="description" content="La simulación de ahorro para enseñar en tus reuniones.">
 <meta name="theme-color" content="#E9ECF2">
@@ -192,7 +192,7 @@ button { display: inline-flex; align-items: center; gap: 7px; }
 .hint { font-size: 12.5px; color: var(--muted); }
 .copy { margin: 0; font-size: 11px; line-height: 1.45; color: var(--muted); opacity: .8; }
 .wrap:fullscreen .copy { display: none; }
-@media screen and (max-width: 760px) { .panel[hidden] ~ .copy { display: none; } .copy { text-align: center; text-wrap: balance; } }
+@media screen and (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { .panel[hidden] ~ .copy { display: none; } .copy { text-align: center; text-wrap: balance; } }
 @media print { .copy { display: none !important; } }
 
 /* ---------- panel de datos ---------- */
@@ -234,7 +234,7 @@ select.in { text-align: left; }
 .pgrid .in:disabled { opacity: .45; }
 .small { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
 .panel p.small { margin: 2px 0 0; }
-@media (max-width: 760px) { .bar .grow { display: none; } .bar { justify-content: flex-start; } }   /* mismas distancias en todas las notas de Datos */
+@media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { .bar .grow { display: none; } .bar { justify-content: flex-start; } }   /* mismas distancias en todas las notas de Datos */
 .row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .panel[hidden] { display: none; }
 .ttime { margin: 2px 0 0; font-size: 14px; line-height: 1.55; }
@@ -259,7 +259,7 @@ select.in { text-align: left; }
 .cnum { font-family: var(--font-black); font-weight: 900; font-size: 3.3cqw; line-height: 1.1; white-space: nowrap; }
 .cbox.ko .cnum { color: #C2186E; } .cbox.ok .cnum { color: #007A7A; }
 .cbox .cap { font-size: 1.35cqw; margin: 0; }
-@media (max-width: 760px) {
+@media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) {
   .comp h2 { font-size: 22px; } .clead { font-size: 15px; } .cnum { font-size: 26px; } .cbox .cap { font-size: 12px; }
   .cboxes { grid-template-columns: 1fr; gap: 10px; } .ccard { width: 90%; gap: 14px; } .cbox { padding: 14px 8px; }
 }
@@ -272,7 +272,7 @@ select.in { text-align: left; }
 
 /* ---------- pantallas estrechas: la diapositiva deja de ser 16:9 ---------- */
 @media (max-width: 900px) { .panel { grid-template-columns: 1fr; } }
-@media (max-width: 760px) {
+@media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) {
   .stage { aspect-ratio: auto; }
   .slide { position: static; padding: 18px 14px; gap: 14px; font-size: 14px; }
   h1 { font-size: 24px; }
@@ -302,7 +302,7 @@ td.wy { color: var(--pink); }
 .chk input { width: 18px; height: 18px; accent-color: var(--navy); }
 .sub { display: grid; gap: 10px; padding-left: 12px; border-left: 3px solid var(--lav); }
 .sub[aria-disabled="true"] { opacity: .45; }
-@media (max-width: 760px) { table.dense td, table.xdense td { font-size: 13px; padding-block: 7px; } }
+@media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { table.dense td, table.xdense td { font-size: 13px; padding-block: 7px; } }
 </style>
 <style>
 /* ---------- exportar en PDF: botón verde azulado (como «Reiniciar» en rosa), junto a las demás herramientas ---------- */
@@ -310,12 +310,12 @@ td.wy { color: var(--pink); }
 #pdf:hover { border-color: #007A7A; background: #E0F4F4; }
 .wrap:fullscreen #pdf { display: none; }        /* como «Reiniciar»: en pantalla completa se presenta, no se exporta */
 .ppage { display: none; }
-@media (max-width: 760px) { #pdf.busy::after { content: "Generando…"; } #pdf.busy .ic { display: none; } }
+@media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { #pdf.busy::after { content: "Generando…"; } #pdf.busy .ic { display: none; } }
 .printing * { transition: none !important; }
 /* pantallas medianas: la navegación en una fila y las cuatro herramientas en otra (sin botones sueltos) */
 @media (max-width: 1199px) { .bar { flex-wrap: wrap; } }
 @media (min-width: 761px) and (max-width: 1199px) { .bar .nav { flex: 1 1 100%; } .bar .grow { display: none; } }
-@media (max-width: 760px) { #pdf::after { content: "PDF"; } }
+@media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { #pdf::after { content: "PDF"; } }
 /* móvil estrecho con las cuatro herramientas: dos filas de dos, alineadas con las columnas de los pasos */
 @media (max-width: 480px) {
   .bar:has(> #full:not([hidden])) > button { flex: 1 1 calc(50% - 5px); }
@@ -326,7 +326,7 @@ td.wy { color: var(--pink); }
 /* móvil: como en el escritorio, la tarjeta tiene un tamaño fijo (el alto de la pantalla menos la barra) y cada
    elemento ocupa ya su sitio desde el paso 0: al avanzar solo aparece, nada se mueve ni hace desplazar la página.
    Todos los botones van en una barra fija abajo: pasos arriba, herramientas debajo. */
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) {
   /* un solo espaciado: 16 px alrededor de la tarjeta, 12 px sobre los botones y 8 px entre filas; bajo los botones,
      la zona de la barra de inicio del iPhone, sin margen extra */
   :root { padding-bottom: 0; --m: 16px; --bpad: max(12px, calc(env(safe-area-inset-bottom, 0px) - 8px)); --barh: calc(105px + var(--bpad)); }
@@ -413,9 +413,29 @@ td.wy { color: var(--pink); }
 @media screen and (max-width: 760px), screen and (pointer: coarse) and (max-width: 1199px) and (min-height: 600px) {
   body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--page); z-index: 40; pointer-events: none; }
 }
+/* móvil girado en horizontal (iPhone Duo cerrado, iPhone SE): la diapositiva 16:9 lo más grande posible y los botones en
+   una columna a la derecha, solo con iconos; la página queda clavada mientras «Datos» está cerrado */
+@media screen and (max-width: 760px) and (orientation: landscape) and (max-height: 600px) and (pointer: coarse) {
+  :root { --m: 16px; padding-bottom: 0; }
+  body { padding: var(--m) calc(max(var(--m), env(safe-area-inset-right, 0px)) + 56px) max(var(--m), env(safe-area-inset-bottom, 0px)) max(var(--m), env(safe-area-inset-left, 0px)); }
+  .wrap:not(:fullscreen) { gap: var(--m); align-content: center;
+    min-height: calc(100dvh - env(safe-area-inset-top, 0px) - var(--m) - max(var(--m), env(safe-area-inset-bottom, 0px)));
+    max-width: calc((100dvh - env(safe-area-inset-top, 0px) - var(--m) - max(var(--m), env(safe-area-inset-bottom, 0px))) * 16 / 9); }
+  .hint { display: none !important; }
+  .panel[hidden] ~ .copy { display: none; }
+  html:has(#panel[hidden]), html:has(#panel[hidden]) body { overflow: hidden; overscroll-behavior: none; }
+  .wrap:not(:fullscreen) .bar { position: fixed; z-index: 20; left: auto; right: max(var(--m), env(safe-area-inset-right, 0px));
+    top: calc(env(safe-area-inset-top, 0px) + var(--m)); bottom: max(var(--m), env(safe-area-inset-bottom, 0px)); width: 44px;
+    display: flex; flex-direction: column; flex-wrap: nowrap; justify-content: center; align-items: center; gap: 6px; }
+  .wrap:not(:fullscreen) .bar .nav { order: 2; flex: none; flex-direction: column; flex-wrap: nowrap; gap: 6px; margin-top: 6px; }
+  .bar .grow, .bar .stepinfo, .bar #full { display: none !important; }
+  .bar button, .bar #reset { width: 44px; height: 40px; min-height: 40px; padding: 0; justify-content: center; margin-left: 0; }
+  .bar .nlbl, .bar .lbl { display: none !important; }
+  .in, .wgrid .in { font-size: 16px; }   /* el iPhone no amplía al tocar una casilla */
+}
 /* pantalla con franja lateral libre (iPhone Duo cerrado, en vertical): los botones, en columna y solo con iconos, pasan
    a esa franja y la tarjeta gana todo el alto. La clase «lateral» la pone el script al medir la zona segura derecha. */
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) {
   html.lateral body { padding-bottom: max(var(--m), env(safe-area-inset-bottom, 0px)); }
   html.lateral .stage { height: max(440px, calc(100dvh - env(safe-area-inset-top, 0px) - var(--m) - max(var(--m), env(safe-area-inset-bottom, 0px)))); }
   html.lateral .wrap:not(:fullscreen) .bar { left: auto; top: auto; right: 0; bottom: max(var(--m), env(safe-area-inset-bottom, 0px));
@@ -429,7 +449,7 @@ td.wy { color: var(--pink); }
   html.lateral .bar .nav .stepinfo { width: 46px; white-space: normal; text-align: center; font-size: 11px; line-height: 1.25; padding: 0; }
 }
 /* pantallas bajas (plegable cerrado, vista dividida): todo un poco más compacto para que la tarjeta quepa entera */
-@media screen and (max-width: 760px) and (max-height: 720px) {
+@media screen and (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) and (max-height: 720px) {
   .slide { padding: 10px 12px 8px; gap: 6px; }
   h1 { font-size: 19px; }
   .box { padding: 4px 3px; }
@@ -437,7 +457,7 @@ td.wy { color: var(--pink); }
   .pill { padding: 3px 9px; }
 }
 /* «Anterior» y «Siguiente» con nombre; en media pantalla muy estrecha, solo flechas */
-@media screen and (min-width: 385px) and (max-width: 760px) { .bar .nav #prev .nlbl, .bar .nav #next .nlbl { display: inline; } }
+@media screen and (min-width: 385px) and (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { .bar .nav #prev .nlbl, .bar .nav #next .nlbl { display: inline; } }
 @media screen and (min-width: 385px) and (max-width: 409px) { .bar .nav #prev .ic, .bar .nav #next .ic { display: none; } }   /* justo de ancho: solo el nombre */
 /* cuatro herramientas en poco ancho: solo iconos (cada botón lleva su nombre para el lector de pantalla) */
 @media screen and (max-width: 439px) {
@@ -703,6 +723,8 @@ td.wy { color: var(--pink); }
   // ---------- pasos ----------
   // 1 años · 2 capital · 3 €/mes · 4 pensión privada · 5 cabecera y 3 primeras filas · 6 resto de la tabla y etiquetas
   // (segundo plazo) 7 años · 8 capital · 9 €/mes · 10 su pensión · 11 la tabla llega al plazo 2 · (retiradas) última: columna «Con retiradas»
+  // diseño de móvil: hasta 760 px, salvo un móvil girado en horizontal (bajo y táctil), que enseña la diapositiva 16:9
+  const PHONE = '(max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse)))';
   let step = 0;
   let penSegs = [];
   const lastYears = () => (S.two ? S.B.years : S.A.years);
@@ -874,7 +896,7 @@ td.wy { color: var(--pink); }
   // entre pasos ni entre plazos. Máximo 2,85 % del ancho de la diapositiva; si no cabe, todas por igual más bajas.
   function fit() {
     const tbl = $('tbl'), note = $('note'), slide = $('slide');
-    if (window.matchMedia('(max-width: 760px)').matches) { tbl.style.setProperty('--rowh', 2.85); fitPhone(); return; }
+    if (window.matchMedia(PHONE).matches) { tbl.style.setProperty('--rowh', 2.85); fitPhone(); return; }
     slide.parentNode.style.minHeight = '';
     const W = validW().map(w => w.year);
     const finalN = S.two ? Math.max(S.A.years, S.B.years) : S.A.years;
@@ -961,7 +983,7 @@ td.wy { color: var(--pink); }
   // «mes» solo abajo; en el ordenador (y en el PDF), el texto de siempre
   function paintPen() {
     const el = $('pen');
-    if (!window.matchMedia('(max-width: 760px)').matches) { el.textContent = penSegs.join(' · '); return; }
+    if (!window.matchMedia(PHONE).matches) { el.textContent = penSegs.join(' · '); return; }
     const txt = document.createElement('span');      // un solo hijo: la píldora es flex
     txt.append(...penSegs.flatMap((t, i) => { const e = document.createElement('span'); e.className = 'seg'; e.textContent = t; return i ? [' · ', e] : [e]; }));
     el.replaceChildren(txt);
@@ -972,11 +994,11 @@ td.wy { color: var(--pink); }
   document.body.appendChild(probe);
   function lateral() {
     const r = parseFloat(getComputedStyle(probe).paddingRight) || 0;
-    document.documentElement.classList.toggle('lateral', r >= 56 && innerHeight > innerWidth && window.matchMedia('(max-width: 760px)').matches);
+    document.documentElement.classList.toggle('lateral', r >= 56 && innerHeight > innerWidth && window.matchMedia(PHONE).matches);
   }
   lateral();
   window.addEventListener('resize', () => { lateral(); fit(); });
-  window.matchMedia('(max-width: 760px)').addEventListener('change', paintPen);
+  window.matchMedia(PHONE).addEventListener('change', paintPen);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => fit());
 
   // retiradas
@@ -1230,7 +1252,7 @@ td.wy { color: var(--pink); }
   // respaldo: diálogo de impresión («Guardar como PDF»), hoja 16:9 sin márgenes
   function printFit() {
     // en móvil la diapositiva no es 16:9 y fit() no calcula el alto de fila: se calcula aquí para la hoja
-    if (!window.matchMedia('(max-width: 760px)').matches) return;
+    if (!window.matchMedia(PHONE).matches) return;
     $('tbl').style.setProperty('--rowh', Math.max(1.6, Math.min(2.85, (56.25 - PRINT_FIXED) / maxRowsAll())).toFixed(3));
   }
   const PRINT_FIXED = 27.4;   // alto de la diapositiva (en % del ancho) que no es filas de la tabla: márgenes, título, cajas, cabecera y etiquetas
