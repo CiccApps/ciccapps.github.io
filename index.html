@@ -125,8 +125,8 @@ header p { margin: 0; text-wrap: balance; font-family: var(--cc-serif); font-sty
 /* Barra lateral: en pantallas con una franja segura ancha a un lado (la exterior del iPhone Duo), botones para ir por familias. Igual que en Vinilo */
 .rail { z-index: 40; display: none; }
 .rail.si { display: flex; }
-/* Con la barra lateral, los saltos dejan el título de la familia a unos 20px de arriba, como las pestañas de Platea (iOS puede difuminar ese borde) */
-html.con-rail { scroll-padding-top: 20px; }
+/* Con la barra lateral, los saltos dejan el título de la familia a 22px de arriba, donde Platea y Bitácora dejan sus pestañas (iOS puede difuminar ese borde) */
+html.con-rail { scroll-padding-top: 22px; }
 .rail button { appearance: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--cc-linea); background: var(--cc-fondo-alto); color: var(--cc-tinta-suave); display: grid; place-items: center; cursor: pointer; padding: 0; box-shadow: 0 4px 12px rgba(0,0,0,.18); }
 .rail button.on { color: var(--cc-oro); border-color: var(--cc-oro); }
 .rail svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
