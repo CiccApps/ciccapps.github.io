@@ -156,7 +156,6 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
 html.cc-tope body { margin-top: calc(-1 * var(--cc-tope)); }
 html.cc-tope body::before, html.cc-tope .cc-velo, html.cc-tope .cl-vitrina { top: calc(-1 * var(--cc-tope)); }
 html.cc-tope .rail.r-duo { top: calc(248px - var(--cc-tope)); }
-html.cc-tope.con-rail { scroll-padding-top: calc(22px - var(--cc-tope)); }
 /* Duo exterior girado (html.cc-gira, desde rail.js): la ventana flota con 20px a cada lado, fuera de la franja de la cámara,
    sin zona reservada para la hora (en horizontal iOS no la pone ahí) y con las cuatro esquinas iguales */
 html.cc-gira { --cc-duo: 20px; --cc-curva: 24px; --cc-muesca-w: 0px; --cc-muesca-h: 0px; --cc-arriba: 20px; --cc-alto-duo: 9999px; }
