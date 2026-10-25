@@ -14,7 +14,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="../iconos/platea-180.png?v=6">
 <link rel="icon" type="image/png" href="../iconos/platea-192.png?v=6">
-<link rel="stylesheet" href="../compartido/ciccapps.css?v=29">
+<link rel="stylesheet" href="../compartido/ciccapps.css?v=30">
 <link rel="stylesheet" href="../compartido/logros.css?v=12">
 <style>
 /* Layout: marquesina de cine arriba (estadísticas en letras de cartel), pestañas Diario / Por ver / Series, entradas como "tickets" troquelados; formulario en hoja inferior */
@@ -178,6 +178,8 @@ html.con-rail{scroll-padding-top:calc(var(--bar-h,60px) + 28px)}
 /* En pantallas táctiles iOS difumina el borde de arriba aunque la zona segura valga 0 (pantalla exterior del Duo, en vertical con la barra
    lateral o en horizontal con la cámara abajo): las pestañas fijas dejan siempre al menos 14 px, tapados con el fondo */
 @media (pointer:coarse){.bar{top:max(env(safe-area-inset-top,0px),14px)}body::before{height:max(env(safe-area-inset-top,0px),14px)}}
+/* con la barra lateral del Duo no se tapa nada arriba: iOS difumina ese borde y basta (Miguel); la franja opaca dejaba una línea al bajar */
+html.con-rail body::before{height:env(safe-area-inset-top,0px)}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--red);border-color:var(--red)}
 .rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}

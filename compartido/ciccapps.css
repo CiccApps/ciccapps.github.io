@@ -110,7 +110,9 @@
   --cc-muesca-w: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, env(safe-area-inset-right, 0px) - 20px);
   --cc-muesca-h: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 140px);
   /* hueco sobre la hoja: bajo la zona segura en el iPhone; en el Duo, el mismo margen que a los lados */
-  --cc-arriba: max(env(safe-area-inset-top, 0px) + 24px - var(--cc-duo) * 100, var(--cc-duo));
+  /* (con clamp sobre env(), como las demás: así iOS lo calcula siempre igual) */
+  --cc-arriba: calc(env(safe-area-inset-top, 0px) + 24px - clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, env(safe-area-inset-top, 0px) + 4px));
+  --cc-alto-duo: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 9999px);
 }
 html.cc-abierta, html.cl-abierta { overflow: hidden; }
 .cc-velo, .cl-vitrina {
@@ -124,7 +126,7 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
   box-sizing: border-box; width: calc(100% - 2 * var(--cc-duo)); margin-bottom: var(--cc-duo);
   max-height: calc(100% - var(--cc-arriba) - var(--cc-duo)); overflow-y: auto; overscroll-behavior: contain;
   /* en el Duo todas las ventanas abren a la altura entera, como la vitrina, aunque tengan poco contenido */
-  min-height: min(var(--cc-duo) * 100, 100% - var(--cc-arriba) - var(--cc-duo));
+  min-height: min(var(--cc-alto-duo), 100% - var(--cc-arriba) - var(--cc-duo));
   padding: 6px 20px calc(max(0px, env(safe-area-inset-bottom, 0px) - var(--cc-duo)) + 20px);
   border-radius: calc(20px - .6 * var(--cc-duo)) max(20px, var(--cc-curva)) var(--cc-curva) calc(.4 * var(--cc-duo));
   transform: translateY(calc(100% + var(--cc-duo))); transition: transform .3s cubic-bezier(.2, .8, .3, 1);
