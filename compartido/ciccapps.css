@@ -99,12 +99,15 @@
 
 /* Ventanas emergentes (comunes: la vitrina de medallas y cualquier hoja de las apps, con .cc-velo > .cc-hoja > .cc-cab).
    En el móvil, hoja desde abajo; en el ordenador, ventana centrada. Con la franja lateral del iPhone Duo (inset derecho de 44px o más)
-   flota con 20px de margen a los lados y abajo, sobre el fondo difuminado, y recorta su esquina de arriba a la derecha,
-   donde iOS pone la hora, la batería o la burbuja de la música. Fuera del Duo, las tres variables valen 0. */
+   flota con 20px de margen a los lados, abajo y bajo la zona segura de arriba, sobre el fondo difuminado; sus esquinas de abajo siguen
+   la curva de la pantalla (--cc-curva). Arriba a la derecha no se recorta: iOS pone ahí la hora, la batería o la burbuja de la música,
+   así que es una zona reservada sin datos de --cc-muesca-w × --cc-muesca-h (medida desde la esquina de la hoja), que la X y lo que va
+   a la derecha esquivan. Fuera del Duo, las variables valen 0. */
 :root {
   --cc-duo: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 20px);
+  --cc-curva: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 34px);
   --cc-muesca-w: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, env(safe-area-inset-right, 0px) - 20px);
-  --cc-muesca-h: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 128px - env(safe-area-inset-top, 0px));
+  --cc-muesca-h: clamp(0px, (env(safe-area-inset-right, 0px) - 43px) * 100, 140px - env(safe-area-inset-top, 0px));
 }
 html.cc-abierta, html.cl-abierta { overflow: hidden; }
 .cc-velo, .cl-vitrina {
@@ -113,33 +116,18 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
 }
 .cc-velo.cc-dentro, .cl-vitrina.cl-dentro { background: rgba(10, 14, 12, .45); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .cc-hoja, .cl-hoja {
-  --w: var(--cc-muesca-w); --h: var(--cc-muesca-h); --r: 16px;
   box-sizing: border-box; width: calc(100% - 2 * var(--cc-duo)); margin-bottom: var(--cc-duo);
-  max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px - 2.2 * var(--cc-duo)); overflow-y: auto; overscroll-behavior: contain;
+  max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px - .8 * var(--cc-duo)); overflow-y: auto; overscroll-behavior: contain;
   padding: 6px 20px calc(max(0px, env(safe-area-inset-bottom, 0px) - var(--cc-duo)) + 20px);
-  border-radius: 20px 20px var(--cc-duo) var(--cc-duo);
+  border-radius: 20px 20px var(--cc-curva) var(--cc-curva);
   transform: translateY(calc(100% + var(--cc-duo))); transition: transform .3s cubic-bezier(.2, .8, .3, 1);
-  /* la muesca: la hoja menos un rectángulo de --w × --h arriba a la derecha, con sus tres esquinas redondeadas */
-  -webkit-mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0), radial-gradient(circle at 0 100%, #000 calc(var(--r) - .5px), transparent var(--r)),
-    linear-gradient(#000 0 0), linear-gradient(#000 0 0), radial-gradient(circle at 0 100%, #000 calc(var(--r) - .5px), transparent var(--r)),
-    radial-gradient(circle at 100% 0, transparent calc(var(--r) - .5px), #000 var(--r));
-  mask-image: linear-gradient(#000 0 0), linear-gradient(#000 0 0), radial-gradient(circle at 0 100%, #000 calc(var(--r) - .5px), transparent var(--r)),
-    linear-gradient(#000 0 0), linear-gradient(#000 0 0), radial-gradient(circle at 0 100%, #000 calc(var(--r) - .5px), transparent var(--r)),
-    radial-gradient(circle at 100% 0, transparent calc(var(--r) - .5px), #000 var(--r));
-  -webkit-mask-size: calc(100% - var(--w) - var(--r)) 100%, calc(100% - var(--w)) calc(100% - var(--r)), var(--r) var(--r),
-    calc(100% - var(--r)) calc(100% - var(--h)), 100% calc(100% - var(--h) - var(--r)), var(--r) var(--r), var(--r) var(--r);
-  mask-size: calc(100% - var(--w) - var(--r)) 100%, calc(100% - var(--w)) calc(100% - var(--r)), var(--r) var(--r),
-    calc(100% - var(--r)) calc(100% - var(--h)), 100% calc(100% - var(--h) - var(--r)), var(--r) var(--r), var(--r) var(--r);
-  -webkit-mask-position: left 0 top 0, left 0 top var(--r), right var(--w) top 0, left 0 top var(--h), left 0 top calc(var(--h) + var(--r)), right 0 top var(--h), right calc(var(--w) - var(--r)) top calc(var(--h) - var(--r));
-  mask-position: left 0 top 0, left 0 top var(--r), right var(--w) top 0, left 0 top var(--h), left 0 top calc(var(--h) + var(--r)), right 0 top var(--h), right calc(var(--w) - var(--r)) top calc(var(--h) - var(--r));
-  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
 }
 .cc-velo.cc-dentro .cc-hoja, .cl-vitrina.cl-dentro .cl-hoja { transform: none; }
 .cc-hoja:focus, .cl-hoja:focus { outline: none; }
 @media (orientation: landscape) { .cc-hoja, .cl-hoja { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); } }
 @media (min-width: 700px) {
   .cc-velo, .cl-vitrina { align-items: center; padding: 24px max(24px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
-  .cc-hoja, .cl-hoja { width: min(760px, 100%); max-height: min(86vh, 900px); margin: 0; border-radius: 20px; padding: 8px 28px 28px; -webkit-mask: none; mask: none;
+  .cc-hoja, .cl-hoja { width: min(760px, 100%); max-height: min(86vh, 900px); margin: 0; border-radius: 20px; padding: 8px 28px 28px;
     transform: translateY(16px) scale(.98); opacity: 0; transition: transform .25s, opacity .25s; }
   .cc-velo.cc-dentro .cc-hoja, .cl-vitrina.cl-dentro .cl-hoja { opacity: 1; }
 }
