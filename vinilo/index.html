@@ -890,7 +890,7 @@ TAGS.forEach(([key, label]) => {
     }catch(e){if(e.message==="sin_sesion"){pintaCon("La conexión con Spotify ha caducado. Vuelve a conectar.");return}pintaCon("Spotify no ha dejado leer tus listas ahora mismo.")}
     try{const [ar,tr]=await Promise.all([SPOT.api("/me/top/artists?time_range=short_term&limit=5"),SPOT.api("/me/top/tracks?time_range=short_term&limit=5")]);
       const A=ar.items||[],T=tr.items||[];if(!A.length&&!T.length)return;
-      $("mesSp").innerHTML=`<div><div class="eyebrow">Tus últimas cuatro semanas</div><h2 id="mesSpH">Tu mes en música</h2></div><div class="mes-cols">
+      $("mesSp").innerHTML=`<div><div class="eyebrow">En bucle</div><h2 id="mesSpH">Tu mes en música</h2></div><div class="mes-cols">
         <div><p class="sub" style="margin-bottom:8px">Artistas que más has escuchado</p><ol class="top">${A.map(a=>`<li class="art">${a.images&&a.images.length?`<img src="${esc(a.images[a.images.length-1].url)}" alt="">`:"<i></i>"}<div><b>${esc(a.name)}</b><span>${esc((a.genres||[]).slice(0,2).join(" · "))}</span></div></li>`).join("")}</ol></div>
         <div><p class="sub" style="margin-bottom:8px">Canciones que más has escuchado</p><ol class="top">${T.map(t=>`<li>${t.album&&t.album.images&&t.album.images.length?`<img src="${esc(t.album.images[t.album.images.length-1].url)}" alt="">`:"<i></i>"}<div><b>${esc(t.name)}</b><span>${esc((t.artists||[]).map(a=>a.name).join(", "))}</span></div></li>`).join("")}</ol></div></div>`;
       $("mesSp").hidden=false;
