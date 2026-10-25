@@ -380,7 +380,7 @@ h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:4
   <div id="view" class="view"><p class="cargando">Abriendo tu bitácora…</p></div>
 
   <footer id="pie">
-    <div class="foot-actions"><button class="chip" id="exportGR">Exportar a Goodreads</button><button class="chip" id="misDatos">Descargar mis datos</button></div>
+    <div class="foot-actions"><button class="chip" id="exportGR">Exportar a Goodreads</button><button class="chip" id="misDatos">Descargar tus datos</button></div>
     <button class="salir-link" id="salir" type="button">Cerrar sesión</button>
     <span id="syncNote">Sincronizado en todos tus dispositivos · páginas aproximadas según ediciones habituales en español.</span>
   </footer>
@@ -665,7 +665,7 @@ function viewIA(){
   const res=IA.res.map((l,i)=>`<article class="pick ia-pick"><span class="spine-mini" style="background:var(--gold)"></span>
     <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><h3>${esc(l.titulo)}</h3><span class="why2">${esc(l.autor)}${l.paginas?` · ≈${l.paginas} páginas`:""}</span>
     ${l.por_que?`<span class="ia-why">${esc(l.por_que)}</span>`:""}
-    <span class="ia-acc">${l.added?`<span class="ia-ok">Añadido a Intercalables</span>`:`<button class="btn sm primary" data-ia-add="${i}">Añadir a mi lista</button>`}</span></span></article>`).join("");
+    <span class="ia-acc">${l.added?`<span class="ia-ok">Añadido a Intercalables</span>`:`<button class="btn sm primary" data-ia-add="${i}">Añadir a tu lista</button>`}</span></span></article>`).join("");
   return `<section class="ia" aria-labelledby="iaH"><div style="display:flex;flex-direction:column;gap:6px"><span class="eyebrow">Con IA</span><h2 id="iaH">Créame una lista</h2>
     <p class="hint">Cuéntame qué te apetece y te propongo diez libros que no estén ya en tu bitácora.</p></div>
     <textarea id="iaTxt" rows="3" maxlength="400" placeholder="Por ejemplo: novelas cortas de misterio ambientadas en Japón">${esc(IA.txt)}</textarea>
