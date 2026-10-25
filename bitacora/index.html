@@ -83,7 +83,6 @@ header p{margin:0;color:var(--muted);max-width:58ch}
   .stage-head h2{font-size:21px}.stage-num{font-size:28px;min-width:22px}
   .row{padding:10px 12px;gap:8px;grid-template-columns:24px 1fr auto}
   .seg button{font-size:12.5px;padding:8px 2px}
-  .sheet h3{font-size:24px}
 }
 .stage-toggle{all:unset;cursor:pointer;display:flex;gap:12px;align-items:flex-start;flex:1;min-width:0}
 .stage-toggle:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:4px}
@@ -200,9 +199,6 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .cl-cuenta b{font-family:var(--f-cifra);font-weight:500;font-variant-numeric:lining-nums tabular-nums}
 .vit-txt{display:flex;align-items:center;gap:10px;min-width:0}
 #vitrinaMed{display:block;width:24px;flex:none}
-/* iPhone Duo plegado: las hojas llegan de borde a borde, como la vitrina común, y su contenido lleva el mismo margen a los dos lados */
-body .sheet-bg{padding-left:0;padding-right:0}
-body .sheet{padding-left:max(18px,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));padding-right:max(18px,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px))}
 /* Con barra lateral, al saltar a una zona se deja un poco de aire arriba */
 html.con-rail{scroll-padding-top:14px}
 html.con-rail .stage{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 48px)}
@@ -276,12 +272,15 @@ html.con-rail .stage{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 48px)
 .sm{font-size:13px;padding:7px 12px}
 .linkbtn{font-size:13px;font-weight:600;text-decoration:none;padding:7px 4px}
 
-/* Hoja */
-.sheet-bg{position:fixed;inset:0;background:rgba(10,12,18,.45);display:flex;align-items:flex-end;justify-content:center;z-index:20;padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
-.sheet{background:var(--card);color:var(--ink);width:100%;max-width:560px;border-radius:12px 12px 0 0;max-height:92%;overflow:auto;
-  padding:20px max(18px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));
-  display:flex;flex-direction:column;gap:16px;border-top:4px solid var(--sc)}
-.sheet h3{font-size:28px;line-height:1.1}
+/* Hojas: la ventana emergente común (ciccapps.css: .cc-velo > .cc-hoja > .cc-cab), como la vitrina; aquí, colores y reparto interior */
+.cc-hoja{background:var(--cl-fondo);color:var(--cl-tinta);font-family:var(--f-body);box-shadow:var(--cl-sombra)}
+.cc-cab h2{font-family:var(--f-display)}
+.cc-cab .eyebrow{display:block;margin-bottom:2px}
+/* con antetítulo la cabecera es más alta: en el Duo, lo de debajo empieza justo pasada la muesca */
+.sheet>.cc-cab{margin-bottom:max(0px,var(--cc-muesca-h) - 80px)}
+.cc-cerrar{color:var(--muted)}
+.cc-cerrar:focus-visible{outline-color:var(--gold)}
+.sheet{display:flex;flex-direction:column;gap:16px}
 .sheet .by{color:var(--muted);margin-top:4px}
 .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:var(--paper);padding:4px;border-radius:8px}
 .seg.two{grid-template-columns:1fr 1fr}
@@ -303,7 +302,6 @@ textarea{min-height:90px;resize:vertical}
 .links a{font-size:14px;font-weight:600;text-decoration:none}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 16px;border-radius:999px;font-size:13px;z-index:30;white-space:nowrap}
 footer{font-size:12px;color:var(--muted);text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
-@media (min-width:760px){.sheet-bg{align-items:center;padding:24px}.sheet{border-radius:12px;max-height:86vh}}
 
 /* ===== CiccApps · capa común: misma rejilla, márgenes y tipografía en todas las apps ===== */
 body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.55}
@@ -330,7 +328,8 @@ body{font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif
 @media (min-width:900px){.cab{padding:40px 40px 36px 48px}.cab .rosa{width:58px;height:58px}}
 
 
-@media (min-width:900px){.shelf{zoom:1.45}}
+/* En pantallas anchas los lomos crecen con --z (sin zoom: en iOS rompía la barra lateral fija) */
+@media (min-width:900px){.shelf{--z:1.45;gap:4px;padding:0 6px;border-bottom-width:7px;min-height:100px}.spine{border-width:2px}}
 h2{font-family:"IM Fell English","Libre Caslon Text",Georgia,serif;font-weight:400}
 .cc-firma{padding-top:24px}
 #pie .cc-firma{padding-inline:0} /* el pie ya va dentro de .wrap, que deja los márgenes y la franja lateral */
@@ -597,7 +596,7 @@ function viewPlan(){
     const done=s._all.filter(b=>st(b.id)==="leido").length;
     return `<div class="shelf-row"><button type="button" class="shelf-head" data-goto="${s.id}" aria-label="Ir a ${esc(s.extra?"Intercalables":"Etapa "+s.n+", "+s.name)}"><span><strong>${s.extra?"Intercalables":"Etapa "+s.n}</strong> · ${esc(s.extra?"sin orden":s.name)} <span class="ir" aria-hidden="true">↓</span></span><span class="mono">${done}/${s._all.length}</span></button>
     <div class="shelf">${s._all.map(b=>{const w=Math.round(7+b.p/38);const h=48+((b.id.charCodeAt(0)*7+b.id.length*5)%22);const e=st(b.id);
-      return `<button class="spine ${e} ${owned(b.id)||e!=="pendiente"?"":"nope"}" style="--sc:var(${s.c});width:${w}px;height:${h}px${e==="leyendo"?";--pr:"+Math.max(8,Math.min(92,Math.round((+S(b.id).pagina||0)/b.p*100)))+"%":""}" data-open="${b.id}" title="${esc(b.t)}" aria-label="${esc(b.t)}, ${LABEL[e]}${owned(b.id)?", lo tienes":""}"></button>`}).join("")}</div></div>`}).join("");
+      return `<button class="spine ${e} ${owned(b.id)||e!=="pendiente"?"":"nope"}" style="--sc:var(${s.c});width:calc(${w}px*var(--z,1));height:calc(${h}px*var(--z,1))${e==="leyendo"?";--pr:"+Math.max(8,Math.min(92,Math.round((+S(b.id).pagina||0)/b.p*100)))+"%":""}" data-open="${b.id}" title="${esc(b.t)}" aria-label="${esc(b.t)}, ${LABEL[e]}${owned(b.id)?", lo tienes":""}"></button>`}).join("")}</div></div>`}).join("");
   const legend=`<div class="legend"><span><i></i>Lo tienes</span><span><i class="d"></i>Por comprar</span><span><i class="g"></i>Leyendo</span><span><i class="f"></i>Leído</span></div>`;
   const chips=`<div class="filters" role="group" aria-label="Filtrar">${[["todos","Todos"],["pendiente","Por leer"],["tengo","Tengo"],["leyendo","Leyendo"],["leido","Leídos"]].map(([k,l])=>`<button class="chip" id="f-${k}" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>`;
   const pass=b=>filter==="todos"||(filter==="tengo"?owned(b.id)&&open(b.id):st(b.id)===filter);
@@ -735,12 +734,22 @@ function advance(id){
 
 /* Ficha */
 let sheetId=null,draft=null;
+/* Ventana emergente común: se abre deslizando y se cierra con la X, tocando fuera o con Escape */
+let hoja=null;
+function abrirHoja(tid,cab,cuerpo,cerrar){
+  const root=document.getElementById("sheetRoot");root.replaceChildren();
+  const v=document.createElement("div");v.className="cc-velo";
+  v.innerHTML=`<div class="cc-hoja sheet" role="dialog" aria-modal="true" aria-labelledby="${tid}" tabindex="-1"><div class="cc-cab"><div>${cab}</div><button type="button" class="cc-cerrar" aria-label="Cerrar">×</button></div>${cuerpo}</div>`;
+  root.appendChild(v);v.offsetWidth;v.classList.add("cc-dentro");document.documentElement.classList.add("cc-abierta");
+  v.addEventListener("click",e=>{if(e.target===v)cerrar()});v.querySelector(".cc-cerrar").onclick=cerrar;
+  hoja={v,cerrar};v.querySelector(".cc-hoja").focus({preventScroll:true});return v;
+}
+function cerrarHoja(){if(!hoja)return;const v=hoja.v;hoja=null;v.classList.remove("cc-dentro");document.documentElement.classList.remove("cc-abierta");setTimeout(()=>v.remove(),300)}
 function openSheet(id,msg){
   sheetId=id;const b=BOOKS[id];draft=Object.assign({estado:"pendiente",inicio:"",fin:"",nota:0,comentario:"",tengo:false,pagina:""},state[id]||{});
   const e=EDS[id];
-  const root=document.getElementById("sheetRoot");
-  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT" style="--sc:var(${b.stage.c})">
-    <div class="cover-prev">${b.cov?`<img src="${esc(b.cov)}" alt="" loading="lazy">`:""}<div><span class="eyebrow">${b.n?"Nº "+b.n+" · Etapa "+b.stage.n:"Intercalable"} · ≈${b.p} páginas</span><h3 id="shT">${esc(b.t)}</h3><div class="by">${esc(b.a)}</div></div></div>
+  const root=abrirHoja("shT",`<span class="eyebrow">${b.n?"Nº "+b.n+" · Etapa "+b.stage.n:"Intercalable"} · ≈${b.p} páginas</span><h2 id="shT">${esc(b.t)}</h2>`,`
+    <div class="cover-prev">${b.cov?`<img src="${esc(b.cov)}" alt="" loading="lazy">`:""}<div class="by">${esc(b.a)}</div></div>
     ${msg?`<p class="why">${esc(msg)}</p>`:""}
     <div class="field"><span class="lbl">Estado</span><div class="seg" role="group" aria-label="Estado">${["pendiente","leyendo","leido","abandonado"].map(k=>`<button id="seg-${k}" data-seg="${k}" aria-pressed="${draft.estado===k}">${LABEL[k]}</button>`).join("")}</div></div>
     <div class="field"><span class="lbl">¿Lo tienes?</span><div class="seg two" role="group" aria-label="Lo tienes">
@@ -755,10 +764,8 @@ function openSheet(id,msg){
       <div class="fr-row"><input type="number" id="frPg" inputmode="numeric" min="1" placeholder="Página (opcional)" aria-label="Página de la frase"><button class="btn" id="frAdd" type="button">Guardar frase</button></div></div>
     ${e&&!draft.tengo?`<div class="ed" style="font-size:14px;background:var(--paper);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:3px"><span class="eyebrow">Edición recomendada</span><b>${esc(e.ed)}</b>${e.why?`<span>${esc(e.why)}</span>`:""}${e.alt?`<small style="color:var(--muted)">Más barata: ${esc(e.alt)}</small>`:""}</div>`:""}
     <div class="links"><a href="${gr(b)}" target="_blank" rel="noopener">Goodreads ↗</a><a href="${amz(b)}" target="_blank" rel="noopener">Amazon ↗</a></div>
-    <div class="sheet-actions"><button class="btn" id="shEdit">Editar libro</button><button class="btn" id="shCancel">Cerrar</button><button class="btn primary" id="shSave">Guardar</button></div>
-  </div></div>`;
+    <div class="sheet-actions" style="justify-content:space-between"><button class="btn" id="shEdit">Editar libro</button><button class="btn primary" id="shSave">Guardar</button></div>`,closeSheet);
   document.getElementById("shEdit").onclick=()=>{const i=sheetId;closeSheet();formLibro(i)};
-  document.getElementById("sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")closeSheet()});
   root.querySelectorAll("[data-seg]").forEach(x=>x.onclick=()=>{draft.estado=x.dataset.seg;
     if(draft.estado==="leyendo"){if(!document.getElementById("dIni").value)document.getElementById("dIni").value=today();setOwn(true)}
     if(draft.estado==="leido"&&!document.getElementById("dFin").value)document.getElementById("dFin").value=today();
@@ -768,7 +775,6 @@ function openSheet(id,msg){
   root.querySelectorAll("[data-ownseg]").forEach(x=>x.onclick=()=>setOwn(x.dataset.ownseg==="1"));
   root.querySelectorAll("[data-rate]").forEach(x=>x.onclick=()=>{const v=+x.dataset.rate;draft.nota=draft.nota===v?0:v;
     root.querySelectorAll("[data-rate]").forEach(y=>y.classList.toggle("on",+y.dataset.rate<=draft.nota))});
-  document.getElementById("shCancel").onclick=closeSheet;
   document.getElementById("shSave").onclick=()=>{
     const pg=parseInt(document.getElementById("dPg").value,10);
     setBook(sheetId,{estado:draft.estado,tengo:draft.tengo||draft.estado!=="pendiente"&&draft.tengo,inicio:document.getElementById("dIni").value,fin:document.getElementById("dFin").value,
@@ -789,8 +795,8 @@ async function cargarFrases(id){
   L.querySelectorAll("[data-frdel]").forEach(x=>x.onclick=async()=>{if(x.dataset.ok!=="1"){x.dataset.ok="1";x.textContent="¿Seguro?";setTimeout(()=>{if(x.isConnected){x.dataset.ok="";x.textContent="Borrar"}},3000);return}
     const r=await sb.from("frases").delete().eq("id",x.dataset.frdel);if(!r.error)NFRASES=Math.max(0,NFRASES-1);cargarFrases(id)});
 }
-function closeSheet(){document.getElementById("sheetRoot").innerHTML="";sheetId=null;render()}
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&sheetId)closeSheet()});
+function closeSheet(){cerrarHoja();sheetId=null;render()}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&hoja)hoja.cerrar()});
 let tt;function toast(m){const t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2200)}
 
 /* Eventos */
@@ -899,30 +905,24 @@ function tuMes(){
   const diasA=[...DIAS].filter(d=>d.startsWith(preA)).length;const dif=leidos-diasA;
   const cmp=diasA||leidos?(dif>0?`${dif} días más leyendo que en ${MESES[ant.getMonth()]}`:dif<0?`${-dif} días menos que en ${MESES[ant.getMonth()]}`:`Los mismos días que en ${MESES[ant.getMonth()]}`):"";
   const off=(new Date(y,m,1).getDay()+6)%7;
-  const root=document.getElementById("sheetRoot");
-  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mesT" style="--sc:var(--gold)">
-    <span class="eyebrow">${cerrado?"Tu resumen del mes":"Tu mes hasta hoy"}</span><h3 id="mesT" style="text-transform:capitalize">${MESES[m]}</h3>
+  abrirHoja("mesT",`<span class="eyebrow">${cerrado?"Tu resumen del mes":"Tu mes hasta hoy"}</span><h2 id="mesT" style="text-transform:capitalize">${MESES[m]}</h2>`,`
     <div class="mes-grid"><div><b class="mono">${leidos}</b><span>días leyendo</span></div><div><b class="mono">${pagMes}</b><span>páginas</span></div><div><b class="mono">${mejor}</b><span>mejor racha</span></div><div><b class="mono">${fin.length}</b><span>${fin.length===1?"libro terminado":"libros terminados"}</span></div></div>
     ${cmp?`<p class="hint" style="margin:0">${cmp}${empez?` · ${empez} ${empez===1?"libro empezado":"libros empezados"}`:""}.</p>`:""}
     <div class="mes-cal" aria-label="Días que leíste">${"<i class=\"vacio\"></i>".repeat(off)}${dias.map((s,i)=>`<i class="${s?"si":""}">${i+1}</i>`).join("")}</div>
     ${fin.length?`<span class="eyebrow">Terminados</span>${fin.map(b=>`<div class="mes-libro">${b.cov?`<img src="${esc(b.cov)}" alt="">`:""}<div><b>${esc(b.t)}</b><span>${esc(b.a)}${S(b.id).nota?" · "+"★".repeat(S(b.id).nota):""}</span></div></div>`).join("")}`:`<p class="hint">${leidos?"Este mes no has terminado ningún libro, pero has seguido leyendo. Eso cuenta.":"Aún no hay días marcados. Pulsa «He leído hoy» cuando leas."}</p>`}
-    <div class="sheet-actions"><button class="btn primary" id="mesCerrar">Cerrar</button></div></div></div>`;
-  const cer=()=>root.innerHTML="";document.getElementById("mesCerrar").onclick=cer;document.getElementById("sheetBg").onclick=e=>{if(e.target.id==="sheetBg")cer()};
+`,cerrarHoja);
   try{localStorage.setItem("bitacora-mes-visto",y+"-"+(m+1))}catch(_){}document.getElementById("mesBtn").classList.remove("nuevo");
 }
 document.getElementById("mesBtn").onclick=tuMes;
 document.getElementById("hHoy").onclick=apuntarHoy;
 function apuntarHoy(){
   const lect=ALL.filter(b=>st(b.id)==="leyendo");const h=hoyISO();const hoy=DIAS.has(h);
-  const root=document.getElementById("sheetRoot");sheetId="__hoy";
-  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="hoyT" style="--sc:var(--gold)">
-    <span class="eyebrow">${hoy?"Leído hoy"+(PAGS[h]?" · "+PAGS[h]+" páginas":""):"Lectura de hoy"}</span><h3 id="hoyT">¿Por dónde vas?</h3>
+  sheetId="__hoy";const cer=()=>{cerrarHoja();sheetId=null};
+  const root=abrirHoja("hoyT",`<span class="eyebrow">${hoy?"Leído hoy"+(PAGS[h]?" · "+PAGS[h]+" páginas":""):"Lectura de hoy"}</span><h2 id="hoyT">¿Por dónde vas?</h2>`,`
     ${lect.map(b=>`<div class="field"><label for="hp-${b.id}">${esc(b.t)}</label><input type="number" inputmode="numeric" min="0" max="${b.p*2}" id="hp-${b.id}" data-hp="${b.id}" value="${S(b.id).pagina||""}" placeholder="Página, de ≈${b.p}"></div>`).join("")}
     <div class="field"><label for="hpExtra">${lect.length?"Otras páginas leídas hoy":"Páginas leídas hoy"}</label><input type="number" inputmode="numeric" min="0" max="1500" id="hpExtra" placeholder="${lect.length?"Opcional: revistas, otro libro…":"Por ejemplo, 25"}"></div>
     <p class="hint" style="margin:0">Las páginas cuentan para tu ritmo y para el resumen del mes.</p>
-    <div class="sheet-actions" style="justify-content:space-between">${hoy?`<button class="btn" id="hpNo">No he leído hoy</button>`:"<span></span>"}<span style="display:flex;gap:10px"><button class="btn" id="hpCerrar">Cerrar</button><button class="btn primary" id="hpOk">Guardar</button></span></div></div></div>`;
-  const cer=()=>{root.innerHTML="";sheetId=null};
-  document.getElementById("hpCerrar").onclick=cer;document.getElementById("sheetBg").onclick=e=>{if(e.target.id==="sheetBg")cer()};
+    <div class="sheet-actions" style="justify-content:space-between">${hoy?`<button class="btn" id="hpNo">No he leído hoy</button>`:"<span></span>"}<button class="btn primary" id="hpOk">Guardar</button></div>`,()=>cer());
   if(hoy)document.getElementById("hpNo").onclick=()=>{cer();desmarcarHoy();toast("Quitado el día de hoy")};
   document.getElementById("hpOk").onclick=()=>{
     root.querySelectorAll("[data-hp]").forEach(i=>{const id=i.dataset.hp;const v=parseInt(i.value,10);if(!isNaN(v)&&v!==(+S(id).pagina||0))setBook(id,{pagina:Math.min(v,BOOKS[id].p)})});
@@ -958,10 +958,9 @@ function formLibro(id){
   const b=id?BOOKS[id]:null;const etapas=STAGES;
   let moods=new Set(b?b.moods.filter(m=>m!=="corto"):[]);
   const MS=Object.keys(MOODS).filter(k=>k!=="corto");
-  const root=document.getElementById("sheetRoot");sheetId="__form";
+  sheetId="__form";
   const def=b?b.stage.id:((STAGES.find(x=>!x.extra)||STAGES[0]||{}).id);
-  root.innerHTML=`<div class="sheet-bg" id="sheetBg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="fT" style="--sc:var(--gold)">
-    <div><span class="eyebrow">${b?"Editar libro":"Nuevo libro"}</span><h3 id="fT">${b?esc(b.t):"Añadir a la bitácora"}</h3></div>
+  const root=abrirHoja("fT",`<span class="eyebrow">${b?"Editar libro":"Nuevo libro"}</span><h2 id="fT">${b?esc(b.t):"Añadir a la bitácora"}</h2>`,`
     <div class="field lookup"><label for="lQ">${b?"Busca tu edición o escanea su código":"Busca el libro o escanea su código"}</label><div class="row2"><input type="text" id="lQ" placeholder="Título, autor o ISBN" autocomplete="off" enterkeyhint="search"><button type="button" class="btn" id="lScan">Escanear</button></div>
       <div class="sug" id="lSug" hidden></div><div class="cover-prev" id="lCov" ${b&&b.cov?"":"hidden"}>${b&&b.cov?`<img src="${esc(b.cov)}" alt="">`:""}<span class="hint" style="margin:0">Portada y datos de tu edición</span></div></div>
     <div class="field"><label for="lT">Título</label><input type="text" id="lT" value="${b?esc(b.t):""}" autocomplete="off"></div>
@@ -970,11 +969,8 @@ function formLibro(id){
     <div class="field"><label for="lE">Dónde va</label><select id="lE">${etapas.map(x=>`<option value="${x.id}" ${x.id===def?"selected":""}>${x.extra?"Intercalables":"Etapa "+x.n+" · "+esc(x.name)}</option>`).join("")}</select></div>
     <div class="field"><span class="lbl">Mood</span><div class="mgrid">${MS.map(k=>`<button type="button" data-fm="${k}" aria-pressed="${moods.has(k)}">${MOODS[k][0]}</button>`).join("")}</div></div>
     ${b?"":`<label class="toggle"><input type="checkbox" id="lO"> Ya lo tengo</label>`}
-    <div class="sheet-actions" style="justify-content:space-between">${b?`<button class="btn danger" id="lDel">Eliminar libro</button>`:"<span></span>"}<span style="display:flex;gap:10px"><button class="btn" id="lCancel">Cerrar</button><button class="btn primary" id="lSave">${b?"Guardar":"Añadir"}</button></span></div>
-  </div></div>`;
-  document.getElementById("sheetBg").addEventListener("click",ev=>{if(ev.target.id==="sheetBg")closeSheet()});
+    <div class="sheet-actions" style="justify-content:space-between">${b?`<button class="btn danger" id="lDel">Eliminar libro</button>`:"<span></span>"}<button class="btn primary" id="lSave">${b?"Guardar":"Añadir"}</button></div>`,closeSheet);
   root.querySelectorAll("[data-fm]").forEach(x=>x.onclick=()=>{const k=x.dataset.fm;moods.has(k)?moods.delete(k):moods.add(k);x.setAttribute("aria-pressed",moods.has(k))});
-  document.getElementById("lCancel").onclick=closeSheet;
   const extra={portada:b?b.cov||null:null,isbn:b?b.isbn||null:null};
   conectarBusqueda(extra);
   if(b){let armed=false;document.getElementById("lDel").onclick=async ev=>{if(!armed){armed=true;ev.target.textContent="Toca otra vez para eliminar";return}
