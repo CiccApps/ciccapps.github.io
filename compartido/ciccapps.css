@@ -149,8 +149,13 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
 .cc-velo.cc-dentro .cc-hoja, .cl-vitrina.cl-dentro .cl-hoja { transform: none; }
 .cc-hoja:focus, .cl-hoja:focus { outline: none; }
 @media (orientation: landscape) { .cc-hoja, .cl-hoja { --cc-hi: max(20px, env(safe-area-inset-left, 0px)); --cc-hd: max(20px, env(safe-area-inset-right, 0px)); } }
-/* Duo exterior en vertical con la franja de iOS reservada arriba (html.cc-tope, desde rail.js): esa franja ya hace de margen */
-html.cc-tope { --cc-arriba: max(0px, 20px - var(--cc-tope, 0px)); }
+/* Duo exterior en vertical, app instalada: tras girar el móvil, iOS a veces deja la página --cc-tope px más abajo (html.cc-tope,
+   desde rail.js) y por encima se ve lo de debajo, difuminado. Se sube todo ese hueco: la página, lo fijo y lo pegado arriba
+   (cada app ajusta sus barras pegadas con calc(… - var(--cc-tope))). */
+html.cc-tope body { margin-top: calc(-1 * var(--cc-tope)); }
+html.cc-tope body::before, html.cc-tope .cc-velo, html.cc-tope .cl-vitrina { top: calc(-1 * var(--cc-tope)); }
+html.cc-tope .rail.r-duo { top: calc(248px - var(--cc-tope)); }
+html.cc-tope.con-rail { scroll-padding-top: calc(22px - var(--cc-tope)); }
 /* Duo exterior girado (html.cc-gira, desde rail.js): la ventana flota con 20px a cada lado, fuera de la franja de la cámara,
    sin zona reservada para la hora (en horizontal iOS no la pone ahí) y con las cuatro esquinas iguales */
 html.cc-gira { --cc-duo: 20px; --cc-curva: 24px; --cc-muesca-w: 0px; --cc-muesca-h: 0px; --cc-arriba: 20px; --cc-alto-duo: 9999px; }
