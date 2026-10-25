@@ -174,9 +174,9 @@ footer{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:12px
 .rail.si{display:flex}
 /* Con la barra lateral (Duo plegado), los saltos dejan 14 px bajo las pestañas fijas */
 html.con-rail{scroll-padding-top:calc(var(--bar-h,60px) + 28px)}
-/* en la pantalla exterior del Duo, env(safe-area-inset-top) vale 0: las pestañas fijas dejan 14 px bajo el difuminado de iOS */
-html.con-rail .bar{top:max(env(safe-area-inset-top,0px),14px)}
-html.con-rail body::before{height:max(env(safe-area-inset-top,0px),14px)}
+/* En pantallas táctiles iOS difumina el borde de arriba aunque la zona segura valga 0 (pantalla exterior del Duo, en vertical con la barra
+   lateral o en horizontal con la cámara abajo): las pestañas fijas dejan siempre al menos 14 px, tapados con el fondo */
+@media (pointer:coarse){.bar{top:max(env(safe-area-inset-top,0px),14px)}body::before{height:max(env(safe-area-inset-top,0px),14px)}}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--red);border-color:var(--red)}
 .rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
