@@ -96,6 +96,8 @@ button{font:inherit;color:inherit}
 .cc-hoja{background:var(--card);color:var(--ink);box-shadow:0 -10px 34px rgba(0,0,0,.28)}
 .sheet{display:flex;flex-direction:column;gap:14px}
 .sheet .cc-cab{flex:none}
+.sheet .cc-cuerpo{display:flex;flex-direction:column;gap:14px}
+.sheet .cc-cuerpo>*{flex-shrink:0}
 .cc-cab .cab-t{min-width:0}
 .cc-cab .eyebrow{display:block;margin-bottom:6px;line-height:1.3}
 .cc-cab h2{font-family:var(--f-display);font-weight:400;font-size:34px;letter-spacing:.03em;line-height:1}
@@ -414,6 +416,9 @@ let editId=null,draft=null,pintaPl=()=>{};
 const CAB=(t,id,pre="",frase="")=>`<div class="cc-cab"><div class="cab-t">${pre}<h2 id="${id}">${t}</h2>${frase}</div><button class="cc-cerrar" type="button" aria-label="Cerrar">×</button></div>`;
 const VELO=(id,cl="")=>`<div class="cc-velo${document.querySelector("#sheetRoot > .cc-velo.cc-dentro")?" cc-dentro":""}" id="bg"><div class="cc-hoja sheet${cl?" "+cl:""}" role="dialog" aria-modal="true" tabindex="-1" aria-labelledby="${id}">`;
 function entraHoja(cerrar){const v=document.querySelector("#sheetRoot > .cc-velo");if(!v)return;
+  // lo que va bajo la cabecera, dentro de .cc-cuerpo: solo eso se desplaza y su barra empieza debajo de la franja fija
+  const h=v.querySelector(".cc-hoja"),cab=h.querySelector(":scope > .cc-cab");
+  if(cab&&!h.querySelector(":scope > .cc-cuerpo")){const c=document.createElement("div");c.className="cc-cuerpo";while(cab.nextSibling)c.appendChild(cab.nextSibling);h.appendChild(c)}
   document.documentElement.classList.add("cc-abierta");
   if(!v.classList.contains("cc-dentro")){void v.offsetWidth;v.classList.add("cc-dentro")}
   v.onclick=e=>{if(e.target===v)cerrar()};v.querySelector(".cc-cerrar").onclick=cerrar;
@@ -681,7 +686,7 @@ function pintaCart(){
   const E=document.getElementById("caE"),H=document.getElementById("caHint");
   if(cartModo==="cines"){
     E.textContent="Hoy en tus Cinesa";
-    H.textContent=`Sesiones de hoy en ${Object.values(misCinesN()).join(", ").replace(/, ([^,]*)$/," y $1")}${priVOSE()?", con la VOSE primero":""}.`;
+    H.textContent=`${Object.values(misCinesN()).join(", ").replace(/, ([^,]*)$/," y $1")}${priVOSE()?", con la VOSE primero":""}.`;
     if(!SES){L.innerHTML=`<p class="hint">${SESFALLO?"Ahora no se pueden consultar las sesiones de tus cines. El resto de Platea funciona igual; prueba más tarde.":"Buscando las sesiones de tus cines…"}</p>${SESFALLO?otrosDias().replace("Para otros días, abre","Mientras, puedes abrir"):""}`;return}
     SESL=SES.lista.map(f=>Object.assign({f},sesDe(f))).filter(z=>z.n).sort((a,b)=>(priVOSE()?(b.v?1:0)-(a.v?1:0):0)||b.n-a.n);
     const aviso=sesAviso();
@@ -691,7 +696,7 @@ function pintaCart(){
       return `<div class="cart-row">${f.poster?`<img src="${esc(f.poster)}" alt="" loading="lazy">`:"<i></i>"}<div><h3>${esc(f.titulo)}</h3><span class="ses-donde">${esc(donde)}${z.v?` <span class="badge">VOSE</span>`:""}</span><button class="ses-tog" type="button" data-st="${i}" aria-expanded="${abierta}">${abierta?"Ocultar sesiones":"Ver sesiones"}</button></div>${ya?`<span class="cart-ok">${ya.estado==="vista"?"Ya la viste":"En tu lista"}</span>`:`<button class="btn" type="button" data-cs="${i}">La quiero ver</button>`}${abierta?panelSes(z):""}</div>`}).join("")+otrosDias();
     return;
   }
-  E.textContent="En cines de España";H.textContent=`Lo que está en salas esta semana. Apunta lo que quieras ver con el Unlimited.`;
+  E.textContent="En cines de España";H.textContent=`Toda la semana. Apunta lo que quieras ver con el Unlimited.`;
   if(!CART){L.innerHTML=`<p class="hint">Buscando la cartelera…</p>`;return}
   if(!CART.lista.length){L.innerHTML=`<p class="hint">${CART.fallo?"Ahora no se puede consultar la cartelera. Prueba en un rato.":"La cartelera necesita la conexión con TMDB."}</p>`;return}
   L.innerHTML=CART.lista.map((f,i)=>{const ya=enLista(f);const tc=enTusCines(f);
