@@ -201,15 +201,14 @@ body.con-pestanas{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
 .macro b{font-family:var(--f-mono);font-weight:500;font-size:18px;white-space:nowrap}
 .macro span{font-size:12px;color:var(--suave)}
 
-/* hoja inferior */
-.hoja-fondo{position:fixed;inset:0;background:rgba(14,8,14,.55);display:flex;align-items:flex-end;justify-content:center;z-index:20;padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
-.hoja{background:var(--fondo);width:100%;max-width:560px;border-radius:12px 12px 0 0;max-height:92%;overflow:auto;border-top:4px solid var(--oro);padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
-.hoja .cierre{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.hoja .cierre h2{margin:0;font-family:var(--f-tit);font-weight:500;font-size:24px;line-height:29px;text-wrap:balance}
-.hoja .x{border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:var(--suave);padding:2px 6px}
-.hoja ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px;font-size:15px;line-height:22px}
-.hoja ul{margin:0;padding-left:20px;font-size:15px;line-height:22px}
-@media (min-width:760px){.hoja-fondo{align-items:center;padding:24px}.hoja{border-radius:12px;max-height:86vh}}
+/* ventanas emergentes: la pieza común de ciccapps.css (.cc-velo > .cc-hoja > .cc-cab); aquí, sus colores y el contenido */
+.cc-hoja{background:var(--fondo);color:var(--tinta);box-shadow:0 -8px 30px rgba(0,0,0,.25)}
+.cc-cab .ojo{display:block;margin-bottom:4px}
+.cc-cab h2{font-family:var(--f-tit);font-weight:500;font-size:24px;line-height:29px;text-wrap:balance}
+.cc-cerrar{color:var(--suave)}
+.hoja-cuerpo{display:flex;flex-direction:column;gap:16px;padding-top:10px}
+.hoja-cuerpo ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px;font-size:15px;line-height:22px}
+.hoja-cuerpo ul{margin:0;padding-left:20px;font-size:15px;line-height:22px}
 .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--tinta);color:var(--fondo);padding:10px 16px;border-radius:8px;font-size:14px;z-index:30;max-width:calc(100% - 40px);text-align:center}
 .pie{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
 .pie .aviso-pie{margin:0;max-width:60ch;text-wrap:balance;font-size:13px;line-height:19px;color:var(--suave)}
@@ -540,27 +539,27 @@ async function copiaLista(){
 }
 
 /* ---------- hojas ---------- */
-function hoja(html){
+function hoja(cab,html){
   const raiz=$("hojas");
-  raiz.innerHTML=`<div class="hoja-fondo" id="hojaFondo"><div class="hoja" role="dialog" aria-modal="true">${html}</div></div>`;
-  const fondo=$("hojaFondo");
-  const cerrar=()=>{raiz.innerHTML="";document.removeEventListener("keydown",tecla)};
+  raiz.innerHTML=`<div class="cc-velo" id="hojaFondo"><div class="cc-hoja" role="dialog" aria-modal="true" tabindex="-1">${cab}<div class="hoja-cuerpo">${html}</div></div></div>`;
+  const fondo=$("hojaFondo"),h=fondo.querySelector(".cc-hoja");
+  void fondo.offsetHeight;fondo.classList.add("cc-dentro");document.documentElement.classList.add("cc-abierta");
+  const cerrar=()=>{document.removeEventListener("keydown",tecla);fondo.classList.remove("cc-dentro");document.documentElement.classList.remove("cc-abierta");setTimeout(()=>fondo.remove(),300)};
   const tecla=e=>{if(e.key==="Escape")cerrar()};
   document.addEventListener("keydown",tecla);
   fondo.onclick=e=>{if(e.target===fondo)cerrar()};
   fondo.querySelectorAll("[data-cerrar]").forEach(b=>b.onclick=cerrar);
-  const h=fondo.querySelector(".hoja");h.cerrar=cerrar;
-  const x=h.querySelector(".x");if(x)x.focus();
+  h.cerrar=cerrar;h.focus({preventScroll:true});
   return h;
 }
-const cabHoja=(t,ojo)=>`<div class="cierre"><div class="pila g8" style="gap:4px">${ojo?`<span class="ojo">${esc(ojo)}</span>`:""}<h2>${esc(t)}</h2></div><button class="x" data-cerrar aria-label="Cerrar">×</button></div>`;
+const cabHoja=(t,ojo)=>`<div class="cc-cab"><div>${ojo?`<span class="ojo">${esc(ojo)}</span>`:""}<h2>${esc(t)}</h2></div><button class="cc-cerrar" data-cerrar aria-label="Cerrar">×</button></div>`;
 
 async function hojaPlato(id){
   const p=plato(id);if(!p)return;
   const veces=DIAS.reduce((s,l)=>s+menuDe(l).filter(m=>m.plato.id===id).length,0);
   const c=p.catalogo&&CAT?CAT.find(z=>z.fuente+":"+z.ref===p.catalogo):null;
   const ingr=(p.ingredientes||[]).map(i=>`<li>${esc(i.nombre)} <span class="suave mono" style="font-size:13px">${esc(cantidad({cantidad:i.cantidad,unidad:String(i.unidad||"").toLowerCase()}))}</span></li>`).join("");
-  const h=hoja(cabHoja(p.nombre,metaPlato(p))+
+  const h=hoja(cabHoja(p.nombre,metaPlato(p)),
     `<div class="macro"><div><b>${fmt(p.kcal)}</b><span>kcal</span></div><div><b>${fmt(p.proteinas)} g</b><span>proteína</span></div><div><b>${fmt(p.hidratos)} g</b><span>hidratos</span></div><div><b>${fmt(p.grasas)} g</b><span>grasas</span></div></div>`+
     (p.catalogo?`<p class="p suave">Plato preparado de ${p.catalogo.startsWith("wetaca")?"Wetaca":"Knoweats"}. Sale ${veces} ${veces===1?"vez":"veces"} esta semana.</p>${c&&c.url?`<a class="btn prim grande" href="${esc(c.url)}" target="_blank" rel="noopener">Pedir en ${p.catalogo.startsWith("wetaca")?"Wetaca":"Knoweats"}</a>`:""}`:
     `<div class="pila g8"><span class="ojo">Ingredientes por ración</span><ul>${ingr||"<li>Sin ingredientes</li>"}</ul></div><div id="pasos" class="pila g8"></div>`));
@@ -579,12 +578,12 @@ async function hojaPlato(id){
 }
 
 function hojaFuera(){
-  hoja(cabHoja("Que aproveche","Comer fuera")+(PLAN.fuera||[]).map(x=>`<section class="tarjeta"><span class="ojo oro">${esc(x.sitio)}</span><p class="p">${esc(x.consejo)}</p></section>`).join("")+`<button class="btn prim grande" data-cerrar>Entendido</button>`);
+  hoja(cabHoja("Que aproveche","Comer fuera"),(PLAN.fuera||[]).map(x=>`<section class="tarjeta"><span class="ojo oro">${esc(x.sitio)}</span><p class="p">${esc(x.consejo)}</p></section>`).join("")+`<button class="btn prim grande" data-cerrar>Entendido</button>`);
 }
 
 function hojaCambiar(clave){
   const letra=LETRAS[hoyFecha().getDay()],m=menuDe(letra).find(x=>x.comida.clave===clave);if(!m)return;
-  const h=hoja(cabHoja("Cambiar "+m.comida.nombre.toLowerCase(),m.plato.nombre)+
+  const h=hoja(cabHoja("Cambiar "+m.comida.nombre.toLowerCase(),m.plato.nombre),
     `<label class="pila g8"><span class="ojo">¿Qué te apetece? (opcional)</span><input class="campo" id="motivo" placeholder="Algo con pasta, algo rápido…" maxlength="200"></label><button class="btn prim grande" id="proponer">Proponer 3 platos</button><div id="opciones" class="pila"></div>`);
   $("proponer").onclick=async()=>{
     $("proponer").disabled=true;$("proponer").textContent="Buscando platos…";
@@ -649,7 +648,7 @@ const PASOS=[
     {tipo:"campos",cols:1,campos:[{k:"presupuesto",label:"Presupuesto aproximado",ph:"€ a la semana",modo:"decimal"}]}]},
 ];
 function abreCuestionario(vista,i){CUE={vista,i:i||0,r:JSON.parse(JSON.stringify(PERFIL||{})),archivos:[],error:"",plan:null,origen:vista==="importar"?"nutricionista":"ia"};pinta();window.scrollTo(0,0)}
-function cierraCuestionario(){CUE=null;$("hojas").innerHTML="";pinta();window.scrollTo(0,0)}
+function cierraCuestionario(){CUE=null;$("hojas").innerHTML="";document.documentElement.classList.remove("cc-abierta");pinta();window.scrollTo(0,0)}
 function valida(i){
   const r=CUE.r;
   if(i===0&&!r.objetivo)return"Elige tu objetivo.";
