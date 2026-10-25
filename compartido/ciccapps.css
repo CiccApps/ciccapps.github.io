@@ -115,9 +115,13 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
   background: rgba(10, 14, 12, 0); transition: background .25s, backdrop-filter .25s, -webkit-backdrop-filter .25s;
 }
 .cc-velo.cc-dentro, .cl-vitrina.cl-dentro { background: rgba(10, 14, 12, .45); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+/* En el Duo, velo algo más oscuro: así el margen de arriba (sobre la cabecera de la app) se lee igual que el de abajo (sobre la sombra) */
+.cc-velo.cc-dentro, .cl-vitrina.cl-dentro { box-shadow: inset 0 0 0 calc(var(--cc-duo) * 100) rgba(10, 14, 12, .3); }
 .cc-hoja, .cl-hoja {
   box-sizing: border-box; width: calc(100% - 2 * var(--cc-duo)); margin-bottom: var(--cc-duo);
   max-height: calc(100% - env(safe-area-inset-top, 0px) - 24px - .8 * var(--cc-duo)); overflow-y: auto; overscroll-behavior: contain;
+  /* en el Duo todas las ventanas abren a la altura entera, como la vitrina, aunque tengan poco contenido */
+  min-height: min(var(--cc-duo) * 100, 100% - env(safe-area-inset-top, 0px) - 24px - .8 * var(--cc-duo));
   padding: 6px 20px calc(max(0px, env(safe-area-inset-bottom, 0px) - var(--cc-duo)) + 20px);
   border-radius: calc(20px - .6 * var(--cc-duo)) max(20px, var(--cc-curva)) var(--cc-curva) calc(.4 * var(--cc-duo));
   transform: translateY(calc(100% + var(--cc-duo))); transition: transform .3s cubic-bezier(.2, .8, .3, 1);
@@ -127,7 +131,7 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
 @media (orientation: landscape) { .cc-hoja, .cl-hoja { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); } }
 @media (min-width: 700px) {
   .cc-velo, .cl-vitrina { align-items: center; padding: 24px max(24px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
-  .cc-hoja, .cl-hoja { width: min(760px, 100%); max-height: min(86vh, 900px); margin: 0; border-radius: 20px; padding: 8px 28px 28px;
+  .cc-hoja, .cl-hoja { width: min(760px, 100%); max-height: min(86vh, 900px); min-height: 0; margin: 0; border-radius: 20px; padding: 8px 28px 28px;
     transform: translateY(16px) scale(.98); opacity: 0; transition: transform .25s, opacity .25s; }
   .cc-velo.cc-dentro .cc-hoja, .cl-vitrina.cl-dentro .cl-hoja { opacity: 1; }
 }
@@ -135,7 +139,7 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
 .cc-cab, .cl-cab { position: sticky; top: -6px; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 -4px; padding: 10px 4px 6px; background: inherit; }
 .cc-cab { margin-bottom: max(0px, var(--cc-muesca-h) - 60px); }
 .cc-cab h2 { margin: 0; font-family: var(--cc-display); font-weight: 400; font-size: 26px; line-height: 1.15; }
-.cc-cerrar, .cl-cerrar { font: inherit; width: 44px; min-height: 44px; font-size: 28px; line-height: 1; color: var(--cc-tinta-suave); background: none; border: 0; border-radius: 10px; cursor: pointer; margin-left: auto; }
+.cc-cerrar, .cl-cerrar { font: inherit; width: 44px; min-height: 44px; font-size: 34px; line-height: 1; color: var(--cc-tinta-suave); background: none; border: 0; border-radius: 10px; cursor: pointer; margin-left: auto; }
 .cc-cab .cc-cerrar, .cl-cab .cl-cerrar { margin-right: max(0px, var(--cc-muesca-w) - 16px); }
 .cc-cerrar:focus-visible { outline: 2px solid var(--cc-oro); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { .cc-hoja, .cc-velo, .cc-velo.cc-dentro .cc-hoja { transition: opacity .15s; transform: none; } }
