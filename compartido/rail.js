@@ -1,3 +1,7 @@
+/* Al girar o plegar, iOS cambia las zonas seguras (env) un poco después del resize: se vuelve a mirar al momento y otra vez al rato */
+window.ccLuego = f => { const g = () => { f(); setTimeout(f, 250); setTimeout(f, 700); };
+  addEventListener("resize", g); addEventListener("orientationchange", g); addEventListener("pageshow", g); };
+
 /* Pantalla exterior del iPhone Duo, común a todas las apps que cargan este archivo (aunque no lleven barra):
    - html.cc-gira (y cc-gira-izq): girada, con la franja de la cámara a un lado. Las ventanas flotan fuera de la franja (ciccapps.css).
    - html.cc-tope: en vertical y con la app instalada, después de girar el móvil iOS a veces deja la página --cc-tope px más abajo
@@ -9,14 +13,15 @@
   const mira = () => {
     if (!pr.isConnected) document.body.appendChild(pr);
     const cs = getComputedStyle(pr), d = parseFloat(cs.paddingRight) || 0, i = parseFloat(cs.paddingLeft) || 0, apaisada = innerWidth > innerHeight;
-    html.classList.toggle("cc-gira", apaisada && (d >= 44) !== (i >= 44));
-    html.classList.toggle("cc-gira-izq", apaisada && i >= 44 && d < 44);
+    const girada = apaisada && innerHeight < 540; // la exterior en horizontal (la interior, girada, sigue con su franja de siempre)
+    html.classList.toggle("cc-gira", girada && (d >= 44) !== (i >= 44));
+    html.classList.toggle("cc-gira-izq", girada && i >= 44 && d < 44);
     const t = solo && !apaisada && d >= 44 ? Math.round(screen.height - innerHeight) : 0, si = t > 0 && t <= 40;
     html.classList.toggle("cc-tope", si);
     html.style.setProperty("--cc-tope", (si ? t : 0) + "px");
   };
   if (document.body) mira(); else addEventListener("DOMContentLoaded", mira);
-  addEventListener("resize", mira);
+  ccLuego(mira);
 })();
 
 /* Barra lateral común (<nav class="rail">): decide dónde va según la pantalla y la coloca (Miguel, 25/10/2026).
@@ -52,11 +57,13 @@ window.ccRail = (r, o = {}) => {
   const MODOS = ["r-duo", "r-der", "r-izq", "r-ancha", "r-boton"];
   const ver = () => {
     if (!r.contains(ab)) r.appendChild(ab); // por si la app rehace los botones
-    const cs = getComputedStyle(pr), d = parseFloat(cs.paddingRight) || 0, i = parseFloat(cs.paddingLeft) || 0, apaisada = innerWidth > innerHeight;
+    const cs = getComputedStyle(pr), d = parseFloat(cs.paddingRight) || 0, i = parseFloat(cs.paddingLeft) || 0;
+    const girada = innerWidth > innerHeight && innerHeight < 540; // solo la exterior girada; la interior en horizontal mantiene su franja
     let m = "";
     if (o.puede && !o.puede()) m = "";
-    else if (d >= 44 && (!apaisada || i < 44)) m = apaisada ? "r-der" : "r-duo";
-    else if (apaisada && i >= 44 && d < 44) m = "r-izq";
+    else if (d >= 44 && !girada) m = "r-duo";
+    else if (girada && d >= 44 && i < 44) m = "r-der";
+    else if (girada && i >= 44 && d < 44) m = "r-izq";
     else if (cabe()) m = "r-ancha";
     else if (o.boton !== false) m = "r-boton";
     MODOS.forEach(k => r.classList.toggle(k, k === m));
@@ -66,6 +73,6 @@ window.ccRail = (r, o = {}) => {
     if (m !== "r-boton") abre(false);
     return m;
   };
-  ver(); addEventListener("resize", ver);
+  ver(); ccLuego(ver);
   return ver;
 };
