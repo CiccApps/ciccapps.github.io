@@ -92,8 +92,9 @@
 
 /* Barra lateral del iPhone Duo (común a todas las apps; cada app pone sus colores y cuándo se ve, con .rail.si).
    Va en la franja segura de la derecha, con su eje alineado con la hora y la batería de iOS (6px a la izquierda del centro de la franja),
-   y empieza justo debajo de ellas, anclada arriba: no depende del alto de la pantalla, que iOS cambia al desplazar, así que no se mueve. */
-.rail { position: fixed; top: 176px; right: 6px; width: env(safe-area-inset-right, 0px); box-sizing: border-box;
+   y empieza donde empieza el dock de la pantalla de inicio del Duo (248px), por debajo de la hora, la batería y las actividades
+   que iOS pone encima (música, mapas…). Anclada arriba: no depende del alto de la pantalla, que iOS cambia al desplazar, así que no se mueve. */
+.rail { position: fixed; top: 248px; right: 6px; width: env(safe-area-inset-right, 0px); box-sizing: border-box;
   flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
 .rail > * { pointer-events: auto; }
 
