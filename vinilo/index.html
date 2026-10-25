@@ -56,6 +56,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: 1.7rem; margin: 0
 .shelf a.hit span { color: var(--accent); }
 .match { font-size: 14px; color: var(--muted); min-height: 1.5em; margin: 0; }
 .match b { color: var(--accent); font-weight: 500; }
+.match:empty { display: none; }
 .scale { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--tag); letter-spacing: .1em; font-size: 14px; color: var(--muted); }
 .scale::before { content: ""; order: 1; flex: 1; height: 2px; background: linear-gradient(90deg, #4f6b8a, var(--accent), #c2452f); border-radius: 2px; }
 .scale span:last-child { order: 2; }
