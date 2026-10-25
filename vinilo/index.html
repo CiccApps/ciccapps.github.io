@@ -321,10 +321,11 @@ html.con-rail{scroll-padding-top:44px}
 html.con-rail #groups{scroll-margin-top:28px}
 html.con-rail body::before{content:"";position:fixed;inset:0 0 auto;height:52px;z-index:35;pointer-events:none;background:linear-gradient(var(--bg) 0 40px,transparent);opacity:0;transition:opacity .2s}
 html.con-rail.bajado body::before{opacity:1}
-/* La portada llena la pantalla exterior con el mismo margen arriba y abajo */
+/* La portada llena la pantalla exterior con el mismo margen arriba, abajo y a los lados */
 @media (orientation:portrait){
+  html.con-rail .wrap{padding-top:20px!important}
   html.con-rail .dial-wrap{margin:12px 0 4px}
-  html.con-rail .dial{--d:min(calc(100% - 64px),300px,calc(100svh - 400px))}
+  html.con-rail .dial{--d:min(calc(100% - 64px),300px)} /* el JS lo encoge si la portada no cabe entera */
   html.con-rail .dial-pie{margin-top:16px}
 }
 /* Móvil en horizontal (pantalla exterior girada): nombre y lo que suena a la izquierda, el disco a la derecha */
@@ -800,6 +801,11 @@ TAGS.forEach(([key, label]) => {
   (()=>{const r=$("rail"),pr=document.createElement("div");pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
     const ver=()=>document.documentElement.classList.toggle("con-rail",r.classList.toggle("si",pr.offsetWidth>=44));ver();addEventListener("resize",ver);
     const baja=()=>document.documentElement.classList.toggle("bajado",scrollY>8);baja();addEventListener("scroll",baja,{passive:true});
+    // En la pantalla exterior la portada cabe entera, con el mismo margen arriba y abajo que a los lados: el disco se encoge lo que sobre
+    const pl=document.querySelector(".plato"),dl=$("dial");
+    const encaja=()=>{dl.style.removeProperty("--d");if(!document.documentElement.classList.contains("con-rail")||innerWidth>innerHeight)return;
+      const b=pl.getBoundingClientRect(),sobra=b.bottom+scrollY+b.left-innerHeight;if(sobra>0)dl.style.setProperty("--d",Math.max(180,dl.offsetWidth-sobra)+"px")};
+    encaja();addEventListener("resize",encaja);document.fonts&&document.fonts.ready.then(encaja);new MutationObserver(encaja).observe($("ahora"),{childList:true,subtree:true,characterData:true});
     r.onclick=e=>{const b=e.target.closest("[data-ir]");if(!b)return;const d=b.dataset.ir;
       if(d==="vitrina"){if(window.CiccLogros&&sb)CiccLogros.vitrina();else $("mis").scrollIntoView({behavior:"smooth"});return}
       if(d==="arriba")scrollTo({top:0,behavior:"smooth"});else $(d).scrollIntoView({behavior:"smooth",block:"start"})};
