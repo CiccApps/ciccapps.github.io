@@ -182,6 +182,8 @@ html.con-rail{scroll-padding-top:calc(var(--bar-h,60px) + 28px)}
 @media (pointer:coarse){.bar{top:max(env(safe-area-inset-top,0px),14px)}body::before{height:max(env(safe-area-inset-top,0px),14px)}}
 /* con la barra lateral del Duo no se tapa nada arriba: iOS difumina ese borde y basta (Miguel); la franja opaca dejaba una línea al bajar */
 html.con-rail body::before{height:env(safe-area-inset-top,0px)}
+/* …salvo cuando la barra ya está pegada arriba: entonces lo que pasa por encima de ella se tapa con el fondo (Miguel) */
+html.con-rail.pegada body::before{height:max(env(safe-area-inset-top,0px),14px)}
 .rail button{appearance:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--muted);display:grid;place-items:center;cursor:pointer;padding:0;box-shadow:0 4px 12px rgba(0,0,0,.18)}
 .rail button.on{color:var(--red);border-color:var(--red)}
 .rail svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -868,7 +870,8 @@ function evalLogros(){if(!LOGROS_OK||!sb)return;clearTimeout(tLogros);tLogros=se
     tab=d;try{localStorage.setItem(LS+"-tab",tab)}catch(err){}render();
     const v=document.getElementById("view");scrollTo(scrollX,scrollY);scrollTo({top:Math.max(0,scrollY+v.getBoundingClientRect().top-bar.offsetHeight-(parseFloat(getComputedStyle(bar).top)||0)-14),behavior:"smooth"});setTimeout(marca,400)};
   // marca la zona que se está viendo: arriba (resumen) o la pestaña abierta
-  const marca=()=>{const act=bar.getBoundingClientRect().top>innerHeight*.35?"arriba":tab;
+  const marca=()=>{document.documentElement.classList.toggle("pegada",scrollY>0&&bar.getBoundingClientRect().top<=parseFloat(getComputedStyle(bar).top)+1);
+    const act=bar.getBoundingClientRect().top>innerHeight*.35?"arriba":tab;
     r.querySelectorAll("[data-ir]").forEach(b=>b.classList.toggle("on",b.dataset.ir===act))};
   addEventListener("scroll",marca,{passive:true});document.addEventListener("click",()=>setTimeout(marca,0));marca()})();
 async function cargar(){

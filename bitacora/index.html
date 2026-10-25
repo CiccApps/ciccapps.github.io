@@ -204,6 +204,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:max(env(safe-area-i
    las pestañas fijas se quedan ahí al bajar y los saltos de la barra lateral también; el difuminado de iOS se deja tal cual */
 html.con-rail{scroll-padding-top:22px}
 html.con-rail body::before{height:env(safe-area-inset-top,0px)}
+/* …salvo cuando las pestañas ya están pegadas arriba: entonces lo que pasa por encima de ellas se tapa con el fondo (Miguel) */
+html.con-rail.pegada body::before{height:max(env(safe-area-inset-top,0px),22px)}
 html.con-rail .wrap{padding-top:22px!important}
 html.con-rail .tabs{top:max(env(safe-area-inset-top,0px),22px)}
 html.con-rail .stage{scroll-margin-top:calc(max(env(safe-area-inset-top,0px),22px) + 42px)}
@@ -1057,7 +1059,8 @@ document.getElementById("vitrinaBtn").onclick=()=>CiccLogros.vitrina();
   pr.style.cssText="position:fixed;visibility:hidden;pointer-events:none;top:0;height:0;width:env(safe-area-inset-right,0px)";document.body.appendChild(pr);
   const ver=()=>document.documentElement.classList.toggle("con-rail",r.classList.toggle("si",pr.offsetWidth>=44&&!document.body.classList.contains("nuevo")));
   const suave=()=>matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
-  const marca=()=>{const act=tabs.getBoundingClientRect().top>innerHeight*.35?"arriba":tab;r.querySelectorAll("[data-ir]").forEach(b=>b.classList.toggle("on",b.dataset.ir===act))};
+  const marca=()=>{document.documentElement.classList.toggle("pegada",scrollY>0&&tabs.getBoundingClientRect().top<=parseFloat(getComputedStyle(tabs).top)+1);
+    const act=tabs.getBoundingClientRect().top>innerHeight*.35?"arriba":tab;r.querySelectorAll("[data-ir]").forEach(b=>b.classList.toggle("on",b.dataset.ir===act))};
   r.onclick=e=>{const b=e.target.closest("[data-ir]");if(!b)return;const d=b.dataset.ir;
     if(d==="vitrina"){CiccLogros.vitrina();return}
     if(d==="arriba"){scrollTo({top:0,behavior:suave()});return}
