@@ -127,16 +127,17 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
   max-height: calc(100% - var(--cc-arriba) - var(--cc-duo)); overflow-y: auto; overscroll-behavior: contain;
   /* en el Duo todas las ventanas abren a la altura entera, como la vitrina, aunque tengan poco contenido */
   min-height: min(var(--cc-alto-duo), 100% - var(--cc-arriba) - var(--cc-duo));
-  padding: 6px 20px calc(max(0px, env(safe-area-inset-bottom, 0px) - var(--cc-duo)) + 20px);
+  --cc-hi: 20px; --cc-hd: 20px; --cc-hb: calc(max(0px, env(safe-area-inset-bottom, 0px) - var(--cc-duo)) + 20px);
+  padding: 0 var(--cc-hd) var(--cc-hb) var(--cc-hi);
   border-radius: calc(20px - .6 * var(--cc-duo)) max(20px, var(--cc-curva)) var(--cc-curva) calc(.4 * var(--cc-duo));
   transform: translateY(calc(100% + var(--cc-duo))); transition: transform .3s cubic-bezier(.2, .8, .3, 1);
 }
 .cc-velo.cc-dentro .cc-hoja, .cl-vitrina.cl-dentro .cl-hoja { transform: none; }
 .cc-hoja:focus, .cl-hoja:focus { outline: none; }
-@media (orientation: landscape) { .cc-hoja, .cl-hoja { padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); } }
+@media (orientation: landscape) { .cc-hoja, .cl-hoja { --cc-hi: max(20px, env(safe-area-inset-left, 0px)); --cc-hd: max(20px, env(safe-area-inset-right, 0px)); } }
 @media (min-width: 700px) {
   .cc-velo, .cl-vitrina { align-items: center; padding: 24px max(24px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px)); }
-  .cc-hoja, .cl-hoja { width: min(760px, 100%); max-height: min(86vh, 900px); min-height: 0; margin: 0; border-radius: 20px; padding: 8px 28px 28px;
+  .cc-hoja, .cl-hoja { width: min(760px, 100%); max-height: min(86vh, 900px); min-height: 0; margin: 0; border-radius: 20px; --cc-hi: 28px; --cc-hd: 28px; --cc-hb: 28px;
     transform: translateY(16px) scale(.98); opacity: 0; transition: transform .25s, opacity .25s; }
   .cc-velo.cc-dentro .cc-hoja, .cl-vitrina.cl-dentro .cl-hoja { opacity: 1; }
 }
@@ -144,8 +145,16 @@ html.cc-abierta, html.cl-abierta { overflow: hidden; }
    En el Duo llega siempre hasta el final de la zona de la hora y la batería (--cc-muesca-h): lo que se desplaza pasa por debajo
    de la franja y nunca se mete ahí. La X y lo que va a la derecha se apartan de la muesca. Lo que va a todo el ancho
    (como la barra de la vitrina) cierra la franja, debajo de esa zona. */
-.cc-cab, .cl-cab { position: sticky; top: -6px; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: space-between; column-gap: 12px;
-  box-sizing: border-box; min-height: var(--cc-muesca-h); margin: 0 -4px; padding: 10px 4px 6px; background: inherit; }
+/* pegada al borde de arriba de la hoja desde el principio (la hoja no tiene relleno arriba): al desplazar no se mueve nada */
+.cc-cab, .cl-cab { position: sticky; top: 0; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; align-content: space-between; column-gap: 12px;
+  box-sizing: border-box; min-height: var(--cc-muesca-h); margin: 0 -4px; padding: 16px 4px 6px; background: inherit; }
+@media (min-width: 700px) { .cc-cab, .cl-cab { padding-top: 18px; } }
+/* Cuerpo: si lo que va debajo de la cabecera está dentro de .cc-cuerpo, solo eso se desplaza (y su barra de desplazamiento
+   empieza debajo de la franja fija). Va de borde a borde de la hoja, con el mismo relleno, para que la barra quede en el borde. */
+.cc-hoja:has(> .cc-cuerpo), .cl-hoja:has(> .cc-cuerpo) { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0; }
+.cc-hoja > .cc-cab, .cl-hoja > .cl-cab { flex: none; }
+.cc-cuerpo { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  margin: 0 calc(-1 * var(--cc-hd)) 0 calc(-1 * var(--cc-hi)); padding: 0 var(--cc-hd) var(--cc-hb) var(--cc-hi); }
 .cc-sub { display: block; margin: 4px 0 0; font-size: 14px; line-height: 1.35; color: var(--cc-tinta-suave); }
 .cc-cab h2 { margin: 0; font-family: var(--cc-display); font-weight: 400; font-size: 26px; line-height: 1.15; }
 .cc-cerrar, .cl-cerrar { font: inherit; width: 44px; min-height: 44px; font-size: 34px; line-height: 1; color: var(--cc-tinta-suave); background: none; border: 0; border-radius: 10px; cursor: pointer; margin-left: auto; }
