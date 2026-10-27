@@ -255,7 +255,7 @@ select.in { text-align: left; }
   .wrap:not(:fullscreen) .panel { column-gap: 14px; }   /* las tarjetas de abajo, alineadas con las de las preguntas */
   .wrap:not(:fullscreen) .panel > :is(.pen, .ret, .plz) { display: flex; flex-direction: column; gap: 8px;
     background: #F7F4FB; border: 1px solid var(--lav); border-radius: 6px; padding: 14px; }
-  .wrap:not(:fullscreen) .panel > :is(.pen, .ret, .plz) > :last-child { margin-top: auto; }
+  .wrap:not(:fullscreen) .panel > :is(.pen, .ret, .plz) > p.small:last-child { margin-top: auto; }
 }
 .qc #tNote { margin: -4px 0 0; }
 .ichk, .lchk { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
@@ -717,7 +717,6 @@ td.wy { color: var(--pink); }
         <span class="h">€/mes al 0%</span><input class="in" id="f_fA" inputmode="numeric" aria-label="Plazo 1: euros al mes al 0%"><input class="in" id="f_fB" inputmode="numeric" aria-label="Plazo 2: euros al mes al 0%">
         <span class="h">€/mes con interés</span><input class="in ici" id="f_mA" inputmode="numeric" aria-label="Plazo 1: euros al mes con interés compuesto"><input class="in ici" id="f_mB" inputmode="numeric" aria-label="Plazo 2: euros al mes con interés compuesto">
       </div>
-      <p class="small">Todo cuadra solo: cambia los años, el capital o una aportación y se ajusta el resto.</p>
     </div>
     <label class="chk xtra"><input type="checkbox" id="f_comp"> Extra al final: «¿Y sin interés compuesto?»</label>
   </form>
