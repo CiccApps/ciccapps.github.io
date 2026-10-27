@@ -1199,7 +1199,7 @@ td.wy { color: var(--pink); }
   // como recargar la página: datos del ejemplo, primer paso, panel de datos oculto y arriba del todo
   $('reset').addEventListener('click', () => {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-    const mayor = S.mayor; S = clone(EXAMPLE); if (mayor) preset(true); norm(S.A); norm(S.B); save(); step = 0;
+    S = clone(EXAMPLE); norm(S.A); norm(S.B); save(); step = 0;   // siempre el ejemplo de menos de 40, con la casilla desmarcada
     const p = $('panel'); p.hidden = true; $('app').classList.remove('data');
     $('toggleTxt').textContent = 'Mostrar datos'; $('toggleData').setAttribute('aria-expanded', 'false');
     try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
