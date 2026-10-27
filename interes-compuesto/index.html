@@ -731,8 +731,8 @@ td.wy { color: var(--pink); }
     A: { years: 30, goal: 144000, monthly: 100 }, B: { years: 40, goal: 336000, monthly: 100 },   // cifras redondas del ejemplo; al cambiar algo se recalcula exacto
     withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 50000 }], mayor: false };
   // cliente de 40 años o más: 15 y 25 años con 255 €/mes al 8 %, que llegan a los dos capitales (al 0 %, 500 y 800 €/mes; renta a 20 años del plazo 2, 1.000 €/mes);
-  // calculadoras, con los mismos datos en las tres: 420.000 €, 25 años y 500 €/mes (al 0 %, 1.400 €/mes y 70 años; la renta sale en verde en las tres)
-  const MAYOR = { rate: 8, tGoal: 420000, tMonthly: 500, nGoal: 420000, nYears: 25, gMonthly: 500, gYears: 25,
+  // calculadoras, con los mismos datos en las tres: 360.000 €, 25 años y 500 €/mes (al 0 %, 1.200 €/mes y 60 años; renta de 1.500 €/mes o más, en verde, en las tres)
+  const MAYOR = { rate: 8, tGoal: 360000, tMonthly: 500, nGoal: 360000, nYears: 25, gMonthly: 500, gYears: 25,
     A: { years: 15, goal: 90000, monthly: 255 }, B: { years: 25, goal: 240000, monthly: 255 },
     withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }] };
   const KEY = 'interes-compuesto-v8';
@@ -787,9 +787,11 @@ td.wy { color: var(--pink); }
     for (let t = 1; t <= 300; t++) { const prev = b; b = (b + 12 * A * Math.pow(1 + g, t - 1)) * (1 + Math.max(0, R)); if (b >= goal) return t - 1 + (goal - prev) / (b - prev); }
     return Infinity;
   }
+  // años enteros para llegar (hacia arriba): los que se llevan a la diapositiva desde «¿Cuánto tardo?»
+  const upY = y => Math.max(1, Math.ceil(y - 1e-6));
   function yTxt(y) {
     if (!isFinite(y)) return 'más de 300 años';
-    const tot = Math.round(y * 12), a = Math.floor(tot / 12), m = tot % 12;
+    const tot = Math.ceil(y * 12 - 1e-6), a = Math.floor(tot / 12), m = tot % 12;   // hacia arriba: el mes en que ya se llega
     return (a ? a + (a === 1 ? ' año' : ' años') : '') + (a && m ? ' y ' : '') + (m ? m + (m === 1 ? ' mes' : ' meses') : '') || '0 meses';
   }
   function fvPerEuro(years) { const r = simulate(years, 1, S.rate / 100, S.method, []); return r[r.length - 1].ic; }
@@ -968,7 +970,7 @@ td.wy { color: var(--pink); }
     $('tTxt').innerHTML = 'Para ' + eur(S.tGoal) + ' ahorrando ' + eur(S.tMonthly) + '/mes:<br>' +
       'En la cuenta (0 %): <b class="ko">' + yTxt(y0) + '</b><br>' +
       'Con interés compuesto al ' + rp + ': <b class="ok">' + yTxt(yR) + '</b>';
-    $('tApply').disabled = !(isFinite(yR) && Math.round(yR) <= MAXY && Math.round(yR) >= 1);
+    $('tApply').disabled = !(isFinite(yR) && upY(yR) <= MAXY);
     // solo si no se puede llevar a la diapositiva, para explicar por qué
     $('tNote').hidden = !$('tApply').disabled;
     $('tNote').textContent = 'Pasa de ' + MAXY + ' años: sube el ahorro al mes para llevarlo a la diapositiva.';
@@ -1181,7 +1183,7 @@ td.wy { color: var(--pink); }
   }
   $('nApply').addEventListener('click', () => toSlide(S.nYears, sc => setGoal(sc, S.nGoal)));
   $('gApply').addEventListener('click', () => toSlide(S.gYears, sc => setMonthly(sc, S.gMonthly)));
-  $('tApply').addEventListener('click', () => toSlide(Math.max(1, Math.min(MAXY, Math.round(yearsTo(S.tGoal, S.tMonthly, S.rate / 100)))), sc => setMonthly(sc, S.tMonthly)));
+  $('tApply').addEventListener('click', () => toSlide(Math.max(1, Math.min(MAXY, upY(yearsTo(S.tGoal, S.tMonthly, S.rate / 100)))), sc => setMonthly(sc, S.tMonthly)));
   // pestañas de las preguntas (solo se ven en una columna)
   let q = 0;
   function showQ(i) {
