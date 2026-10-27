@@ -290,6 +290,10 @@ select.in { text-align: left; }
 .qc .row-actions { margin-top: auto; }
 .qc button { width: 100%; }
 /* en una columna (pantalla completa, móvil): las preguntas en pestañas, una a la vista */
+.agesel { display: flex; align-items: center; gap: 10px; font-size: 14px; flex-wrap: wrap; }
+.agetabs { display: inline-grid; grid-auto-flow: column; gap: 6px; }
+.agetabs button { justify-content: center; padding: 6px 12px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+.agetabs button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
 .qtabs { display: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .qtabs button { justify-content: center; padding: 7px 4px; font-size: 13px; font-weight: 700; min-width: 0; white-space: nowrap; }
 .qtabs button[aria-selected="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
@@ -655,7 +659,7 @@ td.wy { color: var(--pink); }
   <p class="hint hint-pc">Haz clic en una cifra de la diapositiva para cambiarla; el resto está en «Datos». Avanza con → y vuelve con ←. En pantalla completa, mueve el ratón para ver los botones.</p>
 
   <form class="panel" id="panel" autocomplete="off" hidden>
-    <div class="phead"><h2>Datos</h2><label class="chk"><input type="checkbox" id="f_mayor"> Cliente de 40 años o más</label></div>
+    <div class="phead"><h2>Datos</h2><div class="agesel"><span id="ageLbl">Edad del cliente</span><div class="agetabs" role="group" aria-labelledby="ageLbl"><button type="button" data-age="0">Menos de 40</button><button type="button" data-age="1">40 a 49</button><button type="button" data-age="2">50 o más</button></div></div></div>
     <div class="ratecard">
       <div class="rhead"><label for="f_rate">Rentabilidad anual</label><span class="small">Para la diapositiva y las calculadoras (máximo 12&nbsp;%)</span></div>
       <div class="rbig"><input class="in rin" id="f_rate" inputmode="decimal"><span>%</span></div>
@@ -729,21 +733,27 @@ td.wy { color: var(--pink); }
   // ---------- ejemplo inicial: el de la presentación (30 años y un segundo plazo de 40); las calculadoras, con medio millón y 250 €/mes ----------
   const EXAMPLE = { rate: 8, method: 'anual', two: true, pYears: 20, infl: 2.5, inflOn: false, gOn: false, g: 3, wOn: true, comp: true, tGoal: 500000, tMonthly: 250, nGoal: 500000, nYears: 40, gMonthly: 250, gYears: 40,
     A: { years: 30, goal: 144000, monthly: 100 }, B: { years: 40, goal: 336000, monthly: 100 },   // cifras redondas del ejemplo; al cambiar algo se recalcula exacto
-    withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 50000 }], mayor: false };
-  // cliente de 40 años o más: 15 y 25 años con 255 €/mes al 8 %, que llegan a los dos capitales (al 0 %, 500 y 800 €/mes; renta a 20 años del plazo 2, 1.000 €/mes);
+    withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 50000 }], age: 0 };
+  // cliente de 40 a 49 años: 15 y 25 años con 255 €/mes al 8 %, que llegan a los dos capitales (al 0 %, 500 y 800 €/mes; renta a 20 años del plazo 2, 1.000 €/mes);
   // calculadoras, con los mismos datos en las tres: 360.000 €, 25 años y 400 €/mes (al 0 %, 1.200 €/mes y 75 años; con interés, 380 €/mes; renta de 1.500 y 1.579 €/mes, en verde)
   const MAYOR = { rate: 8, tGoal: 360000, tMonthly: 400, nGoal: 360000, nYears: 25, gMonthly: 400, gYears: 25,
     A: { years: 15, goal: 90000, monthly: 255 }, B: { years: 25, goal: 240000, monthly: 255 },
     withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }] };
+  // cliente de 50 años o más: 10 y 20 años con 650 €/mes al 8 % (al 0 %, 1.000 y 1.600 €/mes; renta a 20 años del plazo 2, 1.600 €/mes);
+  // calculadoras: 384.000 €, 20 años y 650 €/mes (al 0 %, 1.600 €/mes; con interés, 647 €/mes y justo 20 años; renta en verde)
+  const SENIOR = { rate: 8, tGoal: 384000, tMonthly: 650, nGoal: 384000, nYears: 20, gMonthly: 650, gYears: 20,
+    A: { years: 10, goal: 120000, monthly: 650 }, B: { years: 20, goal: 384000, monthly: 650 },
+    withdrawals: [{ year: 10, amount: 10000 }, { year: 15, amount: 20000 }] };
   const KEY = 'interes-compuesto-v8';
   const MAXY = 50;
   let S = load();
   if (!(S.rate >= 0 && S.rate <= 12)) S.rate = Math.min(12, Math.max(0, +S.rate || 0));   // la rentabilidad, como mucho al 12 %
+  delete S.mayor;
   norm(S.A); norm(S.B);
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function load() {
-    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.A && s.B) return Object.assign(clone(EXAMPLE), s, { method: 'anual' }); } catch (e) {}
+    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.A && s.B) { if (!(s.age >= 0 && s.age <= 2)) s.age = s.mayor ? 1 : 0; return Object.assign(clone(EXAMPLE), s, { method: 'anual' }); } } catch (e) {}   // antes la edad era una casilla «40 años o más» (mayor)
     return clone(EXAMPLE);
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -807,10 +817,10 @@ td.wy { color: var(--pink); }
   function setRate(x) { S.rate = x; [S.A, S.B].forEach(sc => { sc.monthly = needM(sc); }); }
   // lo mismo al activar o cambiar el crecimiento: se mantiene el capital y se recalcula la aportación
   // carga las cifras del ejemplo de cada edad; las casillas (crecimiento, inflación, retiradas, extra) se quedan como estén
-  function preset(on) {
-    const src = on ? MAYOR : EXAMPLE;
+  function preset(age) {
+    const src = [EXAMPLE, MAYOR, SENIOR][age];
     ['rate', 'tGoal', 'tMonthly', 'nGoal', 'nYears', 'gMonthly', 'gYears'].forEach(k => { S[k] = src[k]; });
-    S.A = clone(src.A); S.B = clone(src.B); S.withdrawals = clone(src.withdrawals); S.two = true; S.mayor = on;
+    S.A = clone(src.A); S.B = clone(src.B); S.withdrawals = clone(src.withdrawals); S.two = true; S.age = age;
     if (gr()) [S.A, S.B].forEach(sc => { sc.monthly = needM(sc); });
   }
   function setGrowth(on, g) { S.gOn = on; S.g = g; [S.A, S.B].forEach(sc => { sc.monthly = needM(sc); }); }
@@ -979,7 +989,7 @@ td.wy { color: var(--pink); }
     setIn('f_g', String(S.g).replace('.', ',')); $('f_gOn').checked = !!S.gOn;
     $('f_inflOn').checked = !!S.inflOn; $('f_wOn').checked = !!S.wOn;
     // último paso: con el capital del último plazo y el ahorro mensual de la tabla
-    $('f_comp').checked = !!S.comp; $('f_mayor').checked = !!S.mayor;
+    $('f_comp').checked = !!S.comp; document.querySelectorAll('.agetabs [data-age]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.age === S.age)));
     const cG = (S.two ? S.B : S.A).goal, cM = (S.two ? S.B : S.A).monthly;
     const c0 = yearsTo(cG, cM, 0), cR = yearsTo(cG, cM, R);
     $('c_goal').textContent = eur(cG); $('c_m').textContent = eur(cM) + '/mes' + (gr() ? ' (+' + pct(S.g) + ' cada año)' : '');
@@ -1163,7 +1173,7 @@ td.wy { color: var(--pink); }
   bindIn('f_pY', x => { if (x >= 1 && x <= 60) S.pYears = Math.round(x); });
   bindIn('f_inf', x => { if (x >= 0 && x < 20) S.infl = x; });
   $('f_comp').addEventListener('change', e => { S.comp = e.target.checked; changed(); });
-  $('f_mayor').addEventListener('change', e => { preset(e.target.checked); step = Math.min(step, maxStep()); changed(); });
+  document.querySelectorAll('.agetabs [data-age]').forEach(b => b.addEventListener('click', () => { preset(+b.dataset.age); step = Math.min(step, maxStep()); changed(); }));
   $('f_inflOn').addEventListener('change', e => { S.inflOn = e.target.checked; changed(); });
   $('f_wOn').addEventListener('change', e => { S.wOn = e.target.checked; changed(); });
   $('f_gOn').addEventListener('change', e => { setGrowth(e.target.checked, S.g); changed(); });
@@ -1200,7 +1210,7 @@ td.wy { color: var(--pink); }
   // como recargar la página: datos del ejemplo, primer paso, panel de datos oculto y arriba del todo
   $('reset').addEventListener('click', () => {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-    S = clone(EXAMPLE); norm(S.A); norm(S.B); save(); step = 0;   // siempre el ejemplo de menos de 40, con la casilla desmarcada
+    S = clone(EXAMPLE); norm(S.A); norm(S.B); save(); step = 0;   // siempre el ejemplo de menos de 40
     const p = $('panel'); p.hidden = true; $('app').classList.remove('data');
     $('toggleTxt').textContent = 'Mostrar datos'; $('toggleData').setAttribute('aria-expanded', 'false');
     try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
