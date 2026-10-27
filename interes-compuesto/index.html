@@ -928,7 +928,7 @@ td.wy { color: var(--pink); }
         ic = '<span class="f">' + sum + ' + ' + pct(S.rate) + ' <span class="fi">(' + eur(int) + ')</span> = </span><b>' + eur(fr) + '</b>';
       }
       const fin = y === N;
-      const reach = fin && r.ic >= t.goal * 0.995;
+      const reach = fin && r.ic >= t.goal * 0.975;
       const vis = k < 3 ? v.step >= 5 : (v.step >= 6);
       let wr = '';
       if (v.showRet) wr = '<td>' + (r.w > 0 ? eur(r.before) + ' <span class="w">− ' + eur(r.w) + '</span>' : eur(r.after)) + '</td>';
@@ -940,7 +940,7 @@ td.wy { color: var(--pink); }
 
     // nota
     const last = rows[rows.length - 1];
-    const ok = last.ic >= t.goal * 0.995;
+    const ok = last.ic >= t.goal * 0.995, near = !ok && last.ic >= t.goal * 0.975;   // si falta un 2,5 % o menos, verde pero con el % real
     const need = t.goal / fvPerEuro(N);
     // al pasar al plazo 2 (paso 7) se ocultan las dos y vuelven a salir ya actualizadas: la renta con sus €/mes (paso 9), el objetivo con la tabla (paso 10)
     const showRes = v.step >= 6 && !(S.two && v.step >= 7 && v.step < 10);
@@ -951,9 +951,10 @@ td.wy { color: var(--pink); }
     $('pen').className = 'pill ' + (pv >= 1500 ? 'ok' : pv >= 1000 ? 'mid' : 'ko') + (v.showPen ? '' : ' hide');
     penSegs = ['Renta mensual: ' + eur(pv) + '/mes', S.pYears + ' años'].concat(S.inflOn && S.infl > 0 ? ['hoy serían ' + eur(pr) + '/mes'] : []);
     paintPen();
-    $('res').className = 'pill ' + (ok ? 'ok' : 'ko') + (showRes ? '' : ' hide');
+    $('res').className = 'pill ' + (ok || near ? 'ok' : 'ko') + (showRes ? '' : ' hide');
     $('res').textContent = ok ? '✓ En ' + N + ' años llegas a ' + eur(last.ic) + ': objetivo cubierto'
-      : 'En ' + N + ' años llegas a ' + eur(last.ic) + ': faltan ' + eur(t.goal - last.ic);
+      : near ? '✓ En ' + N + ' años llegas a ' + eur(last.ic) + ' (' + (Math.floor(last.ic / t.goal * 1000) / 10).toLocaleString('es-ES') + ' % del objetivo)'
+      : 'Llegas al ' + (Math.floor(last.ic / t.goal * 1000) / 10).toLocaleString('es-ES') + ' % del objetivo: faltan ' + eur(t.goal - last.ic);
     show($('note'), true);
 
     // panel
