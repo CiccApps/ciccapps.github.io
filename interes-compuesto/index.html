@@ -666,7 +666,7 @@ td.wy { color: var(--pink); }
     </div>
     <fieldset class="calc">
       <legend>Calculadora rápida</legend>
-      <p class="small">Elige una pregunta y rellena sus dos casillas: verás el resultado sin y con interés compuesto (al <span class="rt"></span>). «Llevar a la diapositiva» lo pasa al plazo 2; las retiradas salen con un «Siguiente» más.</p>
+      <p class="small">Elige una pregunta y rellena sus dos casillas: verás el resultado sin y con interés compuesto (al <span class="rt"></span>). «Llevar a la diapositiva» lo pasa al plazo 2, sin retiradas.</p>
       <p class="small" id="gNote" hidden></p>
       <div class="qtabs" role="tablist" aria-label="Preguntas">
         <button type="button" role="tab" data-q="0">Cuánto ahorrar</button><button type="button" role="tab" data-q="1">Cuánto consigo</button><button type="button" role="tab" data-q="2">Cuánto tardo</button>
@@ -1175,7 +1175,7 @@ td.wy { color: var(--pink); }
   // pasa el cálculo al plazo 2 (el 1 sigue con su ejemplo), quita las retiradas para que se vea bien el cambio y enseña la
   // diapositiva entera (sin el extra); en pantalla completa se cierra «Datos» para ver la diapositiva sin nada encima
   function toSlide(years, set) {
-    S.B.years = years; set(S.B); S.two = true; step = hasRet() ? retStep() - 1 : lastMain(); changed(); renderW();   // justo antes de las retiradas: salen con un «Siguiente» más
+    S.B.years = years; set(S.B); S.two = true; S.wOn = false; step = lastMain(); changed(); renderW();   // sin retiradas: con un «Siguiente» más llega el final
     if (document.fullscreenElement && !$('panel').hidden) $('toggleData').click();
     else $('slide').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
