@@ -690,7 +690,7 @@ td.wy { color: var(--pink); }
       <p class="small" id="tNote"></p>
     </fieldset>
     <fieldset class="pen">
-      <legend>Pensión privada</legend>
+      <legend>Renta mensual</legend>
       <label class="fld">Años cobrando<input class="in" id="f_pY" inputmode="numeric"></label>
       <label class="fld"><span class="ichk"><input type="checkbox" id="f_inflOn" title="Enseñar en la diapositiva lo que valdría hoy"> Inflación anual (%)</span><input class="in" id="f_inf" inputmode="decimal" aria-label="Inflación anual (%)"></label>
       <p class="small" id="penTxt"></p>
@@ -918,7 +918,7 @@ td.wy { color: var(--pink); }
     // Al lado, lo que valdría hoy (descontando la inflación de los años del plazo, hasta que empieza a cobrarla)
     const pr = pv / Math.pow(1 + S.infl / 100, sc.years);
     $('pen').className = 'pill ' + (pv >= 1500 ? 'ok' : pv >= 1000 ? 'mid' : 'ko') + (v.showPen ? '' : ' hide');
-    penSegs = ['Pensión privada: ' + eur(pv) + '/mes', S.pYears + ' años'].concat(S.inflOn && S.infl > 0 ? ['hoy serían ' + eur(pr) + '/mes'] : []);
+    penSegs = ['Renta mensual: ' + eur(pv) + '/mes', S.pYears + ' años'].concat(S.inflOn && S.infl > 0 ? ['hoy serían ' + eur(pr) + '/mes'] : []);
     paintPen();
     $('res').className = 'pill ' + (ok ? 'ok' : 'ko') + (showRes ? '' : ' hide');
     $('res').textContent = ok ? '✓ En ' + N + ' años llegas a ' + eur(last.ic) + ': objetivo cubierto'
@@ -965,7 +965,7 @@ td.wy { color: var(--pink); }
     $('c_y0').textContent = yTxt(c0); $('c_yR').textContent = yTxt(cR);
     $('c_capR').textContent = 'con interés compuesto al ' + rp;
     show($('comp'), v.showComp);
-    $('penTxt').textContent = 'Pensión = capital ÷ (años cobrando × 12). Con la inflación marcada, la diapositiva enseña también lo que valdría hoy.';
+    $('penTxt').textContent = 'Renta = capital ÷ (años cobrando × 12). Con la inflación marcada, la diapositiva enseña también lo que valdría hoy.';
     setIn('f_yA', String(S.A.years)); setIn('f_gA', grp(S.A.goal)); setIn('f_fA', grp(flat(S.A))); setIn('f_mA', grp(S.A.monthly));
     setIn('f_yB', String(S.B.years)); setIn('f_gB', grp(S.B.goal)); setIn('f_fB', grp(flat(S.B))); setIn('f_mB', grp(S.B.monthly));
     ['f_mB'].forEach(id => { $(id).disabled = !S.two; });
