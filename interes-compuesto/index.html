@@ -116,7 +116,7 @@ tbody tr:nth-child(odd) td { background: var(--row1); }
 tbody tr:nth-child(even) td { background: var(--row2); }
 td.yr { font-family: var(--font-black); font-weight: 900; }
 td.ic { color: var(--navy); }
-td .f { font-weight: 400; }
+td .f { font-weight: 400; } td .fi { opacity: .6; }
 td .w { color: var(--pink); }
 tr.final td { box-shadow: inset 0 -3px 0 var(--teal); }
 td.ic.goal { color: var(--teal); }
@@ -905,14 +905,15 @@ td.wy { color: var(--pink); }
     setEd($('h_rate'), String(S.rate).replace('.', ','));
 
     const A12 = y => 12 * t.monthly * Math.pow(1 + gr(), y - 1);   // lo que se aporta ese año
-    let html = '';
+    let html = '', fr = 0;   // las tres primeras filas, con la cuenta a la vista y en euros enteros para que sumen a mano
     ys.forEach((y, k) => {
       const r = rows[y - 1];
       let ic = '<b>' + eur(r.ic) + '</b>';
       if (!v.showRet && S.method === 'anual' && y <= 3 && ys[y - 1] === y) {
-        ic = y === 1
-          ? '<span class="f">' + eur(A12(1)) + ' + ' + pct(S.rate) + ' = </span><b>' + eur(r.ic) + '</b>'
-          : '<span class="f">(' + eur(rows[y - 2].ic) + ' + ' + eur(A12(y)) + ') + ' + pct(S.rate) + ' = </span><b>' + eur(r.ic) + '</b>';
+        const a = Math.round(A12(y)), base = fr + a, int = Math.round(base * S.rate / 100);
+        const sum = y === 1 ? eur(a) : '(' + eur(fr) + ' + ' + eur(a) + ')';
+        fr = base + int;
+        ic = '<span class="f">' + sum + ' + ' + pct(S.rate) + ' <span class="fi">(' + eur(int) + ')</span> = </span><b>' + eur(fr) + '</b>';
       }
       const fin = y === N;
       const reach = fin && r.ic >= t.goal * 0.995;
