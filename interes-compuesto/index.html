@@ -178,7 +178,7 @@ button { display: inline-flex; align-items: center; gap: 7px; }
 .wrap.ui:fullscreen .bar, .wrap.data:fullscreen .bar, .wrap:fullscreen .bar:hover, .wrap:fullscreen .bar:has(:focus-visible) { opacity: 1; pointer-events: auto; }
 .wrap:fullscreen .panel:not([hidden]) { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 94vw); overflow-y: auto; z-index: 9;
   border: 0; border-radius: 0; box-shadow: -8px 0 30px rgba(0, 51, 102, .18); grid-template-columns: 1fr; padding-bottom: 90px;
-  grid-template-areas: "h" "r" "g" "q" "pe" "w" "p"; }
+  grid-template-areas: "h" "r" "g" "q" "pe" "w" "p" "x"; }
 .wrap:fullscreen .cards { grid-template-columns: 1fr; }
 /* pantalla completa: una sola fila abajo, sin fondo; navegación a la izquierda y el resto a la derecha */
 .wrap:fullscreen .bar { left: 16px; right: 16px; bottom: 12px; max-width: none; transform: none; justify-content: space-between;
@@ -203,8 +203,8 @@ button { display: inline-flex; align-items: center; gap: 7px; }
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 36px;
 }
 .panel h2 { grid-column: 1 / -1; margin: 0; font: 800 15px/1.2 var(--font-black); letter-spacing: .04em; text-transform: uppercase; }
-fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; align-content: start; }
-legend { white-space: nowrap; float: left; width: 100%; font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 6px; }
+fieldset, .fs { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; align-content: start; }
+legend, .lg { white-space: nowrap; float: left; width: 100%; font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 6px; }
 label.fld { display: grid; grid-template-columns: 1fr 112px; align-items: center; gap: 10px; font-size: 14px; }
 label.fld small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
 .in {
@@ -243,8 +243,8 @@ select.in { text-align: left; }
 .ttime b.ko { color: #C2186E; } .ttime b.ok { color: #007A7A; }
 /* orden: rentabilidad y crecimiento arriba, las preguntas y debajo plazos, pensión y retiradas (en una columna:
    rentabilidad, preguntas, crecimiento y el resto) */
-.panel { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-areas: "h h h h h h" "r r r g g g" "q q q q q q" "pe pe w w p p"; }
-.panel h2 { grid-area: h; } .panel > .ratecard { grid-area: r; } .panel > .growcard { grid-area: g; } .panel > .calc { grid-area: q; }
+.panel { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-areas: "h h h h h h" "r r r g g g" "q q q q q q" "pe pe w w p p" "x x x x x x"; }
+.panel > .phead { grid-area: h; display: flex; align-items: center; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; } .panel > .xtra { grid-area: x; } .panel > .ratecard { grid-area: r; } .panel > .growcard { grid-area: g; } .panel > .calc { grid-area: q; }
 .panel > .plz { grid-area: p; } .panel > .pen { grid-area: pe; } .panel > .ret { grid-area: w; }
 .gchk { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
 .gchk input { width: 15px; height: 15px; margin: 0; accent-color: var(--navy); }
@@ -297,9 +297,9 @@ select.in { text-align: left; }
 @media (max-width: 900px) { .qtabs { display: grid; } .qc:not(.on) { display: none; } }
 
 /* ---------- pantallas estrechas: la diapositiva deja de ser 16:9 ---------- */
-@media (max-width: 900px) { .panel { grid-template-columns: 1fr; grid-template-areas: "h" "r" "g" "q" "pe" "w" "p"; } }
+@media (max-width: 900px) { .panel { grid-template-columns: 1fr; grid-template-areas: "h" "r" "g" "q" "pe" "w" "p" "x"; } }
 /* pantallas medianas: plazos y pensión a medias y las retiradas debajo, para que ninguna cifra se corte */
-@media (min-width: 901px) and (max-width: 1199px) { .panel { grid-template-areas: "h h h h h h" "r r r g g g" "q q q q q q" "pe pe pe w w w" "p p p p p p"; } .plz .pgrid { max-width: 560px; } }
+@media (min-width: 901px) and (max-width: 1199px) { .panel { grid-template-areas: "h h h h h h" "r r r g g g" "q q q q q q" "pe pe pe w w w" "p p p p p p" "x x x x x x"; } .plz .pgrid { max-width: 560px; } }
 @media (max-width: 480px) { .qtabs button { font-size: 12px; padding-inline: 2px; } }
 @media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) {
   .stage { aspect-ratio: auto; }
@@ -327,8 +327,8 @@ table.xdense tbody tr { height: calc(var(--rowh, 2.85) * .74cqw); }
 table.xdense td { font-size: calc(var(--rowh, 2.85) * .74 * .53cqw); }
 table.xdense th { padding-block: .55cqw; font-size: 1.4cqw; }
 td.wy { color: var(--pink); }
-.chk { display: flex; align-items: center; gap: 10px; font-size: 14px; }
-.chk input { width: 18px; height: 18px; accent-color: var(--navy); }
+.chk { display: flex; align-items: center; gap: 7px; font-size: 14px; cursor: pointer; }
+.chk input { width: 15px; height: 15px; margin: 0; accent-color: var(--navy); }
 .sub { display: grid; gap: 10px; padding-left: 12px; border-left: 3px solid var(--lav); }
 .sub[aria-disabled="true"] { opacity: .45; }
 @media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { table.dense td, table.xdense td { font-size: 13px; padding-block: 7px; } }
@@ -655,7 +655,7 @@ td.wy { color: var(--pink); }
   <p class="hint hint-pc">Haz clic en una cifra de la diapositiva para cambiarla; el resto está en «Datos». Avanza con → o espacio (← para volver). En pantalla completa, mueve el ratón para ver los botones.</p>
 
   <form class="panel" id="panel" autocomplete="off" hidden>
-    <h2>Datos</h2>
+    <div class="phead"><h2>Datos</h2><label class="chk"><input type="checkbox" id="f_mayor"> Cliente de 40 años o más</label></div>
     <div class="ratecard">
       <div class="rhead"><label for="f_rate">Rentabilidad anual</label><span class="small">Para la diapositiva y las calculadoras (máximo 12&nbsp;%)</span></div>
       <div class="rbig"><input class="in rin" id="f_rate" inputmode="decimal"><span>%</span></div>
@@ -696,21 +696,20 @@ td.wy { color: var(--pink); }
         </div>
       </div>
     </fieldset>
-    <fieldset class="pen">
-      <legend>Renta mensual</legend>
+    <div class="fs pen" role="group" aria-labelledby="lgPen">
+      <div class="lg" id="lgPen">Renta mensual</div>
       <label class="fld">Años cobrando<input class="in" id="f_pY" inputmode="numeric"></label>
       <label class="fld"><span class="ichk"><input type="checkbox" id="f_inflOn" title="Enseñar en la diapositiva lo que valdría hoy"> Inflación anual (%)</span><input class="in" id="f_inf" inputmode="decimal" aria-label="Inflación anual (%)"></label>
       <p class="small" id="penTxt"></p>
-    </fieldset>
-    <fieldset class="ret">
-      <legend><label class="lchk"><input type="checkbox" id="f_wOn" aria-label="Aplicar las retiradas"> Retiradas</label></legend>
+    </div>
+    <div class="fs ret" role="group" aria-label="Retiradas">
+      <div class="lg"><label class="lchk"><input type="checkbox" id="f_wOn" aria-label="Aplicar las retiradas"> Retiradas</label></div>
       <div class="wgrid" id="wgrid">
         <span class="h">Año</span><span class="h">Importe €</span><button type="button" class="addx" id="addW" title="Añadir retirada" aria-label="Añadir retirada">+</button>
       </div>
       <p class="small">Se restan al final del año que pongas (máximo 5).</p>
-      <label class="chk"><input type="checkbox" id="f_comp"> Extra al final: «¿Y sin interés compuesto?»</label>
-    </fieldset>
-    <fieldset class="plz" aria-label="Plazos">
+    </div>
+    <div class="fs plz" role="group" aria-label="Plazos">
       <div class="pgrid">
         <span class="h c pl">Plazos</span><span class="h c" aria-label="Plazo 1">1</span><label class="h c chk2" title="Activar el plazo 2"><input type="checkbox" id="f_two" aria-label="Plazo 2"> 2</label>
         <span class="h">Años</span><input class="in" id="f_yA" inputmode="numeric" aria-label="Plazo 1: años"><input class="in" id="f_yB" inputmode="numeric" aria-label="Plazo 2: años">
@@ -719,7 +718,8 @@ td.wy { color: var(--pink); }
         <span class="h">€/mes con interés</span><input class="in ici" id="f_mA" inputmode="numeric" aria-label="Plazo 1: euros al mes con interés compuesto"><input class="in ici" id="f_mB" inputmode="numeric" aria-label="Plazo 2: euros al mes con interés compuesto">
       </div>
       <p class="small">Todo cuadra solo: al cambiar los años o el capital se ajustan las dos aportaciones; al cambiar una aportación, el capital y la otra.</p>
-    </fieldset>
+    </div>
+    <label class="chk xtra"><input type="checkbox" id="f_comp"> Extra al final: «¿Y sin interés compuesto?»</label>
   </form>
   <p class="copy">© 2026 Miguel Pascual Ciccardini · Todos los derechos reservados. Herramienta de uso exclusivo de su equipo: prohibida su copia, distribución o venta sin autorización.</p>
 </div>
@@ -730,7 +730,11 @@ td.wy { color: var(--pink); }
   // ---------- ejemplo inicial: el de la presentación (30 años y un segundo plazo de 40) ----------
   const EXAMPLE = { rate: 8, method: 'anual', two: true, pYears: 20, infl: 2.5, inflOn: false, gOn: false, g: 3, wOn: true, comp: true, tGoal: 336000, tMonthly: 100, nGoal: 336000, nYears: 40, gMonthly: 100, gYears: 40,
     A: { years: 30, goal: 144000, monthly: 100 }, B: { years: 40, goal: 336000, monthly: 100 },   // cifras redondas del ejemplo; al cambiar algo se recalcula exacto
-    withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 50000 }] };
+    withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 50000 }], mayor: false };
+  // cliente de 40 años o más: 15 y 25 años con 250 €/mes al 8 % (al 0 %, 500 y 800 €/mes; renta a 20 años del plazo 2, 1.000 €/mes)
+  const MAYOR = { rate: 8, tGoal: 240000, tMonthly: 250, nGoal: 240000, nYears: 25, gMonthly: 250, gYears: 25,
+    A: { years: 15, goal: 90000, monthly: 250 }, B: { years: 25, goal: 240000, monthly: 250 },
+    withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }] };
   const KEY = 'interes-compuesto-v8';
   const MAXY = 50;
   let S = load();
@@ -800,6 +804,13 @@ td.wy { color: var(--pink); }
   // al cambiar la rentabilidad se mantiene el capital escrito y se recalcula la aportación con interés
   function setRate(x) { S.rate = x; [S.A, S.B].forEach(sc => { sc.monthly = needM(sc); }); }
   // lo mismo al activar o cambiar el crecimiento: se mantiene el capital y se recalcula la aportación
+  // carga las cifras del ejemplo de cada edad; las casillas (crecimiento, inflación, retiradas, extra) se quedan como estén
+  function preset(on) {
+    const src = on ? MAYOR : EXAMPLE;
+    ['rate', 'tGoal', 'tMonthly', 'nGoal', 'nYears', 'gMonthly', 'gYears'].forEach(k => { S[k] = src[k]; });
+    S.A = clone(src.A); S.B = clone(src.B); S.withdrawals = clone(src.withdrawals); S.two = true; S.mayor = on;
+    if (gr()) [S.A, S.B].forEach(sc => { sc.monthly = needM(sc); });
+  }
   function setGrowth(on, g) { S.gOn = on; S.g = g; [S.A, S.B].forEach(sc => { sc.monthly = needM(sc); }); }
   const pension = sc => sc.goal / (S.pYears * 12);             // sin rentabilidad: capital ÷ (años cobrando × 12 meses)
   const validW = () => (S.wOn ? S.withdrawals.filter(w => w.year >= 1 && w.year <= MAXY && w.amount > 0) : []);
@@ -965,7 +976,7 @@ td.wy { color: var(--pink); }
     setIn('f_g', String(S.g).replace('.', ',')); $('f_gOn').checked = !!S.gOn;
     $('f_inflOn').checked = !!S.inflOn; $('f_wOn').checked = !!S.wOn;
     // último paso: con el capital del último plazo y el ahorro mensual de la tabla
-    $('f_comp').checked = !!S.comp;
+    $('f_comp').checked = !!S.comp; $('f_mayor').checked = !!S.mayor;
     const cG = (S.two ? S.B : S.A).goal, cM = (S.two ? S.B : S.A).monthly;
     const c0 = yearsTo(cG, cM, 0), cR = yearsTo(cG, cM, R);
     $('c_goal').textContent = eur(cG); $('c_m').textContent = eur(cM) + '/mes' + (gr() ? ' (+' + pct(S.g) + ' cada año)' : '');
@@ -1149,6 +1160,7 @@ td.wy { color: var(--pink); }
   bindIn('f_pY', x => { if (x >= 1 && x <= 60) S.pYears = Math.round(x); });
   bindIn('f_inf', x => { if (x >= 0 && x < 20) S.infl = x; });
   $('f_comp').addEventListener('change', e => { S.comp = e.target.checked; changed(); });
+  $('f_mayor').addEventListener('change', e => { preset(e.target.checked); step = Math.min(step, maxStep()); changed(); });
   $('f_inflOn').addEventListener('change', e => { S.inflOn = e.target.checked; changed(); });
   $('f_wOn').addEventListener('change', e => { S.wOn = e.target.checked; changed(); });
   $('f_gOn').addEventListener('change', e => { setGrowth(e.target.checked, S.g); changed(); });
@@ -1185,7 +1197,7 @@ td.wy { color: var(--pink); }
   // como recargar la página: datos del ejemplo, primer paso, panel de datos oculto y arriba del todo
   $('reset').addEventListener('click', () => {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-    S = clone(EXAMPLE); norm(S.A); norm(S.B); save(); step = 0;
+    const mayor = S.mayor; S = clone(EXAMPLE); if (mayor) preset(true); norm(S.A); norm(S.B); save(); step = 0;
     const p = $('panel'); p.hidden = true; $('app').classList.remove('data');
     $('toggleTxt').textContent = 'Mostrar datos'; $('toggleData').setAttribute('aria-expanded', 'false');
     try { if (document.fullscreenElement) document.exitFullscreen(); } catch (e) {}
