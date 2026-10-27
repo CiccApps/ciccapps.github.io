@@ -250,6 +250,14 @@ select.in { text-align: left; }
 .gchk input { width: 15px; height: 15px; margin: 0; accent-color: var(--navy); }
 .growcard:has(#f_gOn:not(:checked)) .rbig { opacity: .45; }
 .ret:has(#f_wOn:not(:checked)) .wgrid { opacity: .45; }
+/* vista normal ancha: renta, retiradas y plazos como tarjetas de la misma altura, con su nota al pie */
+@media (min-width: 901px) {
+  .wrap:not(:fullscreen) .panel { column-gap: 14px; }   /* las tarjetas de abajo, alineadas con las de las preguntas */
+  .wrap:not(:fullscreen) .panel > :is(.pen, .ret, .plz) { display: flex; flex-direction: column; gap: 8px;
+    background: #F7F4FB; border: 1px solid var(--lav); border-radius: 6px; padding: 14px; }
+  .wrap:not(:fullscreen) .panel > :is(.pen, .ret, .plz) > :last-child { margin-top: auto; }
+}
+.qc #tNote { margin: -4px 0 0; }
 .ichk, .lchk { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
 .ichk input, .lchk input { width: 15px; height: 15px; margin: 0; accent-color: var(--navy); }
 .pen:has(#f_inflOn:not(:checked)) #f_inf { opacity: .45; }
@@ -286,8 +294,7 @@ select.in { text-align: left; }
 .qtabs button { justify-content: center; padding: 7px 4px; font-size: 13px; font-weight: 700; min-width: 0; white-space: nowrap; }
 .qtabs button[aria-selected="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
 .wrap:fullscreen .qtabs { display: grid; } .wrap:fullscreen .qc:not(.on) { display: none; }
-.wrap:fullscreen .calc:not([data-q="2"]) #tNote { display: none; }
-@media (max-width: 900px) { .qtabs { display: grid; } .qc:not(.on) { display: none; } .calc:not([data-q="2"]) #tNote { display: none; } }
+@media (max-width: 900px) { .qtabs { display: grid; } .qc:not(.on) { display: none; } }
 
 /* ---------- pantallas estrechas: la diapositiva deja de ser 16:9 ---------- */
 @media (max-width: 900px) { .panel { grid-template-columns: 1fr; grid-template-areas: "h" "r" "g" "q" "pe" "w" "p"; } }
@@ -660,6 +667,7 @@ td.wy { color: var(--pink); }
     <fieldset class="calc">
       <legend>Calculadora rápida</legend>
       <p class="small">Elige una pregunta y rellena sus dos casillas: verás el resultado sin y con interés compuesto (al <span class="rt"></span>). «Llevar a la diapositiva» lo pasa al plazo 2, sin retiradas.</p>
+      <p class="small" id="gNote" hidden></p>
       <div class="qtabs" role="tablist" aria-label="Preguntas">
         <button type="button" role="tab" data-q="0">Cuánto ahorrar</button><button type="button" role="tab" data-q="1">Cuánto consigo</button><button type="button" role="tab" data-q="2">Cuánto tardo</button>
       </div>
@@ -683,11 +691,10 @@ td.wy { color: var(--pink); }
           <label class="fld">Capital a conseguir (€)<input class="in" id="f_tGoal" inputmode="numeric"></label>
           <label class="fld">Ahorro al mes (€)<input class="in" id="f_tMonthly" inputmode="numeric"></label>
           <p class="ttime" id="tTxt"></p>
+          <p class="small" id="tNote" hidden></p>
           <div class="row-actions"><button type="button" id="tApply">Llevar a la diapositiva</button></div>
         </div>
       </div>
-      <p class="small" id="gNote" hidden></p>
-      <p class="small" id="tNote"></p>
     </fieldset>
     <fieldset class="pen">
       <legend>Renta mensual</legend>
@@ -701,7 +708,7 @@ td.wy { color: var(--pink); }
         <span class="h">Año</span><span class="h">Importe €</span><button type="button" class="addx" id="addW" title="Añadir retirada" aria-label="Añadir retirada">+</button>
       </div>
       <p class="small">Se restan al final del año que pongas (máximo 5).</p>
-      <label class="chk" style="margin-top:6px"><input type="checkbox" id="f_comp"> Extra al final: «¿Y sin interés compuesto?»</label>
+      <label class="chk"><input type="checkbox" id="f_comp"> Extra al final: «¿Y sin interés compuesto?»</label>
     </fieldset>
     <fieldset class="plz" aria-label="Plazos">
       <div class="pgrid">
@@ -950,9 +957,9 @@ td.wy { color: var(--pink); }
       'En la cuenta (0 %): <b class="ko">' + yTxt(y0) + '</b><br>' +
       'Con interés compuesto al ' + rp + ': <b class="ok">' + yTxt(yR) + '</b>';
     $('tApply').disabled = !(isFinite(yR) && Math.round(yR) <= MAXY && Math.round(yR) >= 1);
-    $('tNote').textContent = $('tApply').disabled
-      ? '«¿Cuánto tardo?»: pasa de ' + MAXY + ' años; sube el ahorro al mes para llevarlo a la diapositiva.'
-      : '«¿Cuánto tardo?»: en la diapositiva los años se redondean al más cercano.';
+    // solo si no se puede llevar a la diapositiva, para explicar por qué
+    $('tNote').hidden = !$('tApply').disabled;
+    $('tNote').textContent = 'Pasa de ' + MAXY + ' años: sube el ahorro al mes para llevarlo a la diapositiva.';
     $('gNote').hidden = !gr();
     $('gNote').textContent = 'Con el crecimiento geométrico, el ahorro al mes es el del primer año y sube un ' + pct(S.g) + ' cada año (también en la cuenta).';
     setIn('f_g', String(S.g).replace('.', ',')); $('f_gOn').checked = !!S.gOn;
