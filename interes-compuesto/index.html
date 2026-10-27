@@ -234,7 +234,7 @@ select.in { text-align: left; }
 .chk2 { display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; }
 .chk2 input { width: 16px; height: 16px; accent-color: var(--navy); margin: 0; }
 .pgrid .in:disabled { opacity: .45; }
-.small { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+.small { font-size: 12.5px; color: var(--muted); line-height: 1.45; text-wrap: pretty; }
 .panel p.small { margin: 2px 0 0; }
 @media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) { .bar .grow { display: none; } .bar { justify-content: flex-start; } }   /* mismas distancias en todas las notas de Datos */
 .row-actions { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -717,7 +717,7 @@ td.wy { color: var(--pink); }
         <span class="h">€/mes al 0%</span><input class="in" id="f_fA" inputmode="numeric" aria-label="Plazo 1: euros al mes al 0%"><input class="in" id="f_fB" inputmode="numeric" aria-label="Plazo 2: euros al mes al 0%">
         <span class="h">€/mes con interés</span><input class="in ici" id="f_mA" inputmode="numeric" aria-label="Plazo 1: euros al mes con interés compuesto"><input class="in ici" id="f_mB" inputmode="numeric" aria-label="Plazo 2: euros al mes con interés compuesto">
       </div>
-      <p class="small">Todo cuadra solo: al cambiar los años o el capital se ajustan las dos aportaciones; al cambiar una aportación, el capital y la otra.</p>
+      <p class="small">Todo cuadra solo: cambia los años, el capital o una aportación y se ajusta el resto.</p>
     </div>
     <label class="chk xtra"><input type="checkbox" id="f_comp"> Extra al final: «¿Y sin interés compuesto?»</label>
   </form>
