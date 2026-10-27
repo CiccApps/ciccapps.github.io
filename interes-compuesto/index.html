@@ -93,6 +93,7 @@ h1 {
 .ed:hover { border-bottom-color: rgba(0, 51, 102, .35); cursor: text; }
 .ed:focus { outline: none; border-bottom-color: var(--teal); background: rgba(255, 255, 255, .55); }
 th .ed { color: #fff; text-align: center; }
+.gline { display: block; margin-top: .15em; font-size: .72em; font-weight: 700; letter-spacing: .02em; opacity: .85; white-space: nowrap; }
 th .ed:hover { border-bottom-color: rgba(255, 255, 255, .5); }
 th .ed:focus { background: rgba(255, 255, 255, .12); border-bottom-color: #fff; }
 
@@ -176,7 +177,8 @@ button { display: inline-flex; align-items: center; gap: 7px; }
 .wrap:fullscreen .bar .lbl { display: none; }                       /* a la derecha, solo iconos (el nombre sale al pasar el ratón) */
 .wrap.ui:fullscreen .bar, .wrap.data:fullscreen .bar, .wrap:fullscreen .bar:hover, .wrap:fullscreen .bar:has(:focus-visible) { opacity: 1; pointer-events: auto; }
 .wrap:fullscreen .panel:not([hidden]) { position: fixed; top: 0; right: 0; bottom: 0; width: min(480px, 94vw); overflow-y: auto; z-index: 9;
-  border: 0; border-radius: 0; box-shadow: -8px 0 30px rgba(0, 51, 102, .18); grid-template-columns: 1fr; padding-bottom: 90px; }
+  border: 0; border-radius: 0; box-shadow: -8px 0 30px rgba(0, 51, 102, .18); grid-template-columns: 1fr; padding-bottom: 90px;
+  grid-template-areas: "h" "r" "q" "g" "p" "pe" "w"; }
 .wrap:fullscreen .cards { grid-template-columns: 1fr; }
 /* pantalla completa: una sola fila abajo, sin fondo; navegación a la izquierda y el resto a la derecha */
 .wrap:fullscreen .bar { left: 16px; right: 16px; bottom: 12px; max-width: none; transform: none; justify-content: space-between;
@@ -239,7 +241,15 @@ select.in { text-align: left; }
 .panel[hidden] { display: none; }
 .ttime { margin: 2px 0 0; font-size: 14px; line-height: 1.55; }
 .ttime b.ko { color: #C2186E; } .ttime b.ok { color: #007A7A; }
-.calc { grid-column: 1 / -1; }
+/* orden: rentabilidad y crecimiento arriba, las preguntas y debajo plazos, pensión y retiradas (en una columna:
+   rentabilidad, preguntas, crecimiento y el resto) */
+.panel { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-areas: "h h h h h h" "r r r g g g" "q q q q q q" "p p pe pe w w"; }
+.panel h2 { grid-area: h; } .panel > .ratecard { grid-area: r; } .panel > .growcard { grid-area: g; } .panel > .calc { grid-area: q; }
+.panel > .plz { grid-area: p; } .panel > .pen { grid-area: pe; } .panel > .ret { grid-area: w; }
+.gchk { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+.gchk input { width: 15px; height: 15px; margin: 0; accent-color: var(--navy); }
+.growcard:has(#f_gOn:not(:checked)) .rbig { opacity: .45; }
+.wgrid:has(~ p) { transition: opacity .2s; } .ret:has(#f_wOn:not(:checked)) .wgrid { opacity: .45; }
 .ratecard { background: var(--lav); border-radius: 6px; padding: 10px 14px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
 .rhead { display: grid; gap: 2px; }
 .ratecard label { font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
@@ -268,10 +278,19 @@ select.in { text-align: left; }
 .qc h3 { margin: 0 0 2px; font: 700 15px/1.3 var(--font); color: var(--navy); }
 .qc .row-actions { margin-top: auto; }
 .qc button { width: 100%; }
-.panel .col { display: grid; gap: 26px; align-content: start; min-width: 0; }
+/* en una columna (pantalla completa, móvil): las preguntas en pestañas, una a la vista */
+.qtabs { display: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.qtabs button { justify-content: center; padding: 7px 4px; font-size: 13px; font-weight: 700; min-width: 0; white-space: nowrap; }
+.qtabs button[aria-selected="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.wrap:fullscreen .qtabs { display: grid; } .wrap:fullscreen .qc:not(.on) { display: none; }
+.wrap:fullscreen .calc:not([data-q="2"]) #tNote { display: none; }
+@media (max-width: 900px) { .qtabs { display: grid; } .qc:not(.on) { display: none; } .calc:not([data-q="2"]) #tNote { display: none; } }
 
 /* ---------- pantallas estrechas: la diapositiva deja de ser 16:9 ---------- */
-@media (max-width: 900px) { .panel { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .panel { grid-template-columns: 1fr; grid-template-areas: "h" "r" "q" "g" "p" "pe" "w"; } }
+/* pantallas medianas: plazos y pensión a medias y las retiradas debajo, para que ninguna cifra se corte */
+@media (min-width: 901px) and (max-width: 1199px) { .panel { grid-template-areas: "h h h h h h" "r r r g g g" "q q q q q q" "p p p pe pe pe" "w w w w w w"; } .wgrid { justify-content: start; } }
+@media (max-width: 480px) { .qtabs button { font-size: 12px; padding-inline: 2px; } }
 @media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) {
   .stage { aspect-ratio: auto; }
   .slide { position: static; padding: 18px 14px; gap: 14px; font-size: 14px; }
@@ -627,39 +646,16 @@ td.wy { color: var(--pink); }
 
   <form class="panel" id="panel" autocomplete="off" hidden>
     <h2>Datos</h2>
-    <div class="col">
-      <div class="ratecard">
-        <div class="rhead"><label for="f_rate">Rentabilidad anual</label><span class="small">Para la diapositiva y las calculadoras</span></div>
-        <div class="rbig"><input class="in rin" id="f_rate" inputmode="decimal"><span>%</span></div>
-      </div>
-      <fieldset>
-        <legend>Pensión privada</legend>
-        <label class="fld">Años cobrando<input class="in" id="f_pY" inputmode="numeric"></label>
-        <label class="fld">Inflación anual (%)<input class="in" id="f_inf" inputmode="decimal"></label>
-        <p class="small" id="penTxt"></p>
-      </fieldset>
+    <div class="ratecard">
+      <div class="rhead"><label for="f_rate">Rentabilidad anual</label><span class="small">Para la diapositiva y las calculadoras</span></div>
+      <div class="rbig"><input class="in rin" id="f_rate" inputmode="decimal"><span>%</span></div>
     </div>
-    <fieldset aria-label="Plazos">
-      <div class="pgrid">
-        <span class="h c pl">Plazos</span><span class="h c" aria-label="Plazo 1">1</span><label class="h c chk2" title="Activar el plazo 2"><input type="checkbox" id="f_two" aria-label="Plazo 2"> 2</label>
-        <span class="h">Años</span><input class="in" id="f_yA" inputmode="numeric" aria-label="Plazo 1: años"><input class="in" id="f_yB" inputmode="numeric" aria-label="Plazo 2: años">
-        <span class="h">Capital (€)</span><input class="in" id="f_gA" inputmode="numeric" aria-label="Plazo 1: capital"><input class="in" id="f_gB" inputmode="numeric" aria-label="Plazo 2: capital">
-        <span class="h">€/mes al 0%</span><input class="in" id="f_fA" inputmode="numeric" aria-label="Plazo 1: euros al mes al 0%"><input class="in" id="f_fB" inputmode="numeric" aria-label="Plazo 2: euros al mes al 0%">
-        <span class="h">€/mes con interés</span><input class="in ici" id="f_mA" inputmode="numeric" aria-label="Plazo 1: euros al mes con interés compuesto"><input class="in ici" id="f_mB" inputmode="numeric" aria-label="Plazo 2: euros al mes con interés compuesto">
-      </div>
-      <p class="small">Todo cuadra solo: al cambiar los años o el capital se ajustan las dos aportaciones; al cambiar una aportación, el capital y la otra.</p>
-    </fieldset>
-    <fieldset>
-      <legend>Retiradas</legend>
-      <div class="wgrid" id="wgrid">
-        <span class="h">Año</span><span class="h">Importe €</span><button type="button" class="addx" id="addW" title="Añadir retirada" aria-label="Añadir retirada">+</button>
-      </div>
-      <p class="small">Se restan al final del año que pongas (máximo 5).</p>
-      <label class="chk" style="margin-top:6px"><input type="checkbox" id="f_comp"> Último paso: «¿Y sin interés compuesto?»</label>
-    </fieldset>
     <fieldset class="calc">
       <legend>Calculadora rápida</legend>
-      <p class="small">Elige una de las tres preguntas y rellena sus dos casillas: verás el resultado sin y con interés compuesto (al <span class="rt"></span> de «Rentabilidad anual»), y con «Llevar a la diapositiva» lo pasas al plazo 1.</p>
+      <p class="small">Elige una pregunta y rellena sus dos casillas: verás el resultado sin y con interés compuesto (al <span class="rt"></span>). «Llevar a la diapositiva» lo pasa al plazo 2, sin retiradas.</p>
+      <div class="qtabs" role="tablist" aria-label="Preguntas">
+        <button type="button" role="tab" data-q="0">Cuánto ahorrar</button><button type="button" role="tab" data-q="1">Cuánto consigo</button><button type="button" role="tab" data-q="2">Cuánto tardo</button>
+      </div>
       <div class="cards">
         <div class="qc">
           <h3>¿Cuánto tengo que ahorrar al mes?</h3>
@@ -683,7 +679,38 @@ td.wy { color: var(--pink); }
           <div class="row-actions"><button type="button" id="tApply">Llevar a la diapositiva</button></div>
         </div>
       </div>
+      <p class="small" id="gNote" hidden></p>
       <p class="small" id="tNote"></p>
+    </fieldset>
+    <div class="ratecard growcard">
+      <div class="rhead"><label class="gchk"><input type="checkbox" id="f_gOn"> Crecimiento geométrico</label><span class="small">La aportación sube ese % cada año (máximo 5&nbsp;%)</span></div>
+      <div class="rbig"><input class="in rin" id="f_g" inputmode="decimal" aria-label="Crecimiento anual de la aportación"><span>%</span></div>
+    </div>
+    <fieldset class="plz" aria-label="Plazos">
+      <div class="pgrid">
+        <span class="h c pl">Plazos</span><span class="h c" aria-label="Plazo 1">1</span><label class="h c chk2" title="Activar el plazo 2"><input type="checkbox" id="f_two" aria-label="Plazo 2"> 2</label>
+        <span class="h">Años</span><input class="in" id="f_yA" inputmode="numeric" aria-label="Plazo 1: años"><input class="in" id="f_yB" inputmode="numeric" aria-label="Plazo 2: años">
+        <span class="h">Capital (€)</span><input class="in" id="f_gA" inputmode="numeric" aria-label="Plazo 1: capital"><input class="in" id="f_gB" inputmode="numeric" aria-label="Plazo 2: capital">
+        <span class="h">€/mes al 0%</span><input class="in" id="f_fA" inputmode="numeric" aria-label="Plazo 1: euros al mes al 0%"><input class="in" id="f_fB" inputmode="numeric" aria-label="Plazo 2: euros al mes al 0%">
+        <span class="h">€/mes con interés</span><input class="in ici" id="f_mA" inputmode="numeric" aria-label="Plazo 1: euros al mes con interés compuesto"><input class="in ici" id="f_mB" inputmode="numeric" aria-label="Plazo 2: euros al mes con interés compuesto">
+      </div>
+      <p class="small">Todo cuadra solo: al cambiar los años o el capital se ajustan las dos aportaciones; al cambiar una aportación, el capital y la otra.</p>
+    </fieldset>
+    <fieldset class="pen">
+      <legend>Pensión privada</legend>
+      <label class="fld">Años cobrando<input class="in" id="f_pY" inputmode="numeric"></label>
+      <label class="fld">Inflación anual (%)<input class="in" id="f_inf" inputmode="decimal"></label>
+      <label class="chk"><input type="checkbox" id="f_inflOn"> Mostrar lo que valdría hoy (con la inflación)</label>
+      <p class="small" id="penTxt"></p>
+    </fieldset>
+    <fieldset class="ret">
+      <legend>Retiradas</legend>
+      <label class="chk"><input type="checkbox" id="f_wOn"> Aplicar las retiradas</label>
+      <div class="wgrid" id="wgrid">
+        <span class="h">Año</span><span class="h">Importe €</span><button type="button" class="addx" id="addW" title="Añadir retirada" aria-label="Añadir retirada">+</button>
+      </div>
+      <p class="small">Se restan al final del año que pongas (máximo 5).</p>
+      <label class="chk" style="margin-top:6px"><input type="checkbox" id="f_comp"> Extra al final: «¿Y sin interés compuesto?»</label>
     </fieldset>
   </form>
   <p class="copy">© 2026 Miguel Pascual Ciccardini · Todos los derechos reservados. Herramienta de uso exclusivo de su equipo: prohibida su copia, distribución o venta sin autorización.</p>
@@ -693,7 +720,7 @@ td.wy { color: var(--pink); }
 (function () {
   'use strict';
   // ---------- ejemplo inicial: el de la presentación (30 años y un segundo plazo de 40) ----------
-  const EXAMPLE = { rate: 8, method: 'anual', two: true, pYears: 20, infl: 2.5, comp: true, tGoal: 336000, tMonthly: 100, nGoal: 336000, nYears: 40, gMonthly: 100, gYears: 40,
+  const EXAMPLE = { rate: 8, method: 'anual', two: true, pYears: 20, infl: 2.5, inflOn: false, gOn: false, g: 3, wOn: true, comp: true, tGoal: 336000, tMonthly: 100, nGoal: 336000, nYears: 40, gMonthly: 100, gYears: 40,
     A: { years: 30, goal: 144000, monthly: 100 }, B: { years: 40, goal: 336000, monthly: 100 },   // cifras redondas del ejemplo; al cambiar algo se recalcula exacto
     withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 50000 }] };
   const KEY = 'interes-compuesto-v8';
@@ -720,25 +747,31 @@ td.wy { color: var(--pink); }
   }
 
   // ---------- cálculos ----------
+  // crecimiento geométrico: la aportación sube un g % cada año (el año 1 es la de partida), también en la cuenta
+  const gr = () => (S.gOn ? S.g / 100 : 0);
+  const sumG = n => { const g = gr(); return g ? (Math.pow(1 + g, n) - 1) / g : n; };   // suma de (1 + g)^(t − 1), t = 1…n
   function simulate(years, A, R, method, withdrawals) {
-    const rows = []; let b = 0, bw = 0; const r = Math.pow(1 + R, 1 / 12) - 1;
+    const rows = []; let b = 0, bw = 0, cc = 0; const r = Math.pow(1 + R, 1 / 12) - 1, g = gr();
     for (let t = 1; t <= years; t++) {
-      if (method === 'mensual') { for (let m = 0; m < 12; m++) { b = (b + A) * (1 + r); bw = (bw + A) * (1 + r); } }
-      else { b = (b + 12 * A) * (1 + R); bw = (bw + 12 * A) * (1 + R); }
+      const At = g ? A * Math.pow(1 + g, t - 1) : A;
+      if (method === 'mensual') { for (let m = 0; m < 12; m++) { b = (b + At) * (1 + r); bw = (bw + At) * (1 + r); } }
+      else { b = (b + 12 * At) * (1 + R); bw = (bw + 12 * At) * (1 + R); }
+      cc += 12 * At;
       const before = bw; let w = 0;
       for (const x of withdrawals) if (x.year === t) w += x.amount;
       w = Math.min(w, bw); bw -= w;
-      rows.push({ t, cc: 12 * A * t, ic: b, before, w, after: bw });
+      rows.push({ t, cc: g ? cc : 12 * A * t, ic: b, before, w, after: bw });
     }
     return rows;
   }
-  const flat = sc => sc.goal / (sc.years * 12);                 // al 0 %, en la cuenta
+  const flat = sc => sc.goal / (sumG(sc.years) * 12);           // al 0 %, en la cuenta (con crecimiento, la de partida)
   // años para llegar a un capital con un ahorro mensual (cálculo anual, como la tabla)
   function yearsTo(goal, A, R) {
     if (A <= 0 || goal <= 0) return Infinity;
-    if (R <= 0) return goal / (12 * A);
+    const g = gr();
+    if (R <= 0 && !g) return goal / (12 * A);
     let b = 0;
-    for (let t = 1; t <= 300; t++) { const prev = b; b = (b + 12 * A) * (1 + R); if (b >= goal) return t - 1 + (goal - prev) / (b - prev); }
+    for (let t = 1; t <= 300; t++) { const prev = b; b = (b + 12 * A * Math.pow(1 + g, t - 1)) * (1 + Math.max(0, R)); if (b >= goal) return t - 1 + (goal - prev) / (b - prev); }
     return Infinity;
   }
   function yTxt(y) {
@@ -754,23 +787,27 @@ td.wy { color: var(--pink); }
   function setYears(sc, y) { sc.years = y; sc.monthly = needM(sc); }
   function setGoal(sc, g) { sc.goal = g; sc.monthly = needM(sc); }
   function setMonthly(sc, m) { sc.monthly = m; sc.goal = m * fvPerEuro(sc.years); }
-  function setFlat(sc, f) { setGoal(sc, f * 12 * sc.years); }
+  function setFlat(sc, f) { setGoal(sc, f * 12 * sumG(sc.years)); }
   // al cambiar la rentabilidad se mantiene el capital escrito y se recalcula la aportación con interés
   function setRate(x) { S.rate = x; [S.A, S.B].forEach(sc => { sc.monthly = needM(sc); }); }
+  // lo mismo al activar o cambiar el crecimiento: se mantiene el capital y se recalcula la aportación
+  function setGrowth(on, g) { S.gOn = on; S.g = g; [S.A, S.B].forEach(sc => { sc.monthly = needM(sc); }); }
   const pension = sc => sc.goal / (S.pYears * 12);             // sin rentabilidad: capital ÷ (años cobrando × 12 meses)
-  const validW = () => S.withdrawals.filter(w => w.year >= 1 && w.year <= MAXY && w.amount > 0);
+  const validW = () => (S.wOn ? S.withdrawals.filter(w => w.year >= 1 && w.year <= MAXY && w.amount > 0) : []);
 
   // ---------- pasos ----------
   // 1 años · 2 capital · 3 €/mes · 4 pensión privada · 5 cabecera y 3 primeras filas · 6 resto de la tabla y etiquetas
-  // (segundo plazo) 7 años · 8 capital · 9 €/mes · 10 su pensión · 11 la tabla llega al plazo 2 · (retiradas) última: columna «Con retiradas»
+  // (segundo plazo) 7 años · 8 capital · 9 €/mes · 10 la tabla llega al plazo 2, con su pensión y el objetivo · (retiradas) columna
+  // «Con retiradas» · (extra) «¿Y sin interés compuesto?»: «Final» se queda en el paso anterior y se llega con un «Siguiente» más
   // diseño de móvil: hasta 760 px, salvo un móvil girado en horizontal (bajo y táctil), que enseña la diapositiva 16:9
   const PHONE = '(max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse)))';
   let step = 0;
   let penSegs = [];
   const lastYears = () => (S.two ? S.B.years : S.A.years);
   const hasRet = () => validW().some(w => w.year <= lastYears());
-  const retStep = () => (S.two ? 12 : 7);
-  const maxStep = () => (S.two ? 11 : 6) + (hasRet() ? 1 : 0) + (S.comp ? 1 : 0);
+  const retStep = () => (S.two ? 11 : 7);
+  const maxStep = () => (S.two ? 10 : 6) + (hasRet() ? 1 : 0) + (S.comp ? 1 : 0);
+  const lastMain = () => maxStep() - (S.comp ? 1 : 0);   // la diapositiva completa, sin el extra
   const $ = id => document.getElementById(id);
   const show = (el, on) => el.classList.toggle('hide', !on);
 
@@ -778,7 +815,7 @@ td.wy { color: var(--pink); }
     const m = maxStep(); if (step > m) step = m; if (step < 0) step = 0;
     const onB = S.two && step >= 7;
     const sc = onB ? S.B : S.A;
-    const tableB = S.two && step >= 11;
+    const tableB = S.two && step >= 10;
     return { step, m, onB, sc, tableSc: tableB ? S.B : S.A, showPen: step >= (onB ? 10 : 4), showRet: hasRet() && step >= retStep(), showComp: !!S.comp && step >= maxStep() };
   }
 
@@ -811,7 +848,7 @@ td.wy { color: var(--pink); }
     $('prev').disabled = v.step === 0;
     $('next').disabled = v.step >= v.m;
     $('restart').disabled = v.step === 0;
-    $('all').disabled = v.step >= v.m;
+    $('all').disabled = v.step >= lastMain();
 
     // cajas (las del plazo que toca)
     const sc = v.sc, base = v.onB ? 6 : 0;
@@ -834,7 +871,7 @@ td.wy { color: var(--pink); }
     $('cols').innerHTML = '<col class="c-yr"><col class="c-cc"><col class="c-ic">' + (v.showRet ? '<col class="c-wr">' : '');
     if (!$('h_monthly')) {
       $('thead').innerHTML =
-        '<th><input class="ed" id="h_monthly" inputmode="numeric" aria-label="Aportación mensual">€ / MES</th>' +
+        '<th><input class="ed" id="h_monthly" inputmode="numeric" aria-label="Aportación mensual">€ / MES<span class="gline" id="h_g" hidden></span></th>' +
         '<th id="h_cc">CUENTA CORRIENTE</th>' +
         '<th>INTERÉS COMPUESTO <span class="nw"><input class="ed" id="h_rate" inputmode="decimal" aria-label="Rentabilidad anual">%</span></th>' +
         '<th id="h_wr">CON RETIRADAS</th>';
@@ -842,19 +879,20 @@ td.wy { color: var(--pink); }
       bindEd($('h_rate'), x => { if (x > -50 && x < 100) setRate(x); }, () => String(S.rate).replace('.', ','));
     }
     $('h_wr').hidden = !v.showRet;
+    $('h_g').hidden = !gr(); $('h_g').textContent = '+' + pct(S.g) + ' CADA AÑO';
     $('h_cc').textContent = 'CUENTA CORRIENTE';
     setEd($('h_monthly'), grp(t.monthly));
     setEd($('h_rate'), String(S.rate).replace('.', ','));
 
-    const A12 = 12 * t.monthly;
+    const A12 = y => 12 * t.monthly * Math.pow(1 + gr(), y - 1);   // lo que se aporta ese año
     let html = '';
     ys.forEach((y, k) => {
       const r = rows[y - 1];
       let ic = '<b>' + eur(r.ic) + '</b>';
       if (!v.showRet && S.method === 'anual' && y <= 3 && ys[y - 1] === y) {
         ic = y === 1
-          ? '<span class="f">' + eur(A12) + ' + ' + pct(S.rate) + ' = </span><b>' + eur(r.ic) + '</b>'
-          : '<span class="f">(' + eur(rows[y - 2].ic) + ' + ' + eur(A12) + ') + ' + pct(S.rate) + ' = </span><b>' + eur(r.ic) + '</b>';
+          ? '<span class="f">' + eur(A12(1)) + ' + ' + pct(S.rate) + ' = </span><b>' + eur(r.ic) + '</b>'
+          : '<span class="f">(' + eur(rows[y - 2].ic) + ' + ' + eur(A12(y)) + ') + ' + pct(S.rate) + ' = </span><b>' + eur(r.ic) + '</b>';
       }
       const fin = y === N;
       const reach = fin && r.ic >= t.goal * 0.995;
@@ -871,14 +909,14 @@ td.wy { color: var(--pink); }
     const last = rows[rows.length - 1];
     const ok = last.ic >= t.goal * 0.995;
     const need = t.goal / fvPerEuro(N);
-    // al pasar al plazo 2 (paso 7) se ocultan las dos y vuelven a salir ya actualizadas: la pensión en el 10, el objetivo en el 11
-    const showRes = v.step >= 6 && !(S.two && v.step >= 7 && v.step < 11);
+    // al pasar al plazo 2 (paso 7) se ocultan las dos y vuelven a salir ya actualizadas a la vez que la tabla, en el paso 10
+    const showRes = v.step >= 6 && !(S.two && v.step >= 7 && v.step < 10);
     const pv = pension(sc);   // la del plazo de las cajas: sale justo después de los €/mes
     // color con la cifra de la diapositiva: menos de 1.000 €/mes rosa, de 1.000 a 1.500 €/mes naranja, desde 1.500 €/mes verde.
     // Al lado, lo que valdría hoy (descontando la inflación de los años del plazo, hasta que empieza a cobrarla)
     const pr = pv / Math.pow(1 + S.infl / 100, sc.years);
     $('pen').className = 'pill ' + (pv >= 1500 ? 'ok' : pv >= 1000 ? 'mid' : 'ko') + (v.showPen ? '' : ' hide');
-    penSegs = ['Pensión privada: ' + eur(pv) + '/mes', S.pYears + ' años'].concat(S.infl > 0 ? ['hoy serían ' + eur(pr) + '/mes'] : []);
+    penSegs = ['Pensión privada: ' + eur(pv) + '/mes', S.pYears + ' años'].concat(S.inflOn && S.infl > 0 ? ['hoy serían ' + eur(pr) + '/mes'] : []);
     paintPen();
     $('res').className = 'pill ' + (ok ? 'ok' : 'ko') + (showRes ? '' : ' hide');
     $('res').textContent = ok ? '✓ En ' + N + ' años llegas a ' + eur(last.ic) + ': objetivo cubierto'
@@ -892,7 +930,7 @@ td.wy { color: var(--pink); }
     document.querySelectorAll('.calc .rt').forEach(e => { e.textContent = rp; });
     // calculadora 1 · ¿cuánto tengo que ahorrar al mes?
     setIn('f_nGoal', grp(S.nGoal)); setIn('f_nYears', String(S.nYears));
-    const nNeed = Math.round(S.nGoal / fvPerEuro(S.nYears)), nFlat = Math.round(S.nGoal / (S.nYears * 12));
+    const nNeed = Math.round(S.nGoal / fvPerEuro(S.nYears)), nFlat = Math.round(S.nGoal / (sumG(S.nYears) * 12));
     $('nTxt').innerHTML = 'Para ' + eur(S.nGoal) + ' en ' + S.nYears + (S.nYears === 1 ? ' año' : ' años') + ':<br>' +
       'En la cuenta (0 %): <b class="ko">' + eur(nFlat) + '/mes</b><br>' +
       'Con interés compuesto al ' + rp + ': <b class="ok">' + eur(nNeed) + '/mes</b>';
@@ -900,7 +938,7 @@ td.wy { color: var(--pink); }
     setIn('f_gMonthly', grp(S.gMonthly)); setIn('f_gYears', String(S.gYears));
     const gRows = simulate(S.gYears, S.gMonthly, R, S.method, []), gIc = gRows[gRows.length - 1].ic;
     $('gTxt').innerHTML = 'Ahorrando ' + eur(S.gMonthly) + '/mes durante ' + S.gYears + (S.gYears === 1 ? ' año' : ' años') + ':<br>' +
-      'En la cuenta (0 %): <b class="ko">' + eur(12 * S.gMonthly * S.gYears) + '</b><br>' +
+      'En la cuenta (0 %): <b class="ko">' + eur(12 * S.gMonthly * sumG(S.gYears)) + '</b><br>' +
       'Con interés compuesto al ' + rp + ': <b class="ok">' + eur(gIc) + '</b>';
     $('gApply').disabled = !(S.gMonthly > 0);
     // calculadora 3 · ¿cuánto tardo?
@@ -913,15 +951,19 @@ td.wy { color: var(--pink); }
     $('tNote').textContent = $('tApply').disabled
       ? '«¿Cuánto tardo?»: pasa de ' + MAXY + ' años; sube el ahorro al mes para llevarlo a la diapositiva.'
       : '«¿Cuánto tardo?»: en la diapositiva los años se redondean al más cercano.';
+    $('gNote').hidden = !gr();
+    $('gNote').textContent = 'Con el crecimiento geométrico, el ahorro al mes es el del primer año y sube un ' + pct(S.g) + ' cada año (también en la cuenta).';
+    setIn('f_g', String(S.g).replace('.', ',')); $('f_gOn').checked = !!S.gOn;
+    $('f_inflOn').checked = !!S.inflOn; $('f_wOn').checked = !!S.wOn;
     // último paso: con el capital del último plazo y el ahorro mensual de la tabla
     $('f_comp').checked = !!S.comp;
     const cG = (S.two ? S.B : S.A).goal, cM = (S.two ? S.B : S.A).monthly;
     const c0 = yearsTo(cG, cM, 0), cR = yearsTo(cG, cM, R);
-    $('c_goal').textContent = eur(cG); $('c_m').textContent = eur(cM) + '/mes';
+    $('c_goal').textContent = eur(cG); $('c_m').textContent = eur(cM) + '/mes' + (gr() ? ' (+' + pct(S.g) + ' cada año)' : '');
     $('c_y0').textContent = yTxt(c0); $('c_yR').textContent = yTxt(cR);
     $('c_capR').textContent = 'con interés compuesto al ' + rp;
     show($('comp'), v.showComp);
-    $('penTxt').textContent = 'Pensión = capital ÷ (años cobrando × 12); con inflación, la diapositiva muestra también lo que valdría hoy.';
+    $('penTxt').textContent = 'Pensión = capital ÷ (años cobrando × 12). Con la casilla marcada, la diapositiva muestra también lo que valdría hoy.';
     setIn('f_yA', String(S.A.years)); setIn('f_gA', grp(S.A.goal)); setIn('f_fA', grp(flat(S.A))); setIn('f_mA', grp(S.A.monthly));
     setIn('f_yB', String(S.B.years)); setIn('f_gB', grp(S.B.goal)); setIn('f_fB', grp(flat(S.B))); setIn('f_mB', grp(S.B.monthly));
     ['f_mB'].forEach(id => { $(id).disabled = !S.two; });
@@ -1098,20 +1140,36 @@ td.wy { color: var(--pink); }
   bindIn('f_pY', x => { if (x >= 1 && x <= 60) S.pYears = Math.round(x); });
   bindIn('f_inf', x => { if (x >= 0 && x < 20) S.infl = x; });
   $('f_comp').addEventListener('change', e => { S.comp = e.target.checked; changed(); });
+  $('f_inflOn').addEventListener('change', e => { S.inflOn = e.target.checked; changed(); });
+  $('f_wOn').addEventListener('change', e => { S.wOn = e.target.checked; changed(); });
+  $('f_gOn').addEventListener('change', e => { setGrowth(e.target.checked, S.g); changed(); });
+  bindIn('f_g', x => { if (x >= 0 && x <= 5) setGrowth(S.gOn, x); });
   bindIn('f_nGoal', x => { if (x > 0) S.nGoal = x; });
   bindIn('f_nYears', x => { if (x >= 1 && x <= MAXY) S.nYears = Math.round(x); });
   bindIn('f_gMonthly', x => { if (x >= 0) S.gMonthly = x; });
   bindIn('f_gYears', x => { if (x >= 1 && x <= MAXY) S.gYears = Math.round(x); });
   bindIn('f_tGoal', x => { if (x > 0) S.tGoal = x; });
   bindIn('f_tMonthly', x => { if (x >= 0) S.tMonthly = x; });
-  // pasa el cálculo al plazo 1 y enseña la diapositiva entera (sin el último paso de comparación)
+  // pasa el cálculo al plazo 2 (el 1 sigue con su ejemplo), quita las retiradas para que se vea bien el cambio y enseña la
+  // diapositiva entera (sin el extra); en pantalla completa se cierra «Datos» para ver la diapositiva sin nada encima
   function toSlide(years, set) {
-    S.A.years = years; set(S.A); S.two = false; step = maxStep() - (S.comp ? 1 : 0); changed(); renderW();
-    $('slide').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    S.B.years = years; set(S.B); S.two = true; S.wOn = false; step = lastMain(); changed(); renderW();
+    if (document.fullscreenElement && !$('panel').hidden) $('toggleData').click();
+    else $('slide').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   $('nApply').addEventListener('click', () => toSlide(S.nYears, sc => setGoal(sc, S.nGoal)));
   $('gApply').addEventListener('click', () => toSlide(S.gYears, sc => setMonthly(sc, S.gMonthly)));
   $('tApply').addEventListener('click', () => toSlide(Math.max(1, Math.min(MAXY, Math.round(yearsTo(S.tGoal, S.tMonthly, S.rate / 100)))), sc => setMonthly(sc, S.tMonthly)));
+  // pestañas de las preguntas (solo se ven en una columna)
+  let q = 0;
+  function showQ(i) {
+    q = i;
+    document.querySelectorAll('.qtabs [data-q]').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.q === q)));
+    document.querySelectorAll('.qc').forEach((c, k) => c.classList.toggle('on', k === q));
+    document.querySelector('.calc').dataset.q = q;
+  }
+  document.querySelectorAll('.qtabs [data-q]').forEach(b => b.addEventListener('click', () => showQ(+b.dataset.q)));
+  showQ(0);
   $('panel').addEventListener('submit', e => e.preventDefault());
   $('panel').addEventListener('keydown', e => e.stopPropagation());
   $('addW').addEventListener('click', () => { if (S.withdrawals.length >= 5) return; $('addW').blur(); S.withdrawals.push({ year: 0, amount: 0 }); save(); renderW(); const ins = $('wgrid').querySelectorAll('input'); if (ins.length) ins[ins.length - 2].focus(); });
@@ -1131,7 +1189,7 @@ td.wy { color: var(--pink); }
   $('next').addEventListener('click', () => go(1));
   $('prev').addEventListener('click', () => { if (step > maxStep()) step = maxStep(); go(-1); });
   $('restart').addEventListener('click', () => { step = 0; render(); $('slide').focus(); });
-  $('all').addEventListener('click', () => { step = 99; render(); });
+  $('all').addEventListener('click', () => { step = lastMain(); render(); });
   // sin avanzar con clic en la diapositiva (para no avanzar sin querer al cambiar una cifra): flechas, espacio o los botones
   document.addEventListener('keydown', e => {
     if (e.target.closest && e.target.closest('input, select, textarea')) return;
@@ -1194,7 +1252,7 @@ td.wy { color: var(--pink); }
     return libsP;
   }
   const exportSteps = () => {
-    const m = maxStep(), s = (step <= 0 || step > m) ? m : step;
+    const m = maxStep(), s = (step <= 0 || step > m) ? m : step;   // en el paso 0, la simulación entera y el extra
     return S.comp && s >= m ? [m - 1, m] : [s];
   };
   const p2 = n => String(n).padStart(2, '0');
