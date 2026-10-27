@@ -808,7 +808,7 @@ td.wy { color: var(--pink); }
   // cada plazo: años, capital y aportación mensual siempre cuadran (capital = lo que da esa aportación en esos años)
   function norm(sc) { if (!(sc.goal > 0)) sc.goal = sc.monthly * fvPerEuro(sc.years); if (!(sc.monthly > 0)) sc.monthly = sc.goal / fvPerEuro(sc.years); }
   // el capital es siempre el que se escribe; la aportación con interés se redondea al euro más cercano
-  const needM = sc => Math.max(1, Math.round(sc.goal / fvPerEuro(sc.years)));   // al euro más cercano
+  const needM = sc => Math.max(1, Math.ceil(sc.goal / fvPerEuro(sc.years) - 1e-9));   // al euro, hacia arriba: así siempre se llega
   function setYears(sc, y) { sc.years = y; sc.monthly = needM(sc); }
   function setGoal(sc, g) { sc.goal = g; sc.monthly = needM(sc); }
   function setMonthly(sc, m) { sc.monthly = m; sc.goal = m * fvPerEuro(sc.years); }
@@ -928,7 +928,7 @@ td.wy { color: var(--pink); }
         ic = '<span class="f">' + sum + ' + ' + pct(S.rate) + ' <span class="fi">(' + eur(int) + ')</span> = </span><b>' + eur(fr) + '</b>';
       }
       const fin = y === N;
-      const reach = fin && (r.ic >= t.goal * 0.995 || yearsTo(t.goal, t.monthly, S.rate / 100) <= N + 0.5);
+      const reach = fin && (r.ic >= t.goal - 0.5 || yearsTo(t.goal, t.monthly, S.rate / 100) <= N + 0.5);
       const vis = k < 3 ? v.step >= 5 : (v.step >= 6);
       let wr = '';
       if (v.showRet) wr = '<td>' + (r.w > 0 ? eur(r.before) + ' <span class="w">− ' + eur(r.w) + '</span>' : eur(r.after)) + '</td>';
@@ -940,7 +940,7 @@ td.wy { color: var(--pink); }
 
     // nota
     const last = rows[rows.length - 1];
-    const yG = yearsTo(t.goal, t.monthly, S.rate / 100), ok = last.ic >= t.goal * 0.995, near = !ok && yG <= N + 0.5;   // si se llega en medio año más o menos, verde con el plazo exacto
+    const yG = yearsTo(t.goal, t.monthly, S.rate / 100), ok = last.ic >= t.goal - 0.5, near = !ok && yG <= N + 0.5;   // si se llega en medio año más o menos, verde con el plazo exacto
     const need = t.goal / fvPerEuro(N);
     // al pasar al plazo 2 (paso 7) se ocultan las dos y vuelven a salir ya actualizadas: la renta con sus €/mes (paso 9), el objetivo con la tabla (paso 10)
     const showRes = v.step >= 6 && !(S.two && v.step >= 7 && v.step < 10);
@@ -964,7 +964,7 @@ td.wy { color: var(--pink); }
     document.querySelectorAll('.calc .rt').forEach(e => { e.textContent = rp; });
     // calculadora 1 · ¿cuánto tengo que ahorrar al mes?
     setIn('f_nGoal', grp(S.nGoal)); setIn('f_nYears', String(S.nYears));
-    const nNeed = Math.round(S.nGoal / fvPerEuro(S.nYears)), nFlat = Math.round(S.nGoal / (sumG(S.nYears) * 12));
+    const nNeed = Math.ceil(S.nGoal / fvPerEuro(S.nYears) - 1e-9), nFlat = Math.ceil(S.nGoal / (sumG(S.nYears) * 12) - 1e-9);
     $('nTxt').innerHTML = 'Para ' + eur(S.nGoal) + ' en ' + S.nYears + (S.nYears === 1 ? ' año' : ' años') + ':<br>' +
       'En la cuenta (0 %): <b class="ko">' + eur(nFlat) + '/mes</b><br>' +
       'Con interés compuesto al ' + rp + ': <b class="ok">' + eur(nNeed) + '/mes</b>';
