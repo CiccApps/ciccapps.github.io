@@ -799,7 +799,7 @@ td.wy { color: var(--pink); }
 
   // ---------- pasos ----------
   // 1 años · 2 capital · 3 €/mes · 4 pensión privada · 5 cabecera y 3 primeras filas · 6 resto de la tabla y etiquetas
-  // (segundo plazo) 7 años · 8 capital · 9 €/mes · 10 la tabla llega al plazo 2, con su pensión y el objetivo · (retiradas) columna
+  // (segundo plazo) 7 años · 8 capital · 9 €/mes, con su renta · 10 la tabla llega al plazo 2, con el objetivo · (retiradas) columna
   // «Con retiradas» · (extra) «¿Y sin interés compuesto?»: «Final» se queda en el paso anterior y se llega con un «Siguiente» más
   // diseño de móvil: hasta 760 px, salvo un móvil girado en horizontal (bajo y táctil), que enseña la diapositiva 16:9
   const PHONE = '(max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse)))';
@@ -818,7 +818,7 @@ td.wy { color: var(--pink); }
     const onB = S.two && step >= 7;
     const sc = onB ? S.B : S.A;
     const tableB = S.two && step >= 10;
-    return { step, m, onB, sc, tableSc: tableB ? S.B : S.A, showPen: step >= (onB ? 10 : 4), showRet: hasRet() && step >= retStep(), showComp: !!S.comp && step >= maxStep() };
+    return { step, m, onB, sc, tableSc: tableB ? S.B : S.A, showPen: step >= (onB ? 9 : 4), showRet: hasRet() && step >= retStep(), showComp: !!S.comp && step >= maxStep() };
   }
 
   // ---------- pintar ----------
@@ -911,7 +911,7 @@ td.wy { color: var(--pink); }
     const last = rows[rows.length - 1];
     const ok = last.ic >= t.goal * 0.995;
     const need = t.goal / fvPerEuro(N);
-    // al pasar al plazo 2 (paso 7) se ocultan las dos y vuelven a salir ya actualizadas a la vez que la tabla, en el paso 10
+    // al pasar al plazo 2 (paso 7) se ocultan las dos y vuelven a salir ya actualizadas: la renta con sus €/mes (paso 9), el objetivo con la tabla (paso 10)
     const showRes = v.step >= 6 && !(S.two && v.step >= 7 && v.step < 10);
     const pv = pension(sc);   // la del plazo de las cajas: sale justo después de los €/mes
     // color con la cifra de la diapositiva: menos de 1.000 €/mes rosa, de 1.000 a 1.500 €/mes naranja, desde 1.500 €/mes verde.
