@@ -952,7 +952,7 @@ td.wy { color: var(--pink); }
     penSegs = ['Renta mensual: ' + eur(pv) + '/mes', S.pYears + ' años'].concat(S.inflOn && S.infl > 0 ? ['hoy serían ' + eur(pr) + '/mes'] : []);
     paintPen();
     $('res').className = 'pill ' + (ok || near ? 'ok' : 'ko') + (showRes ? '' : ' hide');
-    $('res').textContent = ok ? '✓ En ' + N + ' años llegas a ' + eur(last.ic) + ': objetivo cubierto'
+    $('res').textContent = ok ? '✓ Llegas a ' + eur(last.ic) + ' en ' + yTxt(N)
       : near ? '✓ Llegas a ' + eur(t.goal) + ' en ' + yTxt(yG)
       : 'Llegas al ' + (Math.floor(last.ic / t.goal * 1000) / 10).toLocaleString('es-ES') + ' % del objetivo: faltan ' + eur(t.goal - last.ic);
     show($('note'), true);
