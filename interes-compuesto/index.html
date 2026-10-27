@@ -733,17 +733,17 @@ td.wy { color: var(--pink); }
   // ---------- ejemplo inicial: el de la presentación (30 años y un segundo plazo de 40); las calculadoras, con medio millón y 250 €/mes ----------
   const EXAMPLE = { rate: 8, method: 'anual', two: true, pYears: 20, infl: 2.5, inflOn: false, gOn: false, g: 3, wOn: true, comp: true, tGoal: 500000, tMonthly: 250, nGoal: 500000, nYears: 40, gMonthly: 250, gYears: 40,
     A: { years: 30, goal: 144000, monthly: 100 }, B: { years: 40, goal: 336000, monthly: 100 },   // cifras redondas del ejemplo; al cambiar algo se recalcula exacto
-    withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 50000 }], age: 0 };
+    withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 30000 }], age: 0 };
   // cliente de 40 a 49 años: 15 y 25 años con 255 €/mes al 8 %, que llegan a los dos capitales (al 0 %, 500 y 800 €/mes; renta a 20 años del plazo 2, 1.000 €/mes);
   // calculadoras, con los mismos datos en las tres: 360.000 €, 25 años y 400 €/mes (al 0 %, 1.200 €/mes y 75 años; con interés, 380 €/mes; renta de 1.500 y 1.579 €/mes, en verde)
   const MAYOR = { rate: 8, tGoal: 360000, tMonthly: 400, nGoal: 360000, nYears: 25, gMonthly: 400, gYears: 25,
     A: { years: 15, goal: 90000, monthly: 250 }, B: { years: 25, goal: 240000, monthly: 250 },
-    withdrawals: [{ year: 10, amount: 20000 }, { year: 20, amount: 50000 }] };
+    withdrawals: [{ year: 10, amount: 25000 }, { year: 20, amount: 50000 }] };
   // cliente de 50 años o más: 10 y 20 años con 650 €/mes al 8 % (al 0 %, 1.000 y 1.600 €/mes; renta a 20 años del plazo 2, 1.600 €/mes);
   // calculadoras: 384.000 €, 20 años y 650 €/mes (al 0 %, 1.600 €/mes; con interés, 647 €/mes y justo 20 años; renta en verde)
   const SENIOR = { rate: 8, tGoal: 384000, tMonthly: 650, nGoal: 384000, nYears: 20, gMonthly: 650, gYears: 20,
     A: { years: 10, goal: 75000, monthly: 400 }, B: { years: 20, goal: 240000, monthly: 400 },
-    withdrawals: [{ year: 10, amount: 30000 }, { year: 15, amount: 50000 }] };
+    withdrawals: [{ year: 10, amount: 40000 }, { year: 15, amount: 40000 }] };
   const KEY = 'interes-compuesto-v8';
   const MAXY = 50;
   let S = load();
