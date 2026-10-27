@@ -731,8 +731,8 @@ td.wy { color: var(--pink); }
     A: { years: 30, goal: 144000, monthly: 100 }, B: { years: 40, goal: 336000, monthly: 100 },   // cifras redondas del ejemplo; al cambiar algo se recalcula exacto
     withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }, { year: 30, amount: 50000 }], mayor: false };
   // cliente de 40 años o más: 15 y 25 años con 255 €/mes al 8 %, que llegan a los dos capitales (al 0 %, 500 y 800 €/mes; renta a 20 años del plazo 2, 1.000 €/mes);
-  // calculadoras: 300.000 € en 25 años (al 0 %, 1.000 €/mes), 100 €/mes por si no llega a más y 150.000 € con 250 €/mes (al 0 %, 50 años)
-  const MAYOR = { rate: 8, tGoal: 150000, tMonthly: 250, nGoal: 300000, nYears: 25, gMonthly: 100, gYears: 25,
+  // calculadoras, con los mismos datos en las tres: 300.000 €, 25 años y 200 €/mes (al 0 %, 1.000 €/mes; con interés, 317 €/mes)
+  const MAYOR = { rate: 8, tGoal: 300000, tMonthly: 200, nGoal: 300000, nYears: 25, gMonthly: 200, gYears: 25,
     A: { years: 15, goal: 90000, monthly: 255 }, B: { years: 25, goal: 240000, monthly: 255 },
     withdrawals: [{ year: 10, amount: 10000 }, { year: 20, amount: 20000 }] };
   const KEY = 'interes-compuesto-v8';
