@@ -243,8 +243,8 @@ select.in { text-align: left; }
 .ttime b.ko { color: #C2186E; } .ttime b.ok { color: #007A7A; }
 /* orden: rentabilidad y crecimiento arriba, las preguntas y debajo plazos, pensión y retiradas (en una columna:
    rentabilidad, preguntas, crecimiento y el resto) */
-.panel { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-areas: "h h h h h h" "r r r g g g" "q q q q q q" "pe pe w w p p" "x x x x x x"; }
-.panel > .phead { grid-area: h; display: flex; align-items: center; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; } .panel > .xtra { grid-area: x; } .panel > .ratecard { grid-area: r; } .panel > .growcard { grid-area: g; } .panel > .calc { grid-area: q; }
+.panel { grid-template-columns: repeat(6, minmax(0, 1fr)); grid-template-areas: "h h h h h h" "r r g g x x" "q q q q q q" "pe pe w w p p"; }
+.panel > .phead { grid-area: h; display: flex; align-items: center; justify-content: space-between; gap: 8px 16px; flex-wrap: wrap; } .panel > .ratecard.xtra { grid-area: x; } .panel > .ratecard { grid-area: r; } .panel > .growcard { grid-area: g; } .panel > .calc { grid-area: q; }
 .panel > .plz { grid-area: p; } .panel > .pen { grid-area: pe; } .panel > .ret { grid-area: w; }
 .gchk { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
 .gchk input { width: 15px; height: 15px; margin: 0; accent-color: var(--navy); }
@@ -265,8 +265,22 @@ select.in { text-align: left; }
 .rhead { display: grid; gap: 2px; }
 .ratecard label { font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .rhead .small { font-size: 11.5px; }
+.xtra .xq { display: none; }
+.wrap:fullscreen .panel > .xtra { display: block; background: none; padding: 0; }
+.wrap:fullscreen .xtra .xq { display: inline; }
+.wrap:fullscreen .xtra .small { display: none; }
+.wrap:fullscreen .xtra label { font-size: 14px; font-weight: 400; letter-spacing: 0; text-transform: none; color: inherit; }
 .rbig { display: flex; align-items: baseline; justify-content: flex-end; gap: 4px; font: 900 22px/1.1 var(--font-black); color: var(--navy); }
 .rbig .rin { font: 900 22px/1.1 var(--font-black); width: 3.4ch; padding: 2px 4px; text-align: center; background: rgba(255,255,255,.6); }
+/* fuera de pantalla completa, las tres tarjetas con la misma estructura: título (y casilla) con su cifra en la primera fila, explicación en una línea debajo */
+.wrap:not(:fullscreen) .panel > .ratecard { grid-template-rows: 30px auto; align-content: start; gap: 4px 12px; }
+.wrap:not(:fullscreen) .ratecard .rhead { display: contents; }
+.wrap:not(:fullscreen) .ratecard .rhead > label { grid-area: 1 / 1; white-space: nowrap; }
+.wrap:not(:fullscreen) .ratecard .rhead > .small { grid-area: 2 / 1 / 3 / -1; }
+.wrap:not(:fullscreen) .ratecard .rbig { grid-area: 1 / 2; }
+/* si la tarjeta no da para «Crecimiento geométrico» y su cifra en una línea (tableta, móvil estrecho), queda «Crecimiento» */
+.wrap:not(:fullscreen) .panel > .ratecard { container-type: inline-size; }
+@container (max-width: 299px) { .geo { display: none; } }
 .pgrid .in.ici { color: #007A7A; }
 /* último paso: comparación sin / con interés compuesto, encima de la diapositiva */
 .comp { position: absolute; inset: 0; z-index: 4; display: flex; align-items: center; justify-content: center;
@@ -301,9 +315,9 @@ select.in { text-align: left; }
 @media (max-width: 900px) { .qtabs { display: grid; } .qc:not(.on) { display: none; } }
 
 /* ---------- pantallas estrechas: la diapositiva deja de ser 16:9 ---------- */
-@media (max-width: 900px) { .panel { grid-template-columns: 1fr; grid-template-areas: "h" "r" "g" "q" "pe" "w" "p" "x"; } }
+@media (max-width: 900px) { .panel { grid-template-columns: 1fr; grid-template-areas: "h" "r" "g" "x" "q" "pe" "w" "p"; } }
 /* pantallas medianas: plazos y pensión a medias y las retiradas debajo, para que ninguna cifra se corte */
-@media (min-width: 901px) and (max-width: 1199px) { .panel { grid-template-areas: "h h h h h h" "r r r g g g" "q q q q q q" "pe pe pe w w w" "p p p p p p" "x x x x x x"; } .plz .pgrid { max-width: 560px; } }
+@media (min-width: 901px) and (max-width: 1199px) { .panel { grid-template-areas: "h h h h h h" "r r g g x x" "q q q q q q" "pe pe pe w w w" "p p p p p p"; } .plz .pgrid { max-width: 560px; } }
 @media (max-width: 480px) { .qtabs button { font-size: 12px; padding-inline: 2px; } }
 @media (max-width: 760px) and ((orientation: portrait) or (min-height: 601px) or (not (pointer: coarse))) {
   .stage { aspect-ratio: auto; }
@@ -661,11 +675,11 @@ td.wy { color: var(--pink); }
   <form class="panel" id="panel" autocomplete="off" hidden>
     <div class="phead"><h2>Datos</h2><div class="agesel"><div class="agetabs" role="group" aria-label="Edad del cliente"><button type="button" data-age="0">Menos de 40</button><button type="button" data-age="1">Entre 40 y 50</button><button type="button" data-age="2">50 o más</button></div></div></div>
     <div class="ratecard">
-      <div class="rhead"><label for="f_rate">Rentabilidad anual</label><span class="small">Para la diapositiva y las calculadoras (máximo 12&nbsp;%)</span></div>
+      <div class="rhead"><label for="f_rate">Rentabilidad anual</label><span class="small">Diapositiva y calculadoras · máximo 12&nbsp;%</span></div>
       <div class="rbig"><input class="in rin" id="f_rate" inputmode="decimal"><span>%</span></div>
     </div>
     <div class="ratecard growcard">
-      <div class="rhead"><label class="gchk"><input type="checkbox" id="f_gOn"> Crecimiento geométrico</label><span class="small">La aportación sube ese % cada año (máximo 5&nbsp;%)</span></div>
+      <div class="rhead"><label class="gchk"><input type="checkbox" id="f_gOn"> <span>Crecimiento<span class="geo"> geométrico</span></span></label><span class="small">La aportación sube cada año · máximo 5&nbsp;%</span></div>
       <div class="rbig"><input class="in rin" id="f_g" inputmode="decimal" aria-label="Crecimiento anual de la aportación"><span>%</span></div>
     </div>
     <fieldset class="calc">
@@ -722,7 +736,9 @@ td.wy { color: var(--pink); }
         <span class="h">€/mes con interés</span><input class="in ici" id="f_mA" inputmode="numeric" aria-label="Plazo 1: euros al mes con interés compuesto"><input class="in ici" id="f_mB" inputmode="numeric" aria-label="Plazo 2: euros al mes con interés compuesto">
       </div>
     </div>
-    <label class="chk xtra"><input type="checkbox" id="f_comp"> Extra al final: «¿Y sin interés compuesto?»</label>
+    <div class="ratecard xtra">
+      <div class="rhead"><label class="gchk"><input type="checkbox" id="f_comp"> <span>Extra al final<span class="xq">: «¿Y sin interés compuesto?»</span></span></label><span class="small">Diapositiva «¿Y sin interés compuesto?»</span></div>
+    </div>
   </form>
   <p class="copy">© 2026 Miguel Pascual Ciccardini · Todos los derechos reservados. Herramienta de uso exclusivo de su equipo: prohibida su copia, distribución o venta sin autorización.</p>
 </div>
