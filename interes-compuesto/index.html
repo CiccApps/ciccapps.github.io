@@ -226,6 +226,9 @@ select.in { text-align: left; }
   color: #007A7A; background: #F0FAFA; border-color: rgba(0, 153, 153, .4); }
 .addx:hover { border-color: #007A7A; background: #E0F4F4; }
 .addx:disabled { opacity: .35; cursor: default; }
+/* «+» de las retiradas: en la siguiente columna libre, con el alto de año e importe; con 4 desaparece */
+.wgrid .addx { grid-row: 1 / span 2; height: auto !important; align-self: stretch; border-style: dashed; font-size: 22px; }
+.wgrid .addx[hidden] { display: none; }
 /* plazos en dos columnas */
 .pgrid { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: center; }
 .pgrid .h { color: var(--navy); font-size: 14px; white-space: nowrap; }
@@ -723,7 +726,7 @@ td.wy { color: var(--pink); }
     <div class="fs ret" role="group" aria-label="Retiradas">
       <div class="lg"><label class="lchk"><input type="checkbox" id="f_wOn" aria-label="Aplicar las retiradas"> Retiradas</label></div>
       <div class="wgrid" id="wgrid">
-        <span class="h">Año</span><span class="h" title="Importe">€</span><button type="button" class="addx" id="addW" title="Añadir retirada" aria-label="Añadir retirada">+</button>
+        <span class="h">Año</span><span class="h" title="Importe">€</span><span></span><button type="button" class="addx" id="addW" title="Añadir retirada" aria-label="Añadir retirada">+</button>
       </div>
       <p class="small">Se restan al final del año que pongas.</p>
     </div>
@@ -1156,7 +1159,7 @@ td.wy { color: var(--pink); }
       x.addEventListener('click', () => { x.blur(); S.withdrawals.splice(i, 1); changed(); renderW(); });
       g.append(a, b, x);
     });
-    $('addW').disabled = S.withdrawals.length >= 4;
+    g.append($('addW')); $('addW').hidden = S.withdrawals.length >= 4;
   }
 
   function changed() { save(); render(); }
