@@ -755,9 +755,9 @@ td.wy { color: var(--pink); }
   const MAYOR = { rate: 8, tGoal: 360000, tMonthly: 400, nGoal: 360000, nYears: 25, gMonthly: 400, gYears: 25,
     A: { years: 15, goal: 90000, monthly: 250 }, B: { years: 25, goal: 240000, monthly: 250 },
     withdrawals: [{ year: 10, amount: 30000 }, { year: 20, amount: 70000 }] };
-  // cliente de 50 años o más: 10 y 20 años con 650 €/mes al 8 % (al 0 %, 1.000 y 1.600 €/mes; renta a 20 años del plazo 2, 1.600 €/mes);
-  // calculadoras: 384.000 €, 20 años y 650 €/mes (al 0 %, 1.600 €/mes; con interés, 647 €/mes y justo 20 años; renta en verde)
-  const SENIOR = { rate: 8, tGoal: 384000, tMonthly: 650, nGoal: 384000, nYears: 20, gMonthly: 650, gYears: 20,
+  // cliente de 50 años o más: 10 y 20 años con 400 €/mes al 8 % (al 0 %, 625 y 1.000 €/mes; renta a 20 años del plazo 2, 1.000 €/mes);
+  // calculadoras, las cifras del plazo 2: 240.000 €, 20 años y 400 €/mes (al 0 %, 1.000 €/mes y 50 años; con interés, 405 €/mes, 237.230 € y 20 años y 2 meses)
+  const SENIOR = { rate: 8, tGoal: 240000, tMonthly: 400, nGoal: 240000, nYears: 20, gMonthly: 400, gYears: 20,
     A: { years: 10, goal: 75000, monthly: 400 }, B: { years: 20, goal: 240000, monthly: 400 },
     withdrawals: [{ year: 10, amount: 50000 }, { year: 15, amount: 60000 }] };
   const KEY = 'interes-compuesto-v8';
