@@ -214,10 +214,11 @@ label.fld small { display: block; color: var(--muted); font-size: 12px; margin-t
 .in:focus { outline: none; border-color: var(--teal); background: #fff; }
 select.in { text-align: left; }
 /* retiradas en columnas: cada retirada es una columna (año, importe y quitar) */
-.wgrid { display: grid; grid-auto-flow: column; grid-template-rows: auto auto auto; grid-template-columns: auto;
-  grid-auto-columns: minmax(56px, 92px); gap: 8px; align-items: center; font-size: 13px; overflow-x: auto; padding-bottom: 2px; }
+.wgrid { display: grid; grid-auto-flow: column; grid-template-rows: auto auto auto; grid-template-columns: auto repeat(4, minmax(0, 92px));
+  grid-auto-columns: minmax(0, 92px); gap: 8px; align-items: center; font-size: 13px; overflow-x: auto; padding-bottom: 2px; }
 .wgrid .h { color: var(--navy); font-size: 14px; padding-right: 4px; white-space: nowrap; }
-.wgrid .in { padding: 6px; font-size: 14px; text-align: center; }
+.wgrid .in { padding: 6px 2px; font-size: 14px; text-align: center; }
+@media (max-width: 440px) { .wgrid .in.long { font-size: 13px !important; letter-spacing: -.01em; } }   /* importes de 7 cifras con el punto: en el móvil, a 16 px no caben */
 .x { width: 100%; height: 26px; padding: 0; justify-content: center; font-size: 17px; line-height: 1; font-weight: 700;
   color: #C2186E; background: #FFF5FA; border-color: rgba(255, 51, 153, .35); }
 .x:hover { border-color: #C2186E; background: #FFE9F3; }
@@ -435,7 +436,6 @@ td.wy { color: var(--pink); }
   label.fld { grid-template-columns: minmax(0, 1fr) min(128px, 42%); font-size: 15px; }
   .pgrid { grid-template-columns: minmax(0, .9fr) minmax(0, 1fr) minmax(0, 1fr); }
   .pgrid .in { padding-inline: 6px; }
-  .wgrid { grid-auto-columns: minmax(60px, 92px); }
   .wgrid .in { padding-inline: 2px; }
   .pgrid .h { white-space: normal; font-size: 15px; line-height: 1.2; }
   .pgrid .chk2 input { width: 18px; height: 18px; }
@@ -723,9 +723,9 @@ td.wy { color: var(--pink); }
     <div class="fs ret" role="group" aria-label="Retiradas">
       <div class="lg"><label class="lchk"><input type="checkbox" id="f_wOn" aria-label="Aplicar las retiradas"> Retiradas</label></div>
       <div class="wgrid" id="wgrid">
-        <span class="h">Año</span><span class="h">Importe €</span><button type="button" class="addx" id="addW" title="Añadir retirada" aria-label="Añadir retirada">+</button>
+        <span class="h">Año</span><span class="h" title="Importe">€</span><button type="button" class="addx" id="addW" title="Añadir retirada" aria-label="Añadir retirada">+</button>
       </div>
-      <p class="small">Se restan al final del año que pongas (máximo 5).</p>
+      <p class="small">Se restan al final del año que pongas.</p>
     </div>
     <div class="fs plz" role="group" aria-label="Plazos">
       <div class="pgrid">
@@ -756,8 +756,9 @@ td.wy { color: var(--pink); }
     A: { years: 15, goal: 90000, monthly: 250 }, B: { years: 25, goal: 240000, monthly: 250 },
     withdrawals: [{ year: 10, amount: 30000 }, { year: 20, amount: 70000 }] };
   // cliente de 50 años o más: 10 y 20 años con 400 €/mes al 8 % (al 0 %, 625 y 1.000 €/mes; renta a 20 años del plazo 2, 1.000 €/mes);
-  // calculadoras, las cifras del plazo 2: 240.000 €, 20 años y 400 €/mes (al 0 %, 1.000 €/mes y 50 años; con interés, 405 €/mes, 237.230 € y 20 años y 2 meses)
-  const SENIOR = { rate: 8, tGoal: 240000, tMonthly: 400, nGoal: 240000, nYears: 20, gMonthly: 400, gYears: 20,
+  // calculadoras: 360.000 €, 20 años y 650 €/mes, como en los otros tramos el ahorro necesario (608 €/mes) queda por debajo de la cifra redonda;
+  // la renta de la primera, 1.500 €/mes, ya sale en verde (con 650 €/mes, 385.499 € y 19 años y 4 meses; al 0 %, 1.500 €/mes y 46 años y 2 meses)
+  const SENIOR = { rate: 8, tGoal: 360000, tMonthly: 650, nGoal: 360000, nYears: 20, gMonthly: 650, gYears: 20,
     A: { years: 10, goal: 75000, monthly: 400 }, B: { years: 20, goal: 240000, monthly: 400 },
     withdrawals: [{ year: 10, amount: 50000 }, { year: 15, amount: 60000 }] };
   const KEY = 'interes-compuesto-v8';
@@ -769,7 +770,7 @@ td.wy { color: var(--pink); }
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
   function load() {
-    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.A && s.B) { if (!(s.age >= 0 && s.age <= 2)) s.age = s.mayor ? 1 : 0; return Object.assign(clone(EXAMPLE), s, { method: 'anual' }); } } catch (e) {}   // antes la edad era una casilla «40 años o más» (mayor)
+    try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.A && s.B) { if (!(s.age >= 0 && s.age <= 2)) s.age = s.mayor ? 1 : 0; if (Array.isArray(s.withdrawals)) s.withdrawals = s.withdrawals.slice(0, 4); return Object.assign(clone(EXAMPLE), s, { method: 'anual' }); } } catch (e) {}   // antes la edad era una casilla «40 años o más» (mayor)
     return clone(EXAMPLE);
   }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -1147,14 +1148,15 @@ td.wy { color: var(--pink); }
       const a = document.createElement('input'); a.className = 'in wr'; a.id = 'w_y' + i; a.inputMode = 'numeric'; a.placeholder = 'año'; a.value = w.year || ''; a.setAttribute('aria-label', 'Año de la retirada ' + (i + 1));
       const b = document.createElement('input'); b.className = 'in wr'; b.id = 'w_a' + i; b.inputMode = 'numeric'; b.placeholder = '€'; b.value = w.amount ? grp(w.amount) : ''; b.setAttribute('aria-label', 'Importe de la retirada ' + (i + 1));
       const x = document.createElement('button'); x.type = 'button'; x.className = 'x wr'; x.textContent = '×'; x.setAttribute('aria-label', 'Quitar retirada ' + (i + 1));
+      const fit = () => b.classList.toggle('long', b.value.length > 6); fit();   // 100.000 € o más: letra algo menor para que quepa en el móvil
       a.addEventListener('input', () => { const n = num(a.value); w.year = isFinite(n) ? Math.min(MAXY, Math.max(0, Math.round(n))) : 0; changed(); });
       a.addEventListener('blur', () => { a.value = w.year || ''; });
-      b.addEventListener('input', () => { const n = num(b.value); w.amount = isFinite(n) ? Math.max(0, n) : 0; changed(); });
-      b.addEventListener('blur', () => { b.value = w.amount ? grp(w.amount) : ''; });
+      b.addEventListener('input', () => { const n = num(b.value); w.amount = isFinite(n) ? Math.max(0, n) : 0; fit(); changed(); });
+      b.addEventListener('blur', () => { b.value = w.amount ? grp(w.amount) : ''; fit(); });
       x.addEventListener('click', () => { x.blur(); S.withdrawals.splice(i, 1); changed(); renderW(); });
       g.append(a, b, x);
     });
-    $('addW').disabled = S.withdrawals.length >= 5;
+    $('addW').disabled = S.withdrawals.length >= 4;
   }
 
   function changed() { save(); render(); }
@@ -1223,7 +1225,7 @@ td.wy { color: var(--pink); }
   showQ(0);
   $('panel').addEventListener('submit', e => e.preventDefault());
   $('panel').addEventListener('keydown', e => e.stopPropagation());
-  $('addW').addEventListener('click', () => { if (S.withdrawals.length >= 5) return; $('addW').blur(); S.withdrawals.push({ year: 0, amount: 0 }); save(); renderW(); const ins = $('wgrid').querySelectorAll('input'); if (ins.length) ins[ins.length - 2].focus(); });
+  $('addW').addEventListener('click', () => { if (S.withdrawals.length >= 4) return; $('addW').blur(); S.withdrawals.push({ year: 0, amount: 0 }); save(); renderW(); const ins = $('wgrid').querySelectorAll('input'); if (ins.length) ins[ins.length - 2].focus(); });
   // como recargar la página: datos del ejemplo, primer paso, panel de datos oculto y arriba del todo
   $('reset').addEventListener('click', () => {
     if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
